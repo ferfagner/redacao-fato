@@ -37,20 +37,37 @@ Crie cada perfil com `manus-config agents create --file`, usando um JSON num dir
 
 **Perfil 1, "Radar de Pautas".**
 
-Instrução: você encontra o que merece virar vídeo. Varra as publicações das últimas 24 horas em G1, BBC Brasil, Reuters, Associated Press, Agência Brasil, Nature, Science, NASA, Smithsonian, Our World in Data, Pew Research e IBGE.
+Instrução: você encontra o que merece virar vídeo. Todo dia é um tema novo. Procure nas últimas 24 a 48 horas, em cinco categorias:
+
+| categoria | onde procurar (fontes que valem como origem) |
+|---|---|
+| `ciencia` (ciência e espaço) | Nature, Science, NASA, ESA, Smithsonian, universidades, Agência FAPESP |
+| `brasil` (Brasil em números) | IBGE, Agência Brasil, Banco Central, INPE, ministérios, G1 |
+| `tecnologia` | anúncios oficiais das empresas, Reuters, Associated Press, BBC |
+| `games` | blogs oficiais (PlayStation, Xbox, Nintendo, Steam), números de publishers e da Newzoo, lançamentos confirmados |
+| `mundo` (notícias gerais e curiosidades) | Reuters, Associated Press, BBC Brasil, Our World in Data, Pew Research, ONU |
+
+**Como pesquisar.** Use as ferramentas de pesquisa disponíveis nesta conta: busca do Google e Google Notícias, YouTube e Gemini.
+- O **YouTube** serve para descobrir o que o público está procurando: vídeos em alta, buscas por categoria, os comentários mais curtidos. Ele mede o interesse, mas **não é fonte do fato**. Nunca use trechos, imagens ou áudio de vídeos do YouTube.
+- O **Google** serve para achar a origem: a matéria, o comunicado ou o estudo.
+- O **Gemini** pode resumir e agrupar as candidatas, mas toda pauta precisa de uma URL de origem que você mesmo abriu.
+
+Se o conector de alguma dessas ferramentas não estiver habilitado, use `connector ensure`. Se aparecer um cartão de autorização, pare e me mostre. Não invente conector.
 
 Dê nota de 0 a 5 em seis critérios:
 
 | critério | peso |
 |---|---|
 | novidade | 25 |
-| vira número ou gráfico, sem precisar de foto | 20 |
-| curiosidade | 20 |
+| vira número, gráfico, mapa ou objeto 3D, sem precisar de foto | 20 |
+| curiosidade, medida também pelo interesse no YouTube e no Google | 20 |
 | durabilidade | 15 |
 | segurança editorial | 10 |
 | originalidade frente ao `log.csv` dos últimos 30 dias | 10 |
 
 A nota final vai de 0 a 100: some (nota × peso) e divida por 5.
+
+**Variedade:** entre as oito, pelo menos três categorias diferentes e no máximo três pautas da mesma categoria.
 
 Descarte:
 - política partidária;
@@ -58,9 +75,10 @@ Descarte:
 - promessa de investimento;
 - celebridade em situação vexatória;
 - teoria da conspiração;
+- **em games:** boato, vazamento e "insider";
 - tema publicado nos últimos 30 dias.
 
-Entregue as oito melhores em ordem decrescente de nota, cada uma com título, veículo, URL, data e hora e nota. Nunca escreva roteiro.
+Entregue as oito melhores em ordem decrescente de nota, cada uma com título, categoria, veículo, URL de origem, data e hora, nota e, quando houver, o sinal de interesse (exemplo: "vídeo com 2 mi de visualizações em 24 h"). Nunca escreva roteiro.
 
 **Perfil 2, "Checador".**
 
@@ -84,7 +102,7 @@ Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa 
 
 **Perfil 4, "Diretor".**
 
-Instrução: você converte o roteiro em **9 a 11 cenas** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade`, `citacao_fonte`, `mapa_brasil`, `mapa_lugar` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena).
+Instrução: você converte o roteiro em **9 a 11 cenas** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade`, `citacao_fonte`, `mapa_brasil`, `mapa_lugar` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena). Use de 2 a 4 cenas com objeto 3D ou mapa por vídeo, escolhendo o objeto que conta a história: `podio` para ranking, `barras` para comparação, `moedas` para dinheiro, `planeta` para espaço; a lista completa está no `AGENTS.md`.
 
 - A cena 1 é o gancho (`tipo_cinetico`) e a última é `fecho_chamada`.
 - O título vai em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras.
@@ -130,7 +148,7 @@ Listas, nesta ordem:
 - Vetado
 - Publicado
 
-Etiquetas: "nota alta", "auto" e "urgente".
+Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "brasil", "tecnologia", "games" e "mundo".
 
 **Formato do card:**
 - **Título:** o fato em até 60 caracteres, sem ponto final.
@@ -139,7 +157,7 @@ Etiquetas: "nota alta", "auto" e "urgente".
   - duas fontes independentes;
   - número com ano e instituição;
   - fora da lista de veto.
-- **Etiqueta:** "nota alta" quando a nota passar de 85.
+- **Etiquetas:** a da categoria, e "nota alta" quando a nota passar de 85.
 
 **O fluxo é rígido.**
 - O agente escreve só em "Pauta do dia". Quem move para "Aprovado" sou eu.
@@ -149,11 +167,11 @@ Etiquetas: "nota alta", "auto" e "urgente".
 
 ## Tarefa 4: duas rotinas, em duas tarefas separadas
 
-Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello.
+Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A do Radar leva também os uids dos conectores de pesquisa que estiverem habilitados (Google, YouTube e Gemini), conferidos com `connector ensure`. Não chute uid.
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
-Rode o Radar, aplique a nota e os vetos e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
+Rode o Radar com as ferramentas de pesquisa (Google, YouTube e Gemini), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
 
 **Rotina B: tarefa "Produção Fato", todos os dias às 7h30 (America/Sao_Paulo).**
 
@@ -168,7 +186,7 @@ Rode o Radar, aplique a nota e os vetos e crie no máximo oito cards em "Pauta d
    - Reels no Instagram e no Facebook, com a legenda do molde abaixo;
    - no TikTok, só como rascunho e só se houver conector disponível.
 9. Mova o card para "Publicado" e comente os links, a duração e as duas fontes.
-10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, tema, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_ig, link_fb, link_tt, status`.
+10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_ig, link_fb, link_tt, status`.
 11. Envie um resumo com o vídeo, as fontes e as métricas do vídeo de ontem.
 
 **Se "Aprovado" estiver vazio:** [MODO_AUTO]

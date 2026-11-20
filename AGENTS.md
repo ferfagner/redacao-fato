@@ -122,11 +122,17 @@ As famílias e seus campos extras:
 | `tipo_cinetico` | frase forte, palavra a palavra | `rotulo` (opcional) |
 | `numero_heroi` | um número grande que conta até o valor | `dado: {valor, unidade, rotulo}` |
 | `dado_comparado` | 2 a 4 barras | `comparacao: [{rotulo, valor, unidade}]`, com `valor` numérico ("190,8") |
-| `objeto_profundidade` | objeto 3D girando com o título | `objeto`: `globo`, `cubo` ou `aneis` |
+| `objeto_profundidade` | objeto 3D com o título | `objeto`, que pode ser:<br>• `moedas`: pilha de moedas caindo (dinheiro, preço, economia)<br>• `podio`: 1º, 2º e 3º lugar (ranking), com exatamente 3 itens em `comparacao`, cada um com `rotulo` de até 16 caracteres<br>• `barras`: barras 3D com valores, com 2 a 4 itens em `comparacao` (`rotulo`, `valor` numérico, `unidade`)<br>• `planeta`: planeta com anel e lua (espaço, ciência)<br>• `globo`, `cubo` e `aneis`: formas de linha, para quando nada acima combina |
 | `citacao_fonte` | cartão com aspas e a fonte | o título é a citação |
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
 | `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
+
+### Cartões 3D
+
+Toda cena entra como um cartão de vidro em perspectiva: gira, aproxima e depois flutua até o fim, alternando o lado a cada cena. Isso é automático.
+
+O que depende do Diretor é usar **de 2 a 4 cenas com objeto 3D ou mapa por vídeo** (`objeto_profundidade`, `mapa_brasil` ou `mapa_lugar`). O validador avisa quando há menos de 2. Escolha o objeto que conta a história: ranking vira `podio`, comparação de valores vira `barras`, dinheiro vira `moedas`, espaço vira `planeta`, um lugar vira `mapa_lugar`.
 
 ### Personagem (mascote)
 

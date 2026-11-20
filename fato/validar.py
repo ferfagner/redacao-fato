@@ -146,6 +146,20 @@ def validar_cenas(c, roteiro, ficha):
                 e.append(erro("Diretor", "mapa_lugar precisa de 'lugar' com 'nome', 'lat' e 'lon' (graus decimais)", i))
             elif len(str(lg["nome"])) > 24:
                 e.append(erro("Diretor", "o nome do lugar passa de 24 caracteres", i))
+        if fam == "objeto_profundidade":
+            obj = s.get("objeto", "globo")
+            objetos = ("globo", "cubo", "aneis", "moedas", "podio", "planeta", "barras")
+            if obj not in objetos:
+                e.append(erro("Diretor", f"objeto '{obj}' não existe ({', '.join(objetos)})", i))
+            comp = s.get("comparacao") or []
+            if obj == "barras" and not (2 <= len(comp) <= 4 and all(_numero(x.get("valor")) is not None and x.get("rotulo") for x in comp)):
+                e.append(erro("Diretor", "objeto 'barras' precisa de 2 a 4 itens em 'comparacao', com 'rotulo' e 'valor' numérico", i))
+            if obj == "podio" and not (len(comp) == 3 and all(x.get("rotulo") for x in comp)):
+                e.append(erro("Diretor", "objeto 'podio' precisa de exatamente 3 itens em 'comparacao' (1º, 2º e 3º), com 'rotulo'", i))
+            if obj == "podio":
+                for x in comp:
+                    if len(str(x.get("rotulo", ""))) > 16:
+                        e.append(erro("Diretor", f"rótulo do pódio \"{x.get('rotulo')}\" passa de 16 caracteres", i))
         pers = s.get("personagem")
         if pers and (pers.get("pose") not in POSES):
             e.append(erro("Diretor", f"pose do personagem desconhecida: {pers.get('pose')} ({', '.join(POSES)})", i))
@@ -170,6 +184,9 @@ def validar_cenas(c, roteiro, ficha):
         falta = [b for b in BLOCOS if b not in usados]
         if falta:
             e.append(erro("Diretor", f"nenhuma cena para o(s) bloco(s): {', '.join(falta)}"))
+        n3d = sum(1 for s in cenas if s.get("familia") in ("objeto_profundidade", "mapa_brasil", "mapa_lugar"))
+        if n3d < 2:
+            av.append(f"só {n3d} cena(s) com objeto 3D ou mapa; o combinado é de 2 a 4 por vídeo")
     if e:
         raise Falha("cenas", e, av)
     return av

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .comum import MODELO
 from .familias import FUNCOES, esc, js_destaque, placa_fonte
-from .mapas import GLOBO_JS, mapa_brasil, mapa_lugar
+from .mapas import GLOBO_JS, OBJETO_JS, mapa_brasil, mapa_lugar
 
 TODAS = dict(FUNCOES, mapa_brasil=mapa_brasil, mapa_lugar=mapa_lugar)
 
@@ -28,7 +28,7 @@ CSS_CENA = """
 .rot{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:30px;letter-spacing:.12em;color:var(--cobalto-texto);text-align:center;margin-bottom:28px;}
 .centro{position:absolute;left:120px;width:840px;top:285px;height:545px;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 .col{position:absolute;left:120px;width:840px;top:300px;display:flex;flex-direction:column;align-items:center;}
-.col.topo{top:290px;}
+.col.topo{top:300px;}
 .barra{width:200px;height:12px;border-radius:4px;background:var(--amarelo);margin-top:36px;transform-origin:left center;}
 .selo{display:inline-block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:28px;letter-spacing:.14em;background:var(--amarelo);color:var(--on-amarelo);border-radius:4px;padding:6px 14px;margin-bottom:30px;}
 .gancho .tit{text-align:left;}
@@ -62,6 +62,15 @@ CSS_CENA = """
 .fonte{position:absolute;left:120px;top:868px;background:var(--placa);border:2px solid var(--linha);border-radius:8px;padding:12px 20px;
   font-family:'JetBrains Mono',monospace;font-weight:500;font-size:28px;letter-spacing:.04em;color:var(--tinta);}
 .fonte .fk{color:var(--amarelo);font-weight:700;margin-right:8px;}
+.palco3d{position:absolute;inset:0;perspective:1600px;perspective-origin:540px 560px;}
+.c3d{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:540px 560px;}
+.painel{position:absolute;left:84px;width:912px;top:262px;height:590px;border-radius:24px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(42,64,240,.22),rgba(26,26,38,.80) 45%,rgba(15,15,23,.88));
+  border:2px solid rgba(138,149,255,.35);box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.14);}
+.brilho{position:absolute;top:-20%;left:0;width:30%;height:140%;
+  background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.10),rgba(255,255,255,0));}
+.glbox{position:absolute;}
+.c3d .col,.c3d .centro,.c3d .palco,.c3d .glbox{transform:translateZ(60px);}
 """
 
 FMT_JS = ("function fmt(v,c){const s=v.toFixed(c);const [i,d]=s.split('.');"
@@ -76,12 +85,28 @@ def _cena_html(cid, s, tempo):
     modulo = r[3] if len(r) > 3 else None
     fon_html, fon_js = placa_fonte(p, s.get("fonte"))
     js += fon_js + js_destaque(p, tempo["destaque"])
+    # cartão 3D: o conteúdo entra girando em perspectiva e depois flutua até o fim da cena
+    painel = s["id"] != 1 and s["familia"] != "citacao_fonte"
+    corpo = (f'<div class="palco3d"><div id="{p}-c3d" class="c3d">'
+             + (f'<div class="painel"><div id="{p}-brilho" class="brilho"></div></div>' if painel else "")
+             + corpo + '</div></div>')
+    lado = -1 if s["id"] % 2 else 1
+    if s["id"] == 1:   # o gancho já está na tela no quadro 0 (é a capa)
+        js += f'tl.fromTo("#{p}-c3d", {{rotationY: -14, rotationX: 8}}, {{rotationY: 0, rotationX: 0, duration: 0.9, ease: "power3.out"}}, 0);\n'
+    else:
+        js += (f'tl.fromTo("#{p}-c3d", {{rotationY: {32 * lado}, rotationX: 8, z: -120, opacity: 0}}, '
+               f'{{rotationY: 0, rotationX: 0, z: 0, opacity: 1, duration: 0.65, ease: "power3.out"}}, 0);\n')
+    ti = 0.9 if s["id"] == 1 else 0.65
+    js += (f'tl.to("#{p}-c3d", {{rotationY: {-5 * lado}, rotationX: 2, duration: {max(0.5, dur - ti - 0.3):.2f}, '
+           f'ease: "sine.inOut"}}, {ti});\n')
+    if painel:
+        js += f'tl.fromTo("#{p}-brilho", {{xPercent: -120}}, {{xPercent: 420, duration: 1.1, ease: "power2.inOut"}}, 0.35);\n'
     # saída: some no fim do slot (a próxima cena entra por cima)
     js += f'tl.fromTo("#{p}-wrap", {{opacity: 1}}, {{opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false}}, {max(0.3, dur - 0.22):.3f});\n'
     extra, tipo = "", ""
     if modulo is not None:  # cena com Three.js: módulo, registra o timeline depois de carregar
         tipo = ' type="module"'
-        extra = GLOBO_JS.format(dados=json.dumps(modulo), p=p)
+        extra = (OBJETO_JS if modulo.get("_js") == "objeto" else GLOBO_JS).format(dados=json.dumps(modulo), p=p)
     return f"""<template>
   <style>{TOKENS}{CSS_CENA}{css}</style>
   <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920">
@@ -164,6 +189,8 @@ def _legenda_html(grupos, total):
         ini = ws[0]["ini"] - 0.05
         fim = grupos[g + 1][0]["ini"] - 0.06 if g + 1 < len(grupos) else min(total - 0.1, ws[-1]["fim"] + 0.6)
         fim = max(fim, ws[-1]["fim"])
+        if g + 1 < len(grupos):  # nunca dois grupos na tela: sai antes do próximo entrar
+            fim = min(fim, grupos[g + 1][0]["ini"] - 0.051)
         spans = []
         for k, w in enumerate(ws):
             spans.append(f'<span id="lg{g}-{k}" class="lw">{esc(w["texto"])}</span>')

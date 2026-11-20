@@ -141,6 +141,16 @@ def mapa_lugar(p, s, t, dur):
     return html, css, js, modulo
 
 
+OBJETO_JS = """
+import {{ criarObjeto }} from "./assets/lib/objetos.js";
+const o = {dados};
+o.rotulos = Array.from({{ length: o.n_rotulos }}, (_, k) => document.getElementById("{p}-r" + k));
+const g = await criarObjeto(document.getElementById("{p}-cv"), o);
+const st = {{ t: 0 }};
+tl.to(st, {{ t: o.dur, duration: o.dur, ease: "none", onUpdate: () => g.render(st.t) }}, 0);
+g.render(0);
+"""
+
 GLOBO_JS = """
 import {{ criarGlobo }} from "./assets/lib/globo.js";
 const o = {dados};

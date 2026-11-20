@@ -147,6 +147,8 @@ def objeto_profundidade(p, s, t, dur):
     fs = tam_titulo(linhas, 64)
     tit, n = titulo_html(p, linhas, s.get("destaque"))
     obj = s.get("objeto", "globo")
+    if obj in OBJETOS_3D:
+        return _objeto_three(p, s, t, dur, tit, n, fs, obj)
     faces = []
     if obj == "cubo":
         for tr in ("rotateY(0deg)", "rotateY(90deg)", "rotateY(180deg)", "rotateY(270deg)", "rotateX(90deg)", "rotateX(-90deg)"):
@@ -170,6 +172,38 @@ def objeto_profundidade(p, s, t, dur):
     js += f'tl.fromTo("#{p}-obj", {{scale: 0.5, opacity: 0}}, {{scale: 1, opacity: 1, duration: 0.7, ease: "power3.out"}}, 0.05);\n'
     js += f'tl.fromTo("#{p}-obj", {{rotationY: -20, rotationX: 16}}, {{rotationY: {-20 + 40 * dur:.0f}, rotationX: 22, duration: {dur:.2f}, ease: "none"}}, 0);\n'
     return html, css, js
+
+
+OBJETOS_3D = ("moedas", "podio", "planeta", "barras")
+OBJETOS = ("globo", "cubo", "aneis") + OBJETOS_3D
+
+
+def _objeto_three(p, s, t, dur, tit, n, fs, obj):
+    """Objeto em Three.js (objetos.js), com rótulos HTML que seguem o objeto."""
+    W, H, top = 840, 470, 380
+    itens = []
+    for it in s.get("comparacao") or []:
+        itens.append({"rotulo": str(it.get("rotulo", "")), "valor": _numero(it.get("valor")) or 0,
+                      "txt": f'{it.get("valor", "")}{it.get("unidade", "")}'})
+    rot_html = ""
+    if obj in ("barras", "podio"):
+        for k, it in enumerate(itens[:4 if obj == "barras" else 3]):
+            cab = f'<b>{k + 1}º</b> ' if obj == "podio" else ""
+            val = f'<span class="ov">{esc(it["txt"])}</span>' if obj == "barras" else ""
+            rot_html += f'<div id="{p}-r{k}" class="orot">{val}{cab}{esc(it["rotulo"]).upper()}</div>'
+    html = (f'<div id="{p}-bloco" class="col topo">{tit}</div>'
+            f'<div class="glbox" style="left:120px;top:{top}px;width:{W}px;height:{H}px">'
+            f'<canvas id="{p}-cv" width="{W}" height="{H}" data-layout-ignore></canvas>{rot_html}</div>')
+    css = (f'#{p}-tit{{font-size:{fs}px;line-height:1.04;}}'
+           '.glbox canvas{position:absolute;left:0;top:0;}'
+           '.orot{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;text-align:center;font-size:28px;'
+           'color:#f4f3ef;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.8);}'
+           '.orot b{color:#ffd60a;}'
+           '.orot .ov{display:block;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:30px;color:#ffd60a;}')
+    js = js_titulo(p, n, max(0.1, t - 0.3))
+    modulo = {"_js": "objeto", "tipo": obj, "t0": round(max(0.15, t), 3), "dur": dur, "itens": itens,
+              "n_rotulos": rot_html.count('class="orot"')}
+    return html, css, js, modulo
 
 
 def citacao_fonte(p, s, t, dur):
