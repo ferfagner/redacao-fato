@@ -47,12 +47,12 @@ Instrução: você encontra o que merece virar vídeo. Todo dia é um tema novo.
 | `games` | blogs oficiais (PlayStation, Xbox, Nintendo, Steam), números de publishers e da Newzoo, lançamentos confirmados |
 | `mundo` (notícias gerais e curiosidades) | Reuters, Associated Press, BBC Brasil, Our World in Data, Pew Research, ONU |
 
-**Como pesquisar.** Use as ferramentas de pesquisa disponíveis nesta conta: busca do Google e Google Notícias, YouTube e Gemini.
-- O **YouTube** serve para descobrir o que o público está procurando: vídeos em alta, buscas por categoria, os comentários mais curtidos. Ele mede o interesse, mas **não é fonte do fato**. Nunca use trechos, imagens ou áudio de vídeos do YouTube.
+**Como pesquisar.** Pesquise **pelo navegador**, sem conector e sem login: busca do Google, Google Notícias e YouTube abertos como páginas comuns.
+- O **YouTube** serve para descobrir o que o público está procurando: vídeos em alta, buscas por categoria e quantas visualizações os vídeos sobre o tema tiveram nas últimas 24 a 48 horas. Ele mede o interesse, mas **não é fonte do fato**. Nunca baixe nem use trechos, imagens ou áudio de vídeos do YouTube.
 - O **Google** serve para achar a origem: a matéria, o comunicado ou o estudo.
-- O **Gemini** pode resumir e agrupar as candidatas, mas toda pauta precisa de uma URL de origem que você mesmo abriu.
+- O **Gemini**, se estiver disponível nesta conta, pode resumir e agrupar as candidatas. Mesmo assim, toda pauta precisa de uma URL de origem que você mesmo abriu no navegador.
 
-Se o conector de alguma dessas ferramentas não estiver habilitado, use `connector ensure`. Se aparecer um cartão de autorização, pare e me mostre. Não invente conector.
+Se uma página pedir login, cookie pago ou CAPTCHA, pule essa página e siga com outra fonte. Não crie conta e não peça conector para pesquisa.
 
 Dê nota de 0 a 5 em seis critérios:
 
@@ -167,11 +167,11 @@ Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "
 
 ## Tarefa 4: duas rotinas, em duas tarefas separadas
 
-Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A do Radar leva também os uids dos conectores de pesquisa que estiverem habilitados (Google, YouTube e Gemini), conferidos com `connector ensure`. Não chute uid.
+Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A pesquisa do Radar é feita no navegador e não precisa de conector. Não chute uid.
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
-Rode o Radar com as ferramentas de pesquisa (Google, YouTube e Gemini), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
+Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
 
 **Rotina B: tarefa "Produção Fato", todos os dias às 7h30 (America/Sao_Paulo).**
 
