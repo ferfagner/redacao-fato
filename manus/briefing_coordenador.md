@@ -1,8 +1,11 @@
-# Briefing para a sessão de Coordenador (v3, HyperFrames)
+# Prompt definitivo: sessão de Coordenador do Manus
 
-Copie o bloco entre as linhas e cole como primeira mensagem na sessão de Coordenador do Manus. Antes de colar:
-- o repositório já está preenchido (`https://github.com/ferfagner/redacao-fato`, privado: o Manus precisa de acesso ao GitHub);
-- troque `[MODO_AUTO]` pela opção escolhida.
+Copie **tudo o que está entre as duas linhas** e cole como primeira mensagem numa sessão nova de Coordenador do Manus. Não há nada para preencher.
+
+Antes de colar, confira três coisas:
+- o Manus tem acesso ao GitHub, porque o repositório `https://github.com/ferfagner/redacao-fato` é privado;
+- a conexão do Gemini está ativa na conta;
+- o Google Drive e o Trello podem pedir autorização durante a montagem. Quando o Manus mostrar o cartão, é você quem aprova.
 
 ---
 
@@ -59,7 +62,7 @@ Dê nota de 0 a 5 em seis critérios:
 | critério | peso |
 |---|---|
 | novidade | 25 |
-| vira número, gráfico, mapa ou objeto 3D, sem precisar de foto | 20 |
+| vira número, gráfico, mapa, objeto 3D ou foto licenciada | 20 |
 | curiosidade, medida também pelo interesse no YouTube e no Google | 20 |
 | durabilidade | 15 |
 | segurança editorial | 10 |
@@ -103,7 +106,7 @@ Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa 
 
 **Perfil 4, "Diretor".**
 
-Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito é 9 e o máximo 14)** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade`, `citacao_fonte`, `mapa_brasil`, `mapa_lugar` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena). Use de 2 a 4 cenas com objeto 3D ou mapa por vídeo, escolhendo o objeto que conta a história: `podio` para ranking, `barras` para comparação, `moedas` para dinheiro, `planeta` para espaço; a lista completa está no `AGENTS.md`.
+Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito é 9 e o máximo 14)** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade`, `citacao_fonte`, `mapa_brasil`, `mapa_lugar`, `foto` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena). Use de 2 a 4 cenas com objeto 3D ou mapa por vídeo, escolhendo o objeto que conta a história: `podio` para ranking, `barras` para comparação, `moedas` para dinheiro, `planeta` para espaço; a lista completa está no `AGENTS.md`.
 
 - A cena 1 é o gancho (`tipo_cinetico`) e a última é `fecho_chamada`.
 - O título vai em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras.
@@ -169,7 +172,7 @@ Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "
 
 ## Tarefa 4: duas rotinas, em duas tarefas separadas
 
-Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A Rotina B leva também o uid do conector do **Google Drive** (confira com `connector ensure`; se aparecer um cartão de autorização, pare e me mostre). A pesquisa do Radar é feita no navegador e não precisa de conector. Não chute uid.
+Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A Rotina B leva também o uid do conector do **Google Drive** (confira com `connector ensure`; se aparecer um cartão de autorização, pare e me mostre). A pesquisa do Radar é feita no navegador e não precisa de conector. Se o Gemini estiver na conta como conector, as duas rotinas levam também o uid dele, porque usam o Gemini para revisar textos. Não chute uid.
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
@@ -191,9 +194,7 @@ Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), apli
 10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status`.
 11. Envie um resumo curto com o link da pasta no Drive.
 
-**Se "Aprovado" estiver vazio:** [MODO_AUTO]
-- Opção 1: não produza nada e me envie um aviso.
-- Opção 2: produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais, com a etiqueta "auto" e o fluxo completo.
+**Se "Aprovado" estiver vazio:** produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais. Marque o card com a etiqueta "auto" e siga o fluxo completo. Como nada é publicado, o vídeo só vai para o Drive, e eu decido se posto. Se nenhum card tiver nota 85 ou mais, não produza nada e me envie um aviso.
 
 **Descrição e hashtags (o `.txt` salvo no Drive):** vêm do `publicacao.json`, montado pelo Roteirista e revisado pelo Gemini:
 - as hashtags em alta são pesquisadas no TikTok Creative Center (Brasil, 7 dias) e na busca das redes, sempre com relação direta com o assunto;
@@ -219,6 +220,7 @@ As regras completas estão na seção "Publicação" do `AGENTS.md`.
 - o id do quadro;
 - os ids das duas tarefas e dos dois agendamentos;
 - o resultado do teste do exemplo (`ok`, duração e tempo);
+- a confirmação de que o Google Drive está conectado e de que a pasta `thebestnewsbr/videos/` existe;
 - a lista do que ficou pendente de autorização minha.
 
 ---
