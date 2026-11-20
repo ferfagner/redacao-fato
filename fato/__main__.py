@@ -18,7 +18,7 @@ from .comum import Falha, duracao, ler_json, npx_hf, rodar, salvar_json
 from .gerar import gerar
 from .narrar import batidas, narrar, tempos_cenas
 from .som import escolher_trilha, eventos, mixar
-from .linguagem import legibilidade, validar_revisao
+from .linguagem import legibilidade, validar_publicacao, validar_revisao
 from .validar import validar_cenas, validar_ficha, validar_roteiro
 
 
@@ -33,6 +33,9 @@ def _carregar(pasta: Path):
     av += validar_cenas(cenas, roteiro, ficha, pasta)
     ling = validar_revisao(pasta)
     ling["facilidade_leitura"] = facilidade
+    pub = validar_publicacao(pasta)
+    av += pub.pop("avisos")
+    ling["publicacao"] = pub
     return ficha, roteiro, cenas["cenas"], cenas.get("tema", ""), av, ling
 
 

@@ -53,7 +53,10 @@ def validar_revisao(pasta: Path):
     e = []
     if str(r.get("ferramenta", "")).lower() != "gemini":
         e.append(erro("Coordenador", "a revisão de linguagem precisa ser feita pelo Gemini ('ferramenta': 'gemini')"))
-    faltam = [t for t in ("roteiro", "titulos", "legenda_post") if t not in (r.get("textos_revisados") or [])]
+    revisados = set(r.get("textos_revisados") or [])
+    if "legenda_post" in revisados:   # nome antigo
+        revisados.add("publicacao")
+    faltam = [t for t in ("roteiro", "titulos", "publicacao") if t not in revisados]
     if faltam:
         e.append(erro("Coordenador", f"a revisão do Gemini não cobriu: {', '.join(faltam)}"))
     try:
@@ -64,17 +67,78 @@ def validar_revisao(pasta: Path):
         e.append(erro("Coordenador", "'nota_clareza' (de 1 a 10, dada pelo Gemini) está faltando ou inválida"))
     elif nota < 7:
         e.append(erro("Roteirista", f"o Gemini deu nota {nota:g} de clareza; reescreva para ficar mais simples e revise de novo"))
-    leg = str(r.get("legenda_post", "")).strip()
-    if not leg:
-        e.append(erro("Coordenador", "falta 'legenda_post' (a legenda do post, já revisada pelo Gemini)"))
-    else:
-        if len(leg) > 2200:
-            e.append(erro("Roteirista", "a legenda do post passa de 2.200 caracteres"))
-        emojis = EMOJI.findall(leg)
-        if len(emojis) > 1:
-            e.append(erro("Roteirista", "a legenda do post tem mais de um emoji"))
-        if emojis and EMOJI.match(leg):
-            e.append(erro("Roteirista", "a legenda do post não pode começar com emoji"))
     if e:
         raise Falha("linguagem", e)
-    return {"nota_clareza": nota, "mudancas": len(r.get("mudancas") or []), "legenda_post": leg}
+    return {"nota_clareza": nota, "mudancas": len(r.get("mudancas") or [])}
+
+
+# hashtags genéricas que não ajudam (ou que as plataformas tratam como spam): não use
+HASHTAGS_VAZIAS = {"#fyp", "#foryou", "#foryoupage", "#parati", "#paravoce", "#viral", "#viralvideo", "#explore",
+                   "#explorepage", "#trending", "#followme", "#follow", "#like", "#likeforlike", "#l4l", "#f4f", "#tiktok",
+                   "#reels", "#instagram", "#xyzbca", "#fy"}
+HASHTAG_OK = re.compile(r"^#[0-9a-zà-öø-ÿ_]{2,40}$")
+
+
+def _hashtags(lista, onde, e, av, minimo=3, maximo=6):
+    tags = [str(h).strip().lower() for h in (lista or [])]
+    if not minimo <= len(tags) <= maximo:
+        e.append(erro("Roteirista", f"{onde}: são {len(tags)} hashtags; o combinado é de {minimo} a {maximo}"))
+    if "#thebestnewsbr" not in tags:
+        e.append(erro("Roteirista", f"{onde}: falta a hashtag da marca, #thebestnewsbr"))
+    for h in tags:
+        if not HASHTAG_OK.match(h):
+            e.append(erro("Roteirista", f"{onde}: hashtag inválida \"{h}\" (sem espaço, sem acento estranho, começando com #)"))
+        if h in HASHTAGS_VAZIAS:
+            e.append(erro("Roteirista", f"{onde}: \"{h}\" é genérica e não ajuda o vídeo a ser achado; troque por uma do assunto"))
+    if len(set(tags)) != len(tags):
+        e.append(erro("Roteirista", f"{onde}: hashtag repetida"))
+    return tags
+
+
+def _descricao(txt, onde, chaves, e, av):
+    txt = str(txt or "").strip()
+    if not 80 <= len(txt) <= 2200:
+        e.append(erro("Roteirista", f"{onde}: a descrição tem {len(txt)} caracteres; o combinado é de 80 a 2.200"))
+        return
+    primeira = txt.splitlines()[0]
+    if len(primeira) > 125:
+        av.append(f"{onde}: a primeira linha passa de 125 caracteres; ela é o que aparece antes do \"mais\"")
+    if chaves and not any(norm(k) in norm(txt) for k in chaves):
+        e.append(erro("Roteirista", f"{onde}: a descrição não usa nenhuma das palavras-chave (é o que faz o vídeo aparecer na busca)"))
+    if "fonte" not in txt.lower():
+        e.append(erro("Roteirista", f"{onde}: a descrição precisa citar as fontes (\"Fontes: ...\")"))
+    emojis = EMOJI.findall(txt)
+    if len(emojis) > 1:
+        e.append(erro("Roteirista", f"{onde}: mais de um emoji (identidade thebestnewsbr: no máximo um)"))
+    if emojis and EMOJI.match(txt):
+        e.append(erro("Roteirista", f"{onde}: a descrição não pode começar com emoji"))
+    if "#" in txt:
+        av.append(f"{onde}: há hashtag dentro da descrição; elas vão no campo 'hashtags'")
+
+
+def validar_publicacao(pasta: Path):
+    """Descrição, hashtags e palavras-chave do post (revisados pelo Gemini)."""
+    arq = pasta / "publicacao.json"
+    if not arq.exists():
+        raise Falha("publicacao", [erro("Roteirista", "falta publicacao.json (descrição, hashtags e palavras-chave do post; "
+                                                      "veja a seção \"Publicação\" do AGENTS.md)")])
+    p = ler_json(arq)
+    e, av = [], []
+    chaves = [str(k) for k in (p.get("palavras_chave") or [])]
+    if not 3 <= len(chaves) <= 6:
+        e.append(erro("Roteirista", f"são {len(chaves)} palavras-chave; o combinado é de 3 a 6"))
+    _descricao(p.get("descricao"), "descrição", chaves, e, av)
+    tags = _hashtags(p.get("hashtags"), "hashtags", e, av)
+    if not str(p.get("fonte_hashtags", "")).strip():
+        e.append(erro("Roteirista", "falta 'fonte_hashtags' (onde as hashtags em alta foram pesquisadas, com data)"))
+    for plat, v in (p.get("por_plataforma") or {}).items():
+        if plat not in ("tiktok", "instagram", "facebook"):
+            e.append(erro("Roteirista", f"plataforma desconhecida em por_plataforma: {plat}"))
+            continue
+        if v.get("descricao"):
+            _descricao(v["descricao"], f"descrição do {plat}", chaves, e, av)
+        if v.get("hashtags"):
+            _hashtags(v["hashtags"], f"hashtags do {plat}", e, av)
+    if e:
+        raise Falha("publicacao", e, av)
+    return {"hashtags": tags, "palavras_chave": chaves, "avisos": av}

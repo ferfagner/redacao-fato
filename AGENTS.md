@@ -46,13 +46,69 @@ O que fica em `saida/`:
 1. O **Checador** grava `ficha.json`.
 2. O **Roteirista** grava `roteiro.json`.
 3. O **Diretor** grava `cenas.json`.
-4. **Revisão de linguagem pelo Gemini** (obrigatória): o roteiro, os títulos das cenas e a legenda do post passam pelo Gemini, e o resultado fica em `revisao_linguagem.json`. Veja a seção "Revisão de linguagem".
-5. Rode `validar`. Se der código 2, devolva os erros e rode de novo, no máximo duas vezes por agente.
-6. **Revisor, etapa A:** lê a ficha, o roteiro e as cenas.
-7. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
-8. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
-9. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
-10. Publique `saida/video.mp4`, com a legenda do post que saiu da revisão do Gemini.
+4. O **Roteirista** grava `publicacao.json`, com a descrição do post, as hashtags em alta e as palavras-chave. Veja a seção "Publicação".
+5. **Revisão de linguagem pelo Gemini** (obrigatória): o roteiro, os títulos das cenas e a publicação passam pelo Gemini, e o resultado fica em `revisao_linguagem.json`. Veja a seção "Revisão de linguagem".
+6. Rode `validar`. Se der código 2, devolva os erros e rode de novo, no máximo duas vezes por agente.
+7. **Revisor, etapa A:** lê a ficha, o roteiro e as cenas.
+8. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
+9. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
+10. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
+11. Publique `saida/video.mp4` com a descrição e as hashtags do `publicacao.json`.
+
+## Publicação: descrição, hashtags e palavras-chave (Roteirista)
+
+TikTok e Instagram funcionam como buscadores. A descrição e as hashtags decidem para quem o vídeo aparece e se ele é achado na busca. O Roteirista grava `publicacao.json`, que passa pelo Gemini junto com o roteiro.
+
+**1. Pesquise as hashtags em alta no navegador, sem login:**
+- **TikTok Creative Center → Hashtags populares:** https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/pt, com região **Brasil** e período de **7 dias**. Veja as que têm a ver com o assunto e com a categoria.
+- **Busca do TikTok e do Instagram:** digite o assunto, veja as hashtags que os vídeos com mais visualizações usam e quantos posts cada uma tem.
+- **Google Trends** (https://trends.google.com.br, Brasil, 7 dias): mostra como o público escreve o assunto. Isso alimenta as palavras-chave.
+
+**2. Monte de 3 a 6 hashtags, nesta mistura:**
+- `#thebestnewsbr`, sempre;
+- 1 ou 2 do **assunto específico** (`#censo2022`, `#minecraft`, `#jameswebb`);
+- 1 ou 2 da **categoria**, com volume médio (`#curiosidades`, `#ciencia`, `#games`, `#brasil`);
+- no máximo 1 **em alta**, só se tiver relação direta com o assunto.
+
+Proibido:
+- hashtag em alta sem relação com o vídeo (engana o público e as plataformas punem);
+- hashtag genérica que não ajuda: `#fyp`, `#foryou`, `#parati`, `#viral`, `#explore`, `#trending` e similares. O validador recusa.
+
+**3. Escreva a descrição:**
+1. **Primeira linha**, com até 125 caracteres, que é o que aparece antes do "mais": o gancho com uma palavra-chave.
+2. **De 2 a 3 frases curtas** contando o fato em linguagem simples, com o dado principal.
+3. **Uma pergunta ou chamada** que puxe comentário ou salvamento, sem prometer o que o vídeo não entrega.
+4. **`Fontes: …`** no fim.
+
+Use no máximo um emoji, nunca no começo, e sem hashtag no meio do texto.
+
+**4. Palavras-chave:** de 3 a 6 termos que as pessoas digitam na busca (`"censo 2022"`, `"população do brasil"`). Pelo menos uma precisa aparecer na descrição.
+
+```json
+{
+  "descricao": "O Brasil nunca cresceu tão devagar, e o Censo 2022 mostra o porquê.
+
+Somos 203 milhões de pessoas, só 6,5% a mais que em 2010. As famílias encolheram e o país está envelhecendo.
+
+Você sabia disso? Salva pra mostrar pra alguém 👀
+
+Fontes: IBGE; Agência Brasil",
+  "hashtags": ["#thebestnewsbr", "#censo2022", "#ibge", "#curiosidades", "#brasil"],
+  "palavras_chave": ["censo 2022", "população do brasil", "ibge"],
+  "fonte_hashtags": "TikTok Creative Center (Brasil, 7 dias) e busca do TikTok, 21/11/2026",
+  "por_plataforma": {
+    "tiktok": {"hashtags": ["#thebestnewsbr", "#censo2022", "#curiosidades", "#aprendanotiktok"]}
+  }
+}
+```
+
+`por_plataforma` é opcional e serve para quando uma rede pede hashtags ou texto diferentes. O que não estiver nele usa `descricao` e `hashtags`.
+
+O validador confere:
+- a descrição tem de 80 a 2.200 caracteres, cita as fontes, usa uma palavra-chave e tem no máximo um emoji, fora do começo;
+- são de 3 a 6 hashtags, com `#thebestnewsbr`, sem as genéricas proibidas e sem repetição;
+- são de 3 a 6 palavras-chave;
+- `fonte_hashtags` informa onde e quando as hashtags foram pesquisadas.
 
 ## Revisão de linguagem (Gemini, obrigatória)
 
@@ -71,17 +127,18 @@ Reescreva o que for preciso para que qualquer pessoa entenda de primeira:
 - não acrescente nem retire fatos, números, nomes, datas ou fontes;
 - mantenha o número de palavras de cada bloco da narração (no máximo 3 a mais ou a menos);
 - títulos com no máximo 4 palavras por linha, até 3 linhas e 9 palavras no total, em caixa alta;
-- legenda do post: frases curtas, no máximo um emoji e nunca no começo, com as fontes no fim.
+- descrição do post: primeira linha com o gancho e uma palavra-chave (até 125 caracteres), frases curtas, no máximo um emoji e nunca no começo, fontes no fim;
+- hashtags e palavras-chave: diga se alguma não tem relação com o assunto ou é genérica demais (não invente hashtags novas).
 
 Responda só com JSON, neste formato:
 {"roteiro": {"gancho": "...", "fato": "...", "mecanismo": "...", "virada": "...", "ressalva": "...", "chamada": "..."},
  "titulos": [{"cena": 1, "titulo": ["...", "..."]}],
- "legenda_post": "...",
+ "publicacao": {"descricao": "...", "hashtags_sem_relacao": []},
  "mudancas": [{"onde": "roteiro.mecanismo", "antes": "...", "depois": "...", "motivo": "..."}],
  "nota_clareza": 9}
 
 TEXTOS:
-<cole aqui o roteiro (6 blocos), os títulos de cada cena e a legenda do post>
+<cole aqui o roteiro (6 blocos), os títulos de cada cena e o publicacao.json>
 ```
 
 **`revisao_linguagem.json`** (o validador confere):
@@ -90,18 +147,16 @@ TEXTOS:
 {
   "ferramenta": "gemini",
   "data": "2026-11-21",
-  "textos_revisados": ["roteiro", "titulos", "legenda_post"],
+  "textos_revisados": ["roteiro", "titulos", "publicacao"],
   "nota_clareza": 9,
-  "legenda_post": "texto final da legenda do post",
   "mudancas": [{"onde": "roteiro.mecanismo", "antes": "taxa de fecundidade", "depois": "número de filhos por mulher", "motivo": "termo técnico"}],
   "descartadas": [{"sugestao": "...", "motivo": "mudava o número da ficha"}]
 }
 ```
 
 O validador confere:
-- **Revisão registrada:** `ferramenta` é `gemini`, e `textos_revisados` inclui `roteiro`, `titulos` e `legenda_post`.
+- **Revisão registrada:** `ferramenta` é `gemini`, e `textos_revisados` inclui `roteiro`, `titulos` e `publicacao`.
 - **Nota de clareza:** `nota_clareza` vai de 1 a 10. Abaixo de 7, volta para o Roteirista reescrever.
-- **Legenda do post:** existe, tem até 2.200 caracteres e no máximo um emoji, nunca no começo.
 - **Narração:** o próprio validador mede a facilidade de leitura (índice Flesch adaptado ao português). Frase com mais de 20 palavras gera aviso, e texto difícil volta para o Roteirista.
 
 ## ficha.json (Checador)

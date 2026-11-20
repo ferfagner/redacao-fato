@@ -80,11 +80,20 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 - se fizer sentido, escolha a pose do mascote em `personagem`;
 - **fotos:** se o assunto for uma pessoa pública, um jogo, um filme ou um lugar, procure uma foto no navegador, só no Wikimedia Commons ou no kit de imprensa oficial, e salve em `imagens/`. Use a família `foto`, com `licenca`, `credito` e `url_origem`, como manda a seção "Fotos" do `AGENTS.md`. Foto do Google Imagens, de rede social, de jornal ou de banco de imagens é proibida. Se não achar foto liberada, siga sem foto.
 
+## 4a. Descrição e hashtags do post
+
+Siga a seção "Publicação" do `AGENTS.md`:
+1. Pesquise **no navegador, sem login**, as hashtags em alta: TikTok Creative Center (Hashtags populares, Brasil, 7 dias), a busca do TikTok e do Instagram, e o Google Trends (Brasil, 7 dias).
+2. Escolha de 3 a 6 hashtags: `#thebestnewsbr`, mais as do assunto e da categoria, e no máximo uma em alta com relação direta. Nada de `#fyp`, `#viral` e similares.
+3. Escreva a descrição: primeira linha com o gancho e uma palavra-chave, de 2 a 3 frases simples com o dado, uma chamada para comentar ou salvar e as fontes no fim.
+4. Escolha de 3 a 6 palavras-chave de busca.
+5. Grave tudo em `publicacao.json`.
+
 ## 4b. Revisão de linguagem pelo Gemini (obrigatória)
 
-Escreva uma primeira versão da legenda do post (molde no passo 8). Depois mande ao Gemini, pela conexão da conta, o prompt da seção "Revisão de linguagem" do `AGENTS.md`, com o roteiro, os títulos das cenas e a legenda colados no fim. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso.
+Mande ao Gemini, pela conexão da conta, o prompt da seção "Revisão de linguagem" do `AGENTS.md`, com o roteiro, os títulos das cenas e o `publicacao.json` colados no fim. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso.
 
-Aplique as mudanças em `roteiro.json` e `cenas.json`, descartando as que mudarem fatos, números ou limites, e grave `revisao_linguagem.json` no formato do `AGENTS.md`. Sem esse arquivo, o `validar` não passa.
+Aplique as mudanças em `roteiro.json`, `cenas.json` e `publicacao.json`, descartando as que mudarem fatos, números ou limites, e grave `revisao_linguagem.json` no formato do `AGENTS.md`. Sem esse arquivo, o `validar` não passa.
 
 ## 5. Validar e Revisor, etapa A
 
@@ -125,17 +134,7 @@ Rode `python3 -m fato render pautas/teste-AAAA-MM-DD` e anote o tempo. Se `ok` v
 5. O `saida/relatorio.json` do `revisar` e o do `render`.
 6. Quantas rodadas de correção houve em cada etapa e o que foi corrigido.
 7. Os tempos de `setup.sh`, `revisar` e `render`.
-8. A legenda do post já revisada pelo Gemini (`legenda_post`), no molde abaixo (no máximo um emoji, nunca no começo), mais a lista de mudanças que o Gemini sugeriu e quais você aceitou ou descartou:
-
-```
-{gancho}
-
-{fato em uma frase}, segundo {fonte1}.
-
-Fontes: {fonte1}; {fonte2}
-Salva pra mostrar pra alguém 👀
-#curiosidades #fatos #thebestnewsbr #{tema_hashtag}
-```
+8. O `publicacao.json` final, revisado pelo Gemini: a descrição pronta para colar, as hashtags, as palavras-chave e onde as hashtags em alta foram pesquisadas. Junto, a lista do que o Gemini sugeriu e quais sugestões você aceitou ou descartou.
 
 Não edite nada fora de `pautas/`, não escreva HTML e não troque de renderizador. Nenhuma senha ou chave pode aparecer na resposta.
 
