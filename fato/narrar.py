@@ -1,6 +1,7 @@
 """Narração: edge-tts por bloco, corte de silêncio, -16 LUFS, ajuste de velocidade,
 tempo de cada palavra e tempo de cada cena (pela âncora)."""
 import asyncio
+import time
 from pathlib import Path
 
 import edge_tts
@@ -52,7 +53,15 @@ def _pontuar(pals, texto):
 
 def _bloco(bid, texto, rate, pasta: Path):
     mp3, wav = pasta / f"{bid}.mp3", pasta / f"{bid}.wav"
-    pals = asyncio.run(_tts(texto, rate, mp3))
+    # o serviço de voz é online: tenta 4 vezes, com espera crescente, antes de desistir
+    for tentativa in range(4):
+        try:
+            pals = asyncio.run(_tts(texto, rate, mp3))
+            break
+        except Exception as ex:  # rede, limite de requisições ou resposta vazia
+            if tentativa == 3:
+                raise RuntimeError(f"voz (edge-tts) falhou 4 vezes no bloco '{bid}': {type(ex).__name__}: {ex}")
+            time.sleep(3 * (tentativa + 1))
     lead = max(0.0, pals[0][1] - 0.05)
     pals = [[w, round(a - lead, 3), round(b - lead, 3)] for w, a, b in pals]
     rodar("ffmpeg", "-y", "-v", "error", "-i", mp3, "-af",

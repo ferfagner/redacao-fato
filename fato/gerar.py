@@ -203,6 +203,7 @@ def _legenda_html(grupos, total):
         js.append(f'tl.set("#lg{g}", {{opacity: 1, visibility: "visible"}}, {ini:.3f});'
                   f'tl.fromTo("#lg{g}", {{y: 14}}, {{y: 0, duration: 0.12, ease: "power2.out", immediateRender: false}}, {ini:.3f});'
                   f'tl.set("#lg{g}", {{opacity: 0, visibility: "hidden"}}, {fim:.3f});')
+    grupos_html = "".join(divs)
     return f"""<template>
   <style>
     @font-face{{font-family:'Archivo Narrow';src:url('assets/fonts/ArchivoNarrow-Bold.woff2') format('woff2');font-weight:700;}}
@@ -213,7 +214,7 @@ def _legenda_html(grupos, total):
     .lw{{display:inline-block;}}
   </style>
   <div id="root" data-composition-id="legenda" data-width="1080" data-height="1920">
-    {"".join(divs)}
+    {grupos_html}
   </div>
   <script>
     const tl = gsap.timeline({{ paused: true }});

@@ -184,7 +184,9 @@ Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), apli
 7. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não publique nada. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
 8. **Publique `saida/video.mp4`:**
    - Reels no Instagram e no Facebook, com a legenda do molde abaixo;
-   - no TikTok, só como rascunho e só se houver conector disponível.
+   - no TikTok, só como rascunho e só se houver conector disponível;
+   - a narração é voz sintética: quando a plataforma oferecer a marcação de "conteúdo gerado por IA", ative;
+   - use o primeiro quadro do vídeo como capa (é o gancho na caixa azul).
 9. Mova o card para "Publicado" e comente os links, a duração e as duas fontes.
 10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_ig, link_fb, link_tt, status`.
 11. Envie um resumo com o vídeo, as fontes e as métricas do vídeo de ontem.
