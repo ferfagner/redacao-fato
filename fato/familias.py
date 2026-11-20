@@ -236,5 +236,40 @@ def fecho_chamada(p, s, t, dur):
     return html, css, js
 
 
+def foto(p, s, t, dur):
+    """Foto licenciada num cartão: aproxima devagar (Ken Burns), com nome em destaque e crédito na tela."""
+    im = s["imagem"]
+    linhas = s["titulo"]
+    fs = tam_titulo(linhas, 60)
+    tit, n = titulo_html(p, linhas, s.get("destaque"))
+    W = 780
+    top = int(300 + len(linhas) * fs * 1.04 + 24)          # a foto começa depois do título
+    H = max(300, min(460, 840 - top))
+    # pessoa: o rosto fica no terço de cima; o resto, centralizado
+    foco = "50% 22%" if im.get("tipo") == "pessoa" else "50% 50%"
+    nome = f'<div id="{p}-nome" class="fnome">{esc(im["nome"]).upper()}</div>' if im.get("nome") else ""
+    html = (f'<div id="{p}-bloco" class="col topo">{tit}</div>'
+            f'<div id="{p}-moldura" class="fmold" style="left:{540 - W // 2}px;top:{top}px;width:{W}px;height:{H}px">'
+            f'<img id="{p}-img" class="fimg" src="{esc(s["_foto_src"])}" alt="" style="object-position:{foco}"/>'
+            f'<div class="fcred" data-layout-ignore>{esc(im["credito"])}</div></div>{nome}')
+    css = (f'#{p}-tit{{font-size:{fs}px;line-height:1.04;}}'
+           '.fmold{position:absolute;overflow:hidden;border-radius:16px;border:3px solid rgba(138,149,255,.55);'
+           'box-shadow:0 30px 70px rgba(0,0,0,.6);background:#0f0f17;}'
+           '.fimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 35%;}'
+           '.fcred{position:absolute;right:0;bottom:0;max-width:96%;padding:4px 10px;background:rgba(10,10,16,.78);'
+           'font-family:"JetBrains Mono",monospace;font-size:17px;color:#d8d8e2;border-top-left-radius:8px;'
+           'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
+           f'.fnome{{position:absolute;left:{540 - W // 2 + 20}px;top:{top + 18}px;background:#ffd60a;color:#121218;'
+           'font-size:34px;padding:8px 16px;border-radius:4px;white-space:nowrap;}')
+    t0 = max(0.1, t - 0.25)
+    js = js_titulo(p, n, t0)
+    js += f'tl.fromTo("#{p}-moldura", {{scale: 0.9, opacity: 0}}, {{scale: 1, opacity: 1, duration: 0.5, ease: "power3.out"}}, 0.05);\n'
+    js += f'tl.fromTo("#{p}-img", {{scale: 1.0, xPercent: -2}}, {{scale: 1.14, xPercent: 2, duration: {dur:.2f}, ease: "none"}}, 0);\n'
+    if nome:
+        js += f'tl.fromTo("#{p}-nome", {{x: -40, opacity: 0}}, {{x: 0, opacity: 1, duration: 0.35, ease: "back.out(1.8)"}}, {t0 + 0.5:.3f});\n'
+    return html, css, js
+
+
 FUNCOES = {"tipo_cinetico": tipo_cinetico, "numero_heroi": numero_heroi, "dado_comparado": dado_comparado,
-           "objeto_profundidade": objeto_profundidade, "citacao_fonte": citacao_fonte, "fecho_chamada": fecho_chamada}
+           "objeto_profundidade": objeto_profundidade, "citacao_fonte": citacao_fonte, "fecho_chamada": fecho_chamada,
+           "foto": foto}

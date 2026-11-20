@@ -131,6 +131,7 @@ As famílias e seus campos extras:
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
 | `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
+| `foto` | foto de pessoa, jogo, lugar, objeto ou evento num cartão, com nome e crédito | `imagem: {arquivo, tipo, nome, credito, licenca, url_origem}`, conforme a seção "Fotos" |
 
 ### Ritmo (automático)
 
@@ -147,6 +148,44 @@ O Diretor contribui com cenas curtas, de 3 a 6 s.
 Toda cena entra como um cartão de vidro em perspectiva: gira, aproxima e depois flutua até o fim, alternando o lado a cada cena. Isso é automático.
 
 O que depende do Diretor é usar **de 2 a 4 cenas com objeto 3D ou mapa por vídeo** (`objeto_profundidade`, `mapa_brasil` ou `mapa_lugar`). O validador avisa quando há menos de 2. Escolha o objeto que conta a história: ranking vira `podio`, comparação de valores vira `barras`, dinheiro vira `moedas`, espaço vira `planeta`, um lugar vira `mapa_lugar`.
+
+### Fotos (pessoas, jogos, lugares)
+
+Use foto quando o assunto for uma pessoa pública, um jogo, um filme, um lugar ou um objeto que o público precisa **ver**: um jogador, um ator, a capa de um jogo, um prédio. O Diretor procura a foto no navegador, salva em `pautas/<pasta>/imagens/` e usa a família `foto`.
+
+**Só vale foto com licença que permita o uso, sempre com crédito na tela.** O validador recusa qualquer outra.
+
+| de onde | licença (campo `licenca`) | exemplo de crédito |
+|---|---|---|
+| [Wikimedia Commons](https://commons.wikimedia.org): pessoas, lugares, eventos, objetos | `CC0`, `dominio publico`, `CC BY` ou `CC BY-SA` (copie a versão, ex.: `CC BY-SA 4.0`) | `Foto: Nome do autor / Wikimedia Commons, CC BY-SA 4.0` |
+| kit de imprensa oficial (páginas "press", "media" ou "newsroom" do estúdio, da editora de games, do clube ou da empresa) | `kit de imprensa oficial` | `Imagem: Nintendo (kit de imprensa)` |
+
+Proibido:
+- foto do Google Imagens, do Pinterest, de redes sociais ou de matérias de jornal;
+- bancos pagos e agências (Getty, Shutterstock, Alamy, AP, Reuters, AFP);
+- foto de pessoa comum, sem vida pública;
+- foto de criança;
+- foto editada ou montada para parecer outra coisa;
+- usar a foto de alguém de um jeito que pareça que a pessoa apoia o perfil ou um produto.
+
+Como baixar do Wikimedia Commons: abra a página do arquivo, confira a licença e o autor e baixe a versão reduzida, de 1280 px. O link é `https://upload.wikimedia.org/wikipedia/commons/thumb/<a>/<ab>/<Arquivo>/1280px-<Arquivo>`. O original costuma dar erro 429 (pedidos demais).
+
+```json
+{"id": 9, "bloco": "virada", "familia": "foto", "titulo": ["O MENOR DESDE", "O CENSO DE 1872"], "destaque": "1872",
+ "imagem": {"arquivo": "imagens/dom-pedro-ii.jpg", "tipo": "pessoa", "nome": "Dom Pedro II",
+            "credito": "Foto: Hermann Witte, c. 1887 / Wikimedia Commons, domínio público",
+            "licenca": "dominio publico", "url_origem": "https://commons.wikimedia.org/wiki/File:Dom_Pedro_II_circa_1887.jpg"},
+ "fonte": "IBGE", "ancora": "primeiro"}
+```
+
+Regras do validador:
+- `arquivo` em JPG, PNG ou WEBP, com até 12 MB e pelo menos 600 px no lado maior;
+- `tipo` é um destes: `pessoa`, `jogo`, `lugar`, `objeto` ou `evento`. Com `pessoa`, o enquadramento prioriza o rosto;
+- `nome` com até 26 caracteres;
+- `credito` com até 80 caracteres;
+- `url_origem` é a página da imagem, não o link direto do arquivo.
+
+O Revisor confere na folha de quadros se **a foto é mesmo da pessoa ou da coisa certa**. Errar o rosto de alguém é o pior erro possível.
 
 ### Personagem (mascote)
 

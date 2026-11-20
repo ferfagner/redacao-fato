@@ -29,7 +29,7 @@ python3 -m fato render  pautas/AAAA-MM-DD-slug
 - O render leva cerca de 3 minutos.
 - **Não edite nada fora de `pautas/`, não escreva HTML e não troque de renderizador.** Se o `setup.sh` falhar, pare e me mostre a saída.
 
-**Imagens e som:** só o que o pipeline gera (tipografia, gráficos e objetos 3D). Nada de foto, vídeo, logo de veículo ou música de terceiros.
+**Imagens e som:** além do que o pipeline gera (tipografia, gráficos, objetos 3D e mascote), o Diretor pode usar **fotos com licença livre** (Wikimedia Commons ou kit de imprensa oficial), sempre com crédito na tela, conforme a seção "Fotos" do `AGENTS.md`. Nada de vídeo, logo de veículo, foto de banco ou agência, nem música sem licença.
 
 ## Tarefa 1: criar cinco perfis de agente
 
@@ -111,7 +111,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
 
-Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
+Quando o assunto for uma pessoa pública, um jogo, um filme ou um lugar que o público precisa ver, procure uma foto no navegador, só no Wikimedia Commons ou no kit de imprensa oficial. Salve em `imagens/` e use a família `foto`, com licença e crédito, seguindo a seção "Fotos" do `AGENTS.md`. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
 
 **Perfil 5, "Revisor".**
 
@@ -125,6 +125,7 @@ Etapa A (ficha, roteiro e cenas):
 
 Etapa B (`saida/folha.png`, `saida/legendas.srt` e `saida/relatorio.json`):
 - a leitura de cada cena está clara;
+- toda foto mostra mesmo a pessoa ou a coisa certa, e o crédito está visível;
 - nada fica cortado ou sobreposto;
 - a legenda bate com a fala;
 - `check_avisos` está vazio ou é aceitável.

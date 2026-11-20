@@ -1,0 +1,28 @@
+{
+  "blocos": [
+    {
+      "id": "gancho",
+      "texto": "O Brasil nunca cresceu tão devagar, e o motivo surpreende."
+    },
+    {
+      "id": "fato",
+      "texto": "O último Censo contou duzentos e três milhões de pessoas, mais de um quinto em São Paulo. Só seis e meio por cento a mais que doze anos antes."
+    },
+    {
+      "id": "mecanismo",
+      "texto": "O motivo principal é que as famílias encolheram. Nos anos sessenta, a média era de seis filhos por mulher. Hoje, cada mulher tem menos de dois filhos, abaixo do necessário para repor a população. Ao mesmo tempo, as pessoas vivem mais, então os nascimentos diminuem enquanto o número de idosos cresce. O resultado é um país que ainda aumenta, mas cada vez mais devagar, e envelhece rápido."
+    },
+    {
+      "id": "virada",
+      "texto": "O ritmo de crescimento, de cerca de meio por cento ao ano, é o menor desde o primeiro recenseamento do país, feito lá em mil oitocentos e setenta e dois."
+    },
+    {
+      "id": "ressalva",
+      "texto": "Isso não quer dizer que a população está caindo: ela continua crescendo, só que num ritmo bem menor do que antes."
+    },
+    {
+      "id": "chamada",
+      "texto": "Manda esse vídeo pra alguém que adora números e salva pra depois."
+    }
+  ]
+}

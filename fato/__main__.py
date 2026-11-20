@@ -25,7 +25,7 @@ def _carregar(pasta: Path):
     ficha, roteiro, cenas = (ler_json(pasta / n) for n in ("ficha.json", "roteiro.json", "cenas.json"))
     validar_ficha(ficha)
     av = validar_roteiro(roteiro)
-    av += validar_cenas(cenas, roteiro, ficha)
+    av += validar_cenas(cenas, roteiro, ficha, pasta)
     return ficha, roteiro, cenas["cenas"], cenas.get("tema", ""), av
 
 
@@ -51,6 +51,9 @@ def _resumo_check(dados):
         if isinstance(x, dict):
             sev = str(x.get("severity", x.get("level", ""))).lower()
             msg = x.get("message") or x.get("msg") or x.get("rule")
+            # a legenda fica perto do pé da tela por escolha do dono: avisos de área segura dela não contam
+            if msg and "legenda.html" in str(x.get("sourceFile", "")) and "safe area" in str(msg):
+                return
             if msg and sev in ("error", "erro"):
                 erros.append(f"{x.get('rule', '')}: {msg} {x.get('file', '') or ''}".strip())
             elif msg and sev in ("warning", "warn"):
@@ -105,7 +108,7 @@ def cmd_revisar(pasta: Path, saida: Path):
     mixado = saida / "trilha.wav"
     som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name))
     projeto = saida / "projeto"
-    srt = gerar(projeto, cenas, tempos, narr, mixado, titulo=tema)
+    srt = gerar(projeto, cenas, tempos, narr, mixado, titulo=tema, pasta=pasta)
     (saida / "legendas.srt").write_text(srt, encoding="utf-8")
     chk = _check(projeto)
     erros, avisos_chk = _resumo_check(chk)

@@ -13,7 +13,7 @@ HF_VERSAO = "0.9.72"
 
 BLOCOS = ["gancho", "fato", "mecanismo", "virada", "ressalva", "chamada"]
 FAMILIAS = ["numero_heroi", "tipo_cinetico", "dado_comparado", "objeto_profundidade", "citacao_fonte", "fecho_chamada",
-            "mapa_brasil", "mapa_lugar"]
+            "mapa_brasil", "mapa_lugar", "foto"]
 POSES = ["fala", "aponta", "surpreso", "pensa", "comemora", "nega"]
 UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
        "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
@@ -77,3 +77,6 @@ def norm(s: str) -> str:
 
 def palavras(texto: str):
     return [w for w in texto.split() if norm(w)]
+
+# licenças de imagem aceitas (com crédito na tela). Qualquer outra volta para o Diretor.
+LICENCAS_IMAGEM = ["CC0", "dominio publico", "CC BY", "CC BY-SA", "kit de imprensa oficial"]

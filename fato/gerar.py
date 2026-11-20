@@ -136,7 +136,7 @@ def _mascote_html(cenas, tempos, narr):
     total = narr["total"]
     lugares, poses = [], []
     padrao = {"numero_heroi": "aponta", "dado_comparado": "aponta", "mapa_brasil": "aponta", "mapa_lugar": "aponta",
-              "citacao_fonte": "pensa", "objeto_profundidade": "fala", "tipo_cinetico": "fala"}
+              "citacao_fonte": "pensa", "objeto_profundidade": "fala", "tipo_cinetico": "fala", "foto": "aponta"}
     for i, (s, tp) in enumerate(zip(cenas, tempos)):
         if i == 0:
             lugar = [0, 540, 850, 0.95]           # grande, embaixo da caixa do gancho
@@ -222,8 +222,8 @@ def _legenda_html(grupos, total):
   <style>
     @font-face{{font-family:'Archivo Narrow';src:url('assets/fonts/ArchivoNarrow-Bold.woff2') format('woff2');font-weight:700;}}
     #root{{position:absolute;inset:0;}}
-    /* centralizada no quadro e presa pela base (y = 1208, acima do fim da área livre dos Reels) */
-    .grupo{{position:absolute;left:150px;width:780px;bottom:712px;text-align:center;opacity:0;visibility:hidden;
+    /* centralizada no quadro, perto do pé da tela (base em y = 1600), por escolha do dono */
+    .grupo{{position:absolute;left:150px;width:780px;bottom:320px;text-align:center;opacity:0;visibility:hidden;
       font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:68px;line-height:76px;text-transform:uppercase;
       color:#ffffff;-webkit-text-stroke:12px #000000;paint-order:stroke fill;}}
     .gin{{transform-origin:50% 100%;}}
@@ -294,7 +294,7 @@ def _srt(linhas):
     return "\n".join(out)
 
 
-def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo=""):
+def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo="", pasta: Path = None):
     # limpa o conteúdo, mas não a pasta: o `hyperframes check` deixa um processo aquecido usando ela
     projeto.mkdir(parents=True, exist_ok=True)
     for item in projeto.iterdir():
@@ -317,6 +317,11 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo=""):
     host("fundo", 0, total, 1, faixa=0)
     for s, tp in zip(cenas, tempos):
         cid = f"c{s['id']:02d}"
+        if s["familia"] == "foto" and pasta is not None:   # a foto vai para dentro do projeto
+            orig = (pasta / s["imagem"]["arquivo"]).resolve()
+            (projeto / "assets" / "fotos").mkdir(exist_ok=True)
+            shutil.copy(orig, projeto / "assets" / "fotos" / f"{cid}{orig.suffix.lower()}")
+            s = dict(s, _foto_src=f"assets/fotos/{cid}{orig.suffix.lower()}")
         (projeto / "compositions" / f"{cid}.html").write_text(_cena_html(cid, s, tp), encoding="utf-8")
         host(cid, tp["ini"], round(tp["fim"] - tp["ini"], 3), 2, faixa=1)
     (projeto / "compositions" / "mascote.html").write_text(_mascote_html(cenas, tempos, narr), encoding="utf-8")

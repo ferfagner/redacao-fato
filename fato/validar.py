@@ -4,7 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
-from .comum import BLOCOS, FAMILIAS, POSES, UFS, Falha, erro, norm, palavras
+from .comum import BLOCOS, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
 FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
@@ -73,7 +73,53 @@ def validar_roteiro(r):
     return av
 
 
-def validar_cenas(c, roteiro, ficha):
+BANCOS_PROIBIDOS = ("gettyimages", "shutterstock", "alamy", "apimages", "reuters.com", "afp.com", "istockphoto",
+                    "dreamstime", "123rf", "depositphotos", "adobestock", "stock.adobe", "google.com/imgres", "pinterest")
+TIPOS_IMAGEM = ("pessoa", "jogo", "lugar", "objeto", "evento")
+
+
+def validar_imagem(i, im, pasta):
+    """Foto só entra com licença que permite o uso, crédito na tela e origem rastreável."""
+    e = []
+    if not isinstance(im, dict):
+        return [erro("Diretor", "foto precisa de 'imagem' com arquivo, credito, licenca, url_origem e tipo", i)]
+    for campo in ("arquivo", "credito", "licenca", "url_origem", "tipo"):
+        if not str(im.get(campo, "")).strip():
+            e.append(erro("Diretor", f"imagem sem '{campo}'", i))
+    lic = norm(str(im.get("licenca", "")))
+    if im.get("licenca") and not any(lic.startswith(norm(x)) for x in LICENCAS_IMAGEM):
+        e.append(erro("Diretor", f"licença '{im.get('licenca')}' não serve; use só: {', '.join(LICENCAS_IMAGEM)}", i))
+    url = str(im.get("url_origem", "")).lower()
+    if url and not url.startswith(("http://", "https://")):
+        e.append(erro("Diretor", "url_origem precisa ser o link da página da imagem", i))
+    if any(b in url for b in BANCOS_PROIBIDOS):
+        e.append(erro("Diretor", "imagem de banco pago, agência ou buscador não pode; procure no Wikimedia Commons ou no kit de imprensa oficial", i))
+    if im.get("tipo") and im["tipo"] not in TIPOS_IMAGEM:
+        e.append(erro("Diretor", f"tipo de imagem '{im['tipo']}' não existe ({', '.join(TIPOS_IMAGEM)})", i))
+    if len(str(im.get("credito", ""))) > 80:
+        e.append(erro("Diretor", "o crédito passa de 80 caracteres; resuma (ex.: \"Foto: Nome / Wikimedia Commons, CC BY-SA 4.0\")", i))
+    if len(str(im.get("nome", ""))) > 26:
+        e.append(erro("Diretor", "o nome na foto passa de 26 caracteres", i))
+    if pasta is not None and im.get("arquivo"):
+        arq = (pasta / im["arquivo"]).resolve()
+        if not arq.exists():
+            e.append(erro("Diretor", f"arquivo de imagem não encontrado: {im['arquivo']}", i))
+        elif arq.suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp"):
+            e.append(erro("Diretor", "a imagem precisa ser JPG, PNG ou WEBP", i))
+        elif arq.stat().st_size > 12 * 1024 * 1024:
+            e.append(erro("Diretor", "a imagem passa de 12 MB; baixe uma versão menor", i))
+        else:
+            try:
+                r = rodar("ffprobe", "-v", "error", "-show_entries", "stream=width,height", "-of", "csv=p=0", arq)
+                w, h = (int(x) for x in r.stdout.strip().split(",")[:2])
+                if max(w, h) < 600:
+                    e.append(erro("Diretor", f"imagem pequena demais ({w}x{h}); o mínimo é 600 px no lado maior", i))
+            except Exception:
+                e.append(erro("Diretor", "não consegui ler a imagem (arquivo corrompido?)", i))
+    return e
+
+
+def validar_cenas(c, roteiro, ficha, pasta=None):
     e, av = [], []
     cenas = (c or {}).get("cenas") or []
     if not 9 <= len(cenas) <= 14:
@@ -146,6 +192,8 @@ def validar_cenas(c, roteiro, ficha):
                 e.append(erro("Diretor", "mapa_lugar precisa de 'lugar' com 'nome', 'lat' e 'lon' (graus decimais)", i))
             elif len(str(lg["nome"])) > 24:
                 e.append(erro("Diretor", "o nome do lugar passa de 24 caracteres", i))
+        if fam == "foto":
+            e += validar_imagem(i, s.get("imagem"), pasta)
         if fam == "objeto_profundidade":
             obj = s.get("objeto", "globo")
             objetos = ("globo", "cubo", "aneis", "moedas", "podio", "planeta", "barras")

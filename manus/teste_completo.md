@@ -77,7 +77,8 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 - toda cena com número leva `fonte`;
 - cada cena tem uma `ancora`, que é uma palavra do mesmo bloco da narração;
 - **use de 2 a 4 cenas com objeto 3D ou mapa** e escolha o objeto que conta a história: `podio` para ranking, `barras` para comparação, `moedas` para dinheiro, `planeta` para espaço, `mapa_brasil` para estados e `mapa_lugar` para um lugar;
-- se fizer sentido, escolha a pose do mascote em `personagem`.
+- se fizer sentido, escolha a pose do mascote em `personagem`;
+- **fotos:** se o assunto for uma pessoa pública, um jogo, um filme ou um lugar, procure uma foto no navegador, só no Wikimedia Commons ou no kit de imprensa oficial, e salve em `imagens/`. Use a família `foto`, com `licenca`, `credito` e `url_origem`, como manda a seção "Fotos" do `AGENTS.md`. Foto do Google Imagens, de rede social, de jornal ou de banco de imagens é proibida. Se não achar foto liberada, siga sem foto.
 
 ## 5. Validar e Revisor, etapa A
 
@@ -99,6 +100,7 @@ Rode `python3 -m fato revisar pautas/teste-AAAA-MM-DD`.
 
 Então abra `saida/folha.png` e `saida/legendas.srt` e, como Revisor, confira:
 - a leitura de cada cena está clara;
+- toda foto mostra mesmo a pessoa ou a coisa certa, e o crédito está visível;
 - nada fica cortado ou sobreposto;
 - a legenda bate com a fala.
 
@@ -112,7 +114,7 @@ Rode `python3 -m fato render pautas/teste-AAAA-MM-DD` e anote o tempo. Se `ok` v
 
 1. A lista das 8 pautas do Radar, com notas, e qual foi escolhida e por quê.
 2. A ficha do Checador, com as duas URLs.
-3. O roteiro (texto dos 6 blocos) e a lista de cenas com as famílias usadas.
+3. O roteiro (texto dos 6 blocos) e a lista de cenas com as famílias usadas. Se usou fotos, o link de origem e a licença de cada uma.
 4. Os arquivos `saida/video.mp4`, `saida/folha.png` e `saida/legendas.srt`.
 5. O `saida/relatorio.json` do `revisar` e o do `render`.
 6. Quantas rodadas de correção houve em cada etapa e o que foi corrigido.
