@@ -4,7 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
-from .comum import OBJETOS_3D, BLOCOS, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
+from .comum import OBJETOS_3D, BLOCOS, modelos_reais, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
 FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
@@ -234,7 +234,10 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
         if fam == "objeto_profundidade":
             obj = s.get("objeto", "globo")
             objetos = ("globo", "cubo", "aneis") + OBJETOS_3D
-            if obj not in objetos:
+            if str(obj).startswith("modelo:"):
+                if str(obj)[7:] not in modelos_reais():
+                    e.append(erro("Diretor", f"modelo realista '{obj[7:]}' não existe no acervo (lista no AGENTS.md)", i))
+            elif obj not in objetos:
                 e.append(erro("Diretor", f"objeto '{obj}' não existe ({', '.join(objetos)})", i))
             comp = s.get("comparacao") or []
             if obj == "barras" and not (2 <= len(comp) <= 4 and all(_numero(x.get("valor")) is not None and x.get("rotulo") for x in comp)):

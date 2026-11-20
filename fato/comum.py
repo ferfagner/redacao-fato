@@ -86,3 +86,8 @@ LICENCAS_IMAGEM = ["CC0", "dominio publico", "CC BY", "CC BY-SA", "kit de impren
 OBJETOS_3D = ("moedas", "podio", "planeta", "barras", "pizza", "linha", "trofeu", "medalha", "foguete", "lampada",
               "relogio", "ampulheta", "celular", "controle", "predios", "dinheiro", "coracao", "atomo", "dna",
               "cadeado", "alvo", "termometro", "calendario", "bola", "escudo")
+
+
+def modelos_reais():
+    """Nomes dos modelos 3D realistas do acervo (modelo/assets/modelos3d/*.glb)."""
+    return sorted(p.stem for p in (MODELO / "assets" / "modelos3d").glob("*.glb"))

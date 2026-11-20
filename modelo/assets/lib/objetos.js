@@ -1,6 +1,37 @@
 // Acervo de objetos 3D das cenas (Three.js). Cada objeto é uma função que monta a peça e devolve
 // anima(t). Tudo é função do tempo t: o render é determinístico.
 import * as THREE from "./three.module.min.js";
+import { GLTFLoader } from "./GLTFLoader.js";
+import { RGBELoader } from "./RGBELoader.js";
+import { DRACOLoader } from "./DRACOLoader.js";
+
+// modelos que flutuam (espaço): sem chão
+const FLUTUAM = new Set(["astronauta", "hubble", "james_webb", "estacao_espacial", "cassini", "juno", "asteroide", "ingenuity",
+  "onibus_espacial", "saturno_v", "modulo_lunar", "traje_espacial"]);
+
+// modelo realista (.glb do acervo): normaliza o tamanho, apoia no chão (ou flutua) e entra com pulo
+async function modeloReal(nome, { g, o, sombra }) {
+  const draco = new DRACOLoader().setDecoderPath("./assets/lib/draco/");   // modelos da NASA vêm comprimidos
+  const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`./assets/modelos3d/${nome}.glb`);
+  const m = gltf.scene;
+  const caixa = new THREE.Box3().setFromObject(m), tam = caixa.getSize(new THREE.Vector3()), centro = caixa.getCenter(new THREE.Vector3());
+  // cabe no quadro: até 3,4 de largura/profundidade e 2,5 de altura (objetos compridos não ficam minúsculos)
+  const esc = Math.min(3.4 / Math.max(tam.x, tam.z, 1e-6), 2.5 / Math.max(tam.y, 1e-6));
+  const piv = new THREE.Group(); g.add(piv);
+  m.position.set(-centro.x, -caixa.min.y, -centro.z); piv.add(m);
+  piv.scale.setScalar(esc);
+  const flutua = FLUTUAM.has(nome);
+  if (flutua) { sombra.visible = false; m.position.y = -centro.y; }
+  m.traverse((x) => { if (x.isMesh && x.material) { x.material.envMapIntensity = 1.0; x.frustumCulled = false; } });
+  const base = flutua ? 1.1 : 0;
+  return (t) => {
+    const k = back((t - o.t0) / 0.6);
+    piv.scale.setScalar(esc * Math.max(0.001, k));
+    piv.position.y = base + (flutua ? Math.sin(t * 1.1) * 0.08 : 0) + (1 - cl((t - o.t0) / 0.6)) * 0.6;
+    piv.rotation.y = (1 - easeOut((t - o.t0) / 0.9)) * -1.2 + (flutua ? t * 0.25 : 0);
+    if (flutua) piv.rotation.z = Math.sin(t * 0.7) * 0.08;
+  };
+}
 
 const COR = { cobalto: 0x2a40f0, cobaltoEsc: 0x1c2bb0, cobaltoClaro: 0x8a95ff, amarelo: 0xffd60a, branco: 0xffffff,
   linha: 0x2e2e3d, tela: 0x10101a, vermelho: 0xff5a45, verde: 0x2ee59d };
@@ -366,15 +397,26 @@ export async function criarObjeto(canvas, o) {
   const cam = new THREE.PerspectiveCamera(32, W / H, 0.1, 100);
   cam.position.set(0, 1.7, 7.2);
   cam.lookAt(0, 0.95, 0);
-  cena.add(new THREE.HemisphereLight(0xdfe4ff, 0x14141f, 1.1));
-  const key = new THREE.DirectionalLight(0xfff1dc, 2.4); key.position.set(-3, 5, 4); cena.add(key);
-  const rim = new THREE.DirectionalLight(0x8a95ff, 2.0); rim.position.set(4, 2, -3); cena.add(rim);
+  // luz realista: ambiente de estúdio real (HDRI do Poly Haven, CC0) para reflexos e sombreado,
+  // mais uma luz principal quente e um contorno cobalto da marca
+  renderer.toneMappingExposure = 1.05;
+  try {
+    const hdr = await new RGBELoader().loadAsync("./assets/hdri/studio_small_09.hdr");
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    cena.environment = pmrem.fromEquirectangular(hdr).texture;
+    hdr.dispose(); pmrem.dispose();
+  } catch (e) { /* sem HDRI: segue só com as luzes */ }
+  cena.add(new THREE.HemisphereLight(0xdfe4ff, 0x14141f, cena.environment ? 0.35 : 1.1));
+  const key = new THREE.DirectionalLight(0xfff1dc, cena.environment ? 1.6 : 2.4); key.position.set(-3, 5, 4); cena.add(key);
+  const rim = new THREE.DirectionalLight(0x8a95ff, cena.environment ? 1.6 : 2.0); rim.position.set(4, 2, -3); cena.add(rim);
   const M = (cor, extra) => new THREE.MeshStandardMaterial({ color: cor, roughness: 0.38, metalness: 0.15, ...extra });
   const g = new THREE.Group(); cena.add(g);
   const sombra = new THREE.Mesh(new THREE.CircleGeometry(2.4, 48), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.35 }));
   sombra.rotation.x = -Math.PI / 2; sombra.position.y = -0.01; g.add(sombra);
   const anc = [];
-  const anima = (OBJ[o.tipo] || OBJ.planeta)({ g, M, o, anc, sombra });
+  const anima = String(o.tipo).startsWith("modelo:")
+    ? await modeloReal(o.tipo.slice(7), { g, o, sombra })
+    : (OBJ[o.tipo] || OBJ.planeta)({ g, M, o, anc, sombra });
 
   const v = new THREE.Vector3();
   function render(t) {

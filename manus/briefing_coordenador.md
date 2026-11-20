@@ -106,7 +106,7 @@ Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa 
 
 **Perfil 4, "Diretor".**
 
-Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito é 9 e o máximo 14)** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade` (acervo de 28 objetos 3D), `citacao_fonte`, `mapa_brasil`, `mapa_lugar`, `foto`, `lista_cards`, `versus`, `linha_tempo`, `antes_depois` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena). Use de 2 a 4 cenas de 3D por vídeo (objeto, mapa ou cartão 3D), variando entre os vídeos e escolhendo o que conta a história; o acervo completo está no `AGENTS.md`.
+Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito é 9 e o máximo 14)** e grava `cenas.json` no formato do `AGENTS.md`. Use as famílias `tipo_cinetico`, `numero_heroi`, `dado_comparado`, `objeto_profundidade` (28 objetos desenhados e 54 modelos realistas, como `modelo:james_webb`; prefira o realista quando combinar), `citacao_fonte`, `mapa_brasil`, `mapa_lugar`, `foto`, `lista_cards`, `versus`, `linha_tempo`, `antes_depois` e `fecho_chamada` (mapa só quando o lugar ou a distribuição por estado for o assunto da cena). Use de 2 a 4 cenas de 3D por vídeo (objeto, mapa ou cartão 3D), variando entre os vídeos e escolhendo o que conta a história; o acervo completo está no `AGENTS.md`.
 
 - A cena 1 é o gancho (`tipo_cinetico`) e a última é `fecho_chamada`.
 - O título vai em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras.

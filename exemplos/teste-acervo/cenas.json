@@ -69,7 +69,8 @@
     {
       "id": 4,
       "bloco": "mecanismo",
-      "familia": "tipo_cinetico",
+      "familia": "objeto_profundidade",
+      "objeto": "modelo:relogio_parede",
       "titulo": [
         "AS FAMÍLIAS",
         "ENCOLHERAM"

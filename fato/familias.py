@@ -147,7 +147,7 @@ def objeto_profundidade(p, s, t, dur):
     fs = tam_titulo(linhas, 64)
     tit, n = titulo_html(p, linhas, s.get("destaque"))
     obj = s.get("objeto", "globo")
-    if obj in OBJETOS_3D:
+    if obj in OBJETOS_3D or str(obj).startswith("modelo:"):
         return _objeto_three(p, s, t, dur, tit, n, fs, obj)
     faces = []
     if obj == "cubo":

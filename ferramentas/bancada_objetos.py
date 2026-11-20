@@ -1,7 +1,9 @@
 """Bancada do acervo de objetos 3D: mostra cada objeto do objetos.js já animado, numa folha só.
 
-Uso (na raiz do repositório):  python ferramentas/bancada_objetos.py
-Saída: ferramentas/saida_objetos/folha.png
+Uso (na raiz do repositório):
+  python ferramentas/bancada_objetos.py            # objetos desenhados em código
+  python ferramentas/bancada_objetos.py --modelos  # modelos realistas (.glb)
+Saída: ferramentas/saida_objetos/folha.png (ou folha_modelos.png)
 """
 import json
 import re
@@ -11,7 +13,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
-from fato.comum import MODELO, OBJETOS_3D, npx_hf, rodar  # noqa: E402
+from fato.comum import MODELO, OBJETOS_3D, modelos_reais, npx_hf, rodar  # noqa: E402
 from fato.gerar import GSAP  # noqa: E402
 
 SEG = 2.6
@@ -25,7 +27,11 @@ def projeto(dest: Path, tipos):
             if item.name != ".hyperframes":
                 shutil.rmtree(item) if item.is_dir() else item.unlink()
     (dest / "compositions").mkdir(parents=True, exist_ok=True)
-    shutil.copytree(MODELO / "assets", dest / "assets", dirs_exist_ok=True)
+    shutil.copytree(MODELO / "assets", dest / "assets", dirs_exist_ok=True, ignore=shutil.ignore_patterns("modelos3d"))
+    (dest / "assets" / "modelos3d").mkdir(exist_ok=True)
+    for tp in tipos:
+        if tp.startswith("modelo:"):
+            shutil.copy(MODELO / "assets" / "modelos3d" / f"{tp[7:]}.glb", dest / "assets" / "modelos3d")
     shutil.copy(MODELO / "hyperframes.json", dest / "hyperframes.json")
     hosts = []
     for i, tipo in enumerate(tipos):
@@ -36,7 +42,7 @@ def projeto(dest: Path, tipos):
   <style>#root{{position:absolute;inset:0;background:#0f0f17;}} #{cid}-cv{{position:absolute;left:120px;top:500px;}}
   .nm{{position:absolute;left:0;width:1080px;top:380px;text-align:center;font:900 64px 'Archivo Black',sans-serif;color:#ffd60a;}}</style>
   <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920">
-    <div class="nm">{tipo.upper()}</div>
+    <div class="nm">{tipo.replace("modelo:", "").upper()}</div>
     <canvas id="{cid}-cv" width="840" height="470" data-layout-ignore></canvas>
   </div>
   <script type="module">
@@ -63,23 +69,25 @@ def projeto(dest: Path, tipos):
 
 def main():
     out = RAIZ / "ferramentas" / "saida_objetos"
-    quad = out / "quadros"
+    quad = out / ("quadros_modelos" if "--modelos" in sys.argv else "quadros")
     if quad.exists():
         shutil.rmtree(quad)
     quad.mkdir(parents=True)
-    tipos, n = list(OBJETOS_3D), 0
+    modelos = "--modelos" in sys.argv
+    tipos, n = ([f"modelo:{m}" for m in modelos_reais()] if modelos else list(OBJETOS_3D)), 0
     for lote in range(0, len(tipos), 9):          # até 9 objetos 3D por página (limite de contextos WebGL)
-        dest = out / f"lote{lote // 9}"
+        dest = out / f"lote{lote // 9}{'m' if modelos else ''}"
         ts = projeto(dest, tipos[lote:lote + 9])
-        snap = out / f"snap{lote // 9}"
+        snap = out / f"snap{lote // 9}{'m' if modelos else ''}"
         if snap.exists():
             shutil.rmtree(snap)
         npx_hf("snapshot", "--at", ",".join(map(str, ts)), "--no-end", "--output", snap, cwd=dest, check=False)
         for p in sorted(snap.glob("*.png"), key=lambda p: float(re.sub(r"[^\d.]", "", p.stem.split("at-")[-1]) or 0)):
             p.rename(quad / f"q{n:02d}.png"); n += 1
     rodar("ffmpeg", "-y", "-v", "error", "-i", quad / "q%02d.png", "-vf",
-          "crop=1080:760:0:340,scale=270:-1,tile=5x5:padding=6:color=0x333333", "-frames:v", "1", out / "folha.png")
-    print("folha:", out / "folha.png", f"({n} objetos)")
+          f"crop=1080:760:0:340,scale=216:-1,tile=7x{(n + 6) // 7}:padding=6:color=0x333333", "-frames:v", "1",
+          out / ("folha_modelos.png" if modelos else "folha.png"))
+    print("folha:", out / ("folha_modelos.png" if modelos else "folha.png"), f"({n} objetos)")
 
 
 if __name__ == "__main__":

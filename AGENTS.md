@@ -235,7 +235,7 @@ As famílias e seus campos extras:
 | `tipo_cinetico` | frase forte, palavra a palavra | `rotulo` (opcional) |
 | `numero_heroi` | um número grande que conta até o valor | `dado: {valor, unidade, rotulo}` |
 | `dado_comparado` | 2 a 4 barras | `comparacao: [{rotulo, valor, unidade}]`, com `valor` numérico ("190,8") |
-| `objeto_profundidade` | objeto 3D com o título | `objeto`: um dos 28 do acervo, na tabela "Acervo de objetos 3D" abaixo |
+| `objeto_profundidade` | objeto 3D com o título | `objeto`: um dos 28 desenhados em código (tabela "Acervo de objetos 3D") **ou** um dos 54 modelos realistas, com `"modelo:<nome>"` (tabela "Modelos 3D realistas") |
 | `citacao_fonte` | cartão com aspas e a fonte | o título é a citação |
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
@@ -281,6 +281,23 @@ O Diretor contribui com cenas curtas, de 3 a 6 s.
 | `globo`, `cubo`, `aneis` | formas de linha, para quando nada acima combina | nenhum |
 
 Para ver todos animados, rode `python ferramentas/bancada_objetos.py`, que gera a folha em `ferramentas/saida_objetos/`.
+
+### Modelos 3D realistas (`"objeto": "modelo:<nome>"`)
+
+São 54 modelos fotorrealistas, com luz de estúdio de verdade (HDRI). A origem e a licença de cada um estão em `modelo/assets/modelos3d/LICENCAS.md`. **Prefira um modelo realista quando ele combinar com o assunto**: fica mais crível que o objeto desenhado em código.
+
+| tema | modelos |
+|---|---|
+| espaço (NASA) | `astronauta`, `traje_espacial`, `hubble`, `james_webb`, `estacao_espacial`, `perseverance`, `ingenuity`, `saturno_v`, `onibus_espacial`, `modulo_lunar`, `cassini`, `juno`, `antena_70m`, `crawler` |
+| tecnologia e games | `console`, `notebook`, `televisao`, `placa_circuito`, `camera_video`, `camera_seguranca`, `radio`, `toca_fitas`, `relogio_pulso`, `lampada_led`, `micro_ondas` |
+| ciência | `microscopio`, `quimica`, `bico_bunsen`, `instrumento_espacial`, `binoculo`, `multimetro`, `lampada_antiga` |
+| economia e trabalho | `caixa_registradora`, `caixa_papelao`, `caixote`, `martelo`, `chave_inglesa`, `trena`, `mala`, `caderno`, `lousa` |
+| comida | `maca`, `bananas`, `abacate`, `batata_doce`, `limao`, `bolo` |
+| casa e cultura | `relogio_parede`, `xadrez`, `busto`, `planta`, `ventilador`, `botas`, `mascara_gas` |
+
+Exemplo: `{"familia": "objeto_profundidade", "objeto": "modelo:james_webb", "titulo": ["O TELESCÓPIO", "MAIS POTENTE"], ...}`.
+
+Os modelos da NASA flutuam (sem chão) e giram devagar; os outros ficam apoiados e entram com um pulo. Para ver todos, rode `python ferramentas/bancada_objetos.py --modelos`, que gera `ferramentas/saida_objetos/folha_modelos.png`.
 
 ### Cartões 3D
 

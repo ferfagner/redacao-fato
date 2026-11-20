@@ -308,7 +308,13 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo="", pasta: Path 
             continue
         shutil.rmtree(item) if item.is_dir() else item.unlink()
     (projeto / "compositions").mkdir(parents=True)
-    shutil.copytree(MODELO / "assets", projeto / "assets")
+    # o acervo de modelos realistas é grande: copia só os que esta pauta usa
+    shutil.copytree(MODELO / "assets", projeto / "assets", ignore=shutil.ignore_patterns("modelos3d"))
+    (projeto / "assets" / "modelos3d").mkdir(exist_ok=True)
+    for s_ in cenas:
+        ob = str(s_.get("objeto", ""))
+        if ob.startswith("modelo:"):
+            shutil.copy(MODELO / "assets" / "modelos3d" / f"{ob[7:]}.glb", projeto / "assets" / "modelos3d" / f"{ob[7:]}.glb")
     shutil.copy(MODELO / "hyperframes.json", projeto / "hyperframes.json")
     shutil.copy(wav, projeto / "assets" / "narracao.wav")
     total = narr["total"]
