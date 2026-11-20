@@ -12,7 +12,7 @@ Cada vídeo tem uma pasta própria, por exemplo `pautas/2026-11-21-censo/`, com 
 | `roteiro.json` | Roteirista | a narração em 6 blocos |
 | `cenas.json` | Diretor | de 9 a 11 cenas |
 
-Veja o exemplo completo em `exemplos/censo-2022/`.
+Veja o exemplo completo em `exemplos/teste-acervo/`.
 
 ## Comandos
 
@@ -235,12 +235,16 @@ As famílias e seus campos extras:
 | `tipo_cinetico` | frase forte, palavra a palavra | `rotulo` (opcional) |
 | `numero_heroi` | um número grande que conta até o valor | `dado: {valor, unidade, rotulo}` |
 | `dado_comparado` | 2 a 4 barras | `comparacao: [{rotulo, valor, unidade}]`, com `valor` numérico ("190,8") |
-| `objeto_profundidade` | objeto 3D com o título | `objeto`, que pode ser:<br>• `moedas`: pilha de moedas caindo (dinheiro, preço, economia)<br>• `podio`: 1º, 2º e 3º lugar (ranking), com exatamente 3 itens em `comparacao`, cada um com `rotulo` de até 16 caracteres<br>• `barras`: barras 3D com valores, com 2 a 4 itens em `comparacao` (`rotulo`, `valor` numérico, `unidade`)<br>• `planeta`: planeta com anel e lua (espaço, ciência)<br>• `globo`, `cubo` e `aneis`: formas de linha, para quando nada acima combina |
+| `objeto_profundidade` | objeto 3D com o título | `objeto`: um dos 28 do acervo, na tabela "Acervo de objetos 3D" abaixo |
 | `citacao_fonte` | cartão com aspas e a fonte | o título é a citação |
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
 | `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
 | `foto` | foto de pessoa, jogo, lugar, objeto ou evento num cartão, com nome e crédito | `imagem: {arquivo, tipo, nome, credito, licenca, url_origem}`, conforme a seção "Fotos" |
+| `lista_cards` | ranking ou lista: cartões que chegam um a um em profundidade | `itens`: de 3 a 5 `{rotulo, valor, unidade}`, com `rotulo` de até 24 caracteres; `valor` é opcional e, se houver, exige `fonte` |
+| `versus` | dois cartões frente a frente com o selo VS; o maior ganha borda amarela | `comparacao`: exatamente 2 `{rotulo, valor, unidade}`, com `valor` de até 7 caracteres |
+| `linha_tempo` | datas numa linha vertical em perspectiva, que acendem uma a uma | `itens`: de 3 a 5 `{rotulo, texto}`, com `rotulo` (a data) de até 10 caracteres e `texto` de até 26 |
+| `antes_depois` | cartão que gira no meio da cena: frente ANTES, verso DEPOIS | `comparacao`: exatamente 2 (o primeiro é o antes), com `valor` de até 7 caracteres |
 
 ### Ritmo (automático)
 
@@ -252,49 +256,91 @@ O código garante uma mudança visual a cada 2 a 3 segundos, sempre ligada à fa
 
 O Diretor contribui com cenas curtas, de 3 a 6 s.
 
+### Acervo de objetos 3D (`objeto_profundidade`)
+
+| objeto | use para | dados extras |
+|---|---|---|
+| `barras` | comparar de 2 a 4 valores | `comparacao` com valor numérico |
+| `pizza` | partes de um todo (fatias) | `comparacao` com de 2 a 4 fatias |
+| `linha` | evolução no tempo | `comparacao` com de 3 a 6 pontos (ex.: anos) |
+| `podio` | ranking top 3 | `comparacao` com exatamente 3 |
+| `termometro` | temperatura, nível ou índice subindo | `comparacao` (o último valor vira o nível) |
+| `moedas`, `dinheiro` | dinheiro, preço, economia, salário | nenhum |
+| `trofeu`, `medalha` | vitória, recorde, prêmio, campeão | nenhum |
+| `foguete`, `planeta`, `atomo` | espaço, lançamento, ciência, física | nenhum |
+| `dna` | biologia, saúde, genética | nenhum |
+| `lampada` | ideia, descoberta, invenção | nenhum |
+| `relogio`, `ampulheta`, `calendario` | tempo, prazo, data, espera | nenhum |
+| `celular` | apps, redes sociais, tecnologia | nenhum |
+| `controle` | games | nenhum |
+| `predios` | cidades, economia, imóveis, população | nenhum |
+| `coracao` | saúde, amor, coração | nenhum |
+| `cadeado`, `escudo` | segurança, privacidade, proteção | nenhum |
+| `alvo` | meta, objetivo, precisão | nenhum |
+| `bola` | esportes, futebol | nenhum |
+| `globo`, `cubo`, `aneis` | formas de linha, para quando nada acima combina | nenhum |
+
+Para ver todos animados, rode `python ferramentas/bancada_objetos.py`, que gera a folha em `ferramentas/saida_objetos/`.
+
 ### Cartões 3D
 
 Toda cena entra como um cartão de vidro em perspectiva: gira, aproxima e depois flutua até o fim, alternando o lado a cada cena. Isso é automático.
 
-O que depende do Diretor é usar **de 2 a 4 cenas com objeto 3D ou mapa por vídeo** (`objeto_profundidade`, `mapa_brasil` ou `mapa_lugar`). O validador avisa quando há menos de 2. Escolha o objeto que conta a história: ranking vira `podio`, comparação de valores vira `barras`, dinheiro vira `moedas`, espaço vira `planeta`, um lugar vira `mapa_lugar`.
+O que depende do Diretor é usar **de 2 a 4 cenas de 3D por vídeo**, entre `objeto_profundidade`, `mapa_brasil`, `mapa_lugar`, `lista_cards`, `versus`, `linha_tempo` e `antes_depois`, variando de um vídeo para o outro. O validador avisa quando há menos de 2. Escolha o objeto que conta a história: ranking vira `podio`, comparação de valores vira `barras`, dinheiro vira `moedas`, espaço vira `planeta`, um lugar vira `mapa_lugar`.
 
-### Fotos (pessoas, jogos, lugares)
+### Fotos (obrigatório: pelo menos 1 por vídeo)
 
-Use foto quando o assunto for uma pessoa pública, um jogo, um filme, um lugar ou um objeto que o público precisa **ver**: um jogador, um ator, a capa de um jogo, um prédio. O Diretor procura a foto no navegador, salva em `pautas/<pasta>/imagens/` e usa a família `foto`.
+**Regra: todo vídeo tem pelo menos uma cena `foto`.** O validador recusa vídeo sem foto. O Diretor procura no navegador, salva em `pautas/<pasta>/imagens/` e usa a família `foto`.
 
-**Só vale foto com licença que permita o uso, sempre com crédito na tela.** O validador recusa qualquer outra.
+**Ordem de busca.** Comece pela primeira linha e desça até achar:
 
-| de onde | licença (campo `licenca`) | exemplo de crédito |
-|---|---|---|
-| [Wikimedia Commons](https://commons.wikimedia.org): pessoas, lugares, eventos, objetos | `CC0`, `dominio publico`, `CC BY` ou `CC BY-SA` (copie a versão, ex.: `CC BY-SA 4.0`) | `Foto: Nome do autor / Wikimedia Commons, CC BY-SA 4.0` |
-| kit de imprensa oficial (páginas "press", "media" ou "newsroom" do estúdio, da editora de games, do clube ou da empresa) | `kit de imprensa oficial` | `Imagem: Nintendo (kit de imprensa)` |
+| # | onde | bom para | `licenca` |
+|---|---|---|---|
+| 1 | **Wikimedia Commons** (commons.wikimedia.org) | pessoas públicas, atletas, atores, lugares, eventos | `CC0`, `dominio publico`, `CC BY` ou `CC BY-SA` (com a versão) |
+| 2 | **Agência Brasil** (agenciabrasil.ebc.com.br): as fotos são CC BY | política, economia, esporte e eventos no Brasil | `CC BY` |
+| 3 | **Fotos Públicas** (fotospublicas.com) e Flickr oficiais de governos, clubes e órgãos públicos com licença livre | eventos, autoridades, obras, esportes | `fotos publicas` ou a CC do Flickr |
+| 4 | **NASA, ESA, NOAA** (imagens oficiais) | espaço, clima, ciência | `dominio publico` (NASA) ou `CC BY` (ESA) |
+| 5 | **Kit de imprensa oficial** (páginas press, media ou newsroom de estúdios, editoras de games, ligas, empresas) | jogos, filmes, produtos, lançamentos | `kit de imprensa oficial` |
+| 6 | **Unsplash, Pexels e Pixabay** | foto do **tema**, quando não houver do assunto exato (um estádio, um celular, uma cidade, comida) | `licenca unsplash`, `licenca pexels` ou `licenca pixabay` |
+| 7 | **Ilustração gerada por IA** (Gemini ou outra ferramenta da conta) | último recurso, só para objeto, lugar genérico ou conceito | `ilustracao ia`, com crédito "Ilustração gerada por IA" |
 
-Proibido:
-- foto do Google Imagens, do Pinterest, de redes sociais ou de matérias de jornal;
+**Continua proibido**, porque dá derrubada de vídeo ou processo:
+- Google Imagens, Pinterest, redes sociais e fotos de matérias de jornal;
 - bancos pagos e agências (Getty, Shutterstock, Alamy, AP, Reuters, AFP);
-- foto de pessoa comum, sem vida pública;
-- foto de criança;
-- foto editada ou montada para parecer outra coisa;
-- usar a foto de alguém de um jeito que pareça que a pessoa apoia o perfil ou um produto.
+- foto do Unsplash+ (é paga).
 
-Como baixar do Wikimedia Commons: abra a página do arquivo, confira a licença e o autor e baixe a versão reduzida, de 1280 px. O link é `https://upload.wikimedia.org/wikipedia/commons/thumb/<a>/<ab>/<Arquivo>/1280px-<Arquivo>`. O original costuma dar erro 429 (pedidos demais).
+**Editar não muda a licença.** Recortar ou mudar a cor de uma foto da Getty continua sendo uso de foto da Getty.
+
+Também proibido:
+- ilustração de IA mostrando **pessoa real** ou que pareça foto de um fato;
+- foto de criança;
+- foto de pessoa sem vida pública;
+- montagem enganosa;
+- usar alguém de um jeito que pareça que a pessoa apoia o perfil.
+
+**Tratamento automático** (campo `tratamento`; o código aplica antes de entrar no vídeo):
+- `natural` (padrão): ajusta tamanho, contraste, cor e nitidez;
+- `marca`: duotone nas cores do thebestnewsbr, bom para foto de banco, com cores fracas ou de estilo diferente;
+- `recorte`: tira o fundo da pessoa ou do objeto e põe sobre o brilho da marca, "saindo" do cartão. É o melhor para **pessoas**: atleta, ator, cientista.
+
+Como baixar do Wikimedia Commons: use a versão reduzida, de 1280 px (`https://upload.wikimedia.org/wikipedia/commons/thumb/<a>/<ab>/<Arquivo>/1280px-<Arquivo>`). O original costuma dar erro 429.
 
 ```json
 {"id": 9, "bloco": "virada", "familia": "foto", "titulo": ["O MENOR DESDE", "O CENSO DE 1872"], "destaque": "1872",
- "imagem": {"arquivo": "imagens/dom-pedro-ii.jpg", "tipo": "pessoa", "nome": "Dom Pedro II",
+ "imagem": {"arquivo": "imagens/dom-pedro-ii.jpg", "tipo": "pessoa", "nome": "Dom Pedro II", "tratamento": "recorte",
             "credito": "Foto: Hermann Witte, c. 1887 / Wikimedia Commons, domínio público",
             "licenca": "dominio publico", "url_origem": "https://commons.wikimedia.org/wiki/File:Dom_Pedro_II_circa_1887.jpg"},
  "fonte": "IBGE", "ancora": "primeiro"}
 ```
 
 Regras do validador:
-- `arquivo` em JPG, PNG ou WEBP, com até 12 MB e pelo menos 600 px no lado maior;
-- `tipo` é um destes: `pessoa`, `jogo`, `lugar`, `objeto` ou `evento`. Com `pessoa`, o enquadramento prioriza o rosto;
-- `nome` com até 26 caracteres;
-- `credito` com até 80 caracteres;
-- `url_origem` é a página da imagem, não o link direto do arquivo.
+- **Arquivo:** JPG, PNG ou WEBP, com até 12 MB e pelo menos 600 px no lado maior.
+- **Tipo:** `pessoa`, `jogo`, `lugar`, `objeto` ou `evento`.
+- **Textos:** `nome` com até 26 caracteres e `credito` com até 80.
+- **Origem:** `url_origem` é a página da imagem, exceto na ilustração de IA.
+- **Tratamento:** `natural`, `marca` ou `recorte`.
 
-O Revisor confere na folha de quadros se **a foto é mesmo da pessoa ou da coisa certa**. Errar o rosto de alguém é o pior erro possível.
+O Revisor confere na folha de quadros se **a foto é mesmo da pessoa ou da coisa certa**.
 
 ### Personagem (mascote)
 

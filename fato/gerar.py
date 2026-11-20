@@ -8,7 +8,12 @@ from .comum import MODELO, norm
 from .familias import FUNCOES, esc, js_destaque, placa_fonte
 from .mapas import GLOBO_JS, OBJETO_JS, mapa_brasil, mapa_lugar
 
-TODAS = dict(FUNCOES, mapa_brasil=mapa_brasil, mapa_lugar=mapa_lugar)
+from .cartoes import CARTOES  # noqa: E402
+from .fotos import tratar  # noqa: E402
+
+AVISOS = []   # avisos da montagem (ex.: recorte de foto que falhou)
+
+TODAS = dict(FUNCOES, mapa_brasil=mapa_brasil, mapa_lugar=mapa_lugar, **CARTOES)
 
 GSAP = '<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>'
 
@@ -136,7 +141,8 @@ def _mascote_html(cenas, tempos, narr):
     total = narr["total"]
     lugares, poses = [], []
     padrao = {"numero_heroi": "aponta", "dado_comparado": "aponta", "mapa_brasil": "aponta", "mapa_lugar": "aponta",
-              "citacao_fonte": "pensa", "objeto_profundidade": "fala", "tipo_cinetico": "fala", "foto": "aponta"}
+              "citacao_fonte": "pensa", "objeto_profundidade": "fala", "tipo_cinetico": "fala", "foto": "aponta",
+              "lista_cards": "aponta", "versus": "surpreso", "linha_tempo": "pensa", "antes_depois": "aponta"}
     for i, (s, tp) in enumerate(zip(cenas, tempos)):
         if i == 0:
             lugar = [0, 540, 850, 0.95]           # grande, embaixo da caixa do gancho
@@ -319,9 +325,11 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo="", pasta: Path 
         cid = f"c{s['id']:02d}"
         if s["familia"] == "foto" and pasta is not None:   # a foto vai para dentro do projeto
             orig = (pasta / s["imagem"]["arquivo"]).resolve()
-            (projeto / "assets" / "fotos").mkdir(exist_ok=True)
-            shutil.copy(orig, projeto / "assets" / "fotos" / f"{cid}{orig.suffix.lower()}")
-            s = dict(s, _foto_src=f"assets/fotos/{cid}{orig.suffix.lower()}")
+            nome_arq, trat, aviso = tratar(orig, projeto / "assets" / "fotos", cid,
+                                           s["imagem"].get("tratamento", "natural"), cwd=projeto)
+            if aviso:
+                AVISOS.append(f"cena {s['id']}: {aviso}")
+            s = dict(s, _foto_src=f"assets/fotos/{nome_arq}", _tratamento=trat)
         (projeto / "compositions" / f"{cid}.html").write_text(_cena_html(cid, s, tp), encoding="utf-8")
         host(cid, tp["ini"], round(tp["fim"] - tp["ini"], 3), 2, faixa=1)
     (projeto / "compositions" / "mascote.html").write_text(_mascote_html(cenas, tempos, narr), encoding="utf-8")

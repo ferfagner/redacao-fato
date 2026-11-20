@@ -174,7 +174,7 @@ def objeto_profundidade(p, s, t, dur):
     return html, css, js
 
 
-OBJETOS_3D = ("moedas", "podio", "planeta", "barras")
+from .comum import OBJETOS_3D  # noqa: E402  (acervo de objetos 3D)
 OBJETOS = ("globo", "cubo", "aneis") + OBJETOS_3D
 
 
@@ -186,11 +186,15 @@ def _objeto_three(p, s, t, dur, tit, n, fs, obj):
         itens.append({"rotulo": str(it.get("rotulo", "")), "valor": _numero(it.get("valor")) or 0,
                       "txt": f'{it.get("valor", "")}{it.get("unidade", "")}'})
     rot_html = ""
-    if obj in ("barras", "podio"):
-        for k, it in enumerate(itens[:4 if obj == "barras" else 3]):
+    com_valor = ("barras", "pizza", "linha")
+    if obj in ("barras", "podio", "pizza", "linha"):
+        lim = {"barras": 4, "podio": 3, "pizza": 4, "linha": 6}[obj]
+        for k, it in enumerate(itens[:lim]):
             cab = f'<b>{k + 1}º</b> ' if obj == "podio" else ""
-            val = f'<span class="ov">{esc(it["txt"])}</span>' if obj == "barras" else ""
+            val = f'<span class="ov">{esc(it["txt"])}</span>' if obj in com_valor else ""
             rot_html += f'<div id="{p}-r{k}" class="orot">{val}{cab}{esc(it["rotulo"]).upper()}</div>'
+    elif obj == "termometro" and itens:
+        rot_html += f'<div id="{p}-r0" class="orot"><span class="ov">{esc(itens[-1]["txt"])}</span>{esc(itens[-1]["rotulo"]).upper()}</div>'
     html = (f'<div id="{p}-bloco" class="col topo">{tit}</div>'
             f'<div class="glbox" style="left:120px;top:{top}px;width:{W}px;height:{H}px">'
             f'<canvas id="{p}-cv" width="{W}" height="{H}" data-layout-ignore></canvas>{rot_html}</div>')
@@ -248,6 +252,34 @@ def foto(p, s, t, dur):
     # pessoa: o rosto fica no terço de cima; o resto, centralizado
     foco = "50% 22%" if im.get("tipo") == "pessoa" else "50% 50%"
     nome = f'<div id="{p}-nome" class="fnome">{esc(im["nome"]).upper()}</div>' if im.get("nome") else ""
+    if s.get("_tratamento") == "recorte":
+        # recorte: a pessoa/objeto sem fundo, sobre um brilho da marca, saindo da moldura (efeito 3D)
+        H2 = max(340, min(520, 860 - top))
+        html = (f'<div id="{p}-bloco" class="col topo">{tit}</div>'
+                f'<div id="{p}-moldura" class="fmold frec" style="left:{540 - W // 2}px;top:{top + 60}px;width:{W}px;height:{H2 - 60}px"></div>'
+                f'<div id="{p}-brilhof" class="fbrilho" style="left:{540 - 260}px;top:{top}px;width:520px;height:{H2}px"></div>'
+                f'<img id="{p}-img" class="frecimg" src="{esc(s["_foto_src"])}" alt="" style="left:{540 - W // 2}px;top:{top}px;width:{W}px;height:{H2}px"/>'
+                f'<div class="fcred fcredr" data-layout-ignore style="right:{540 - W // 2}px;top:{top + H2 - 28}px">{esc(im["credito"])}</div>{nome}')
+        css = (f'#{p}-tit{{font-size:{fs}px;line-height:1.04;}}'
+               '.fmold{position:absolute;border-radius:16px;}'
+               '.frec{background:linear-gradient(170deg,rgba(42,64,240,.55),rgba(26,26,38,.9));border:3px solid rgba(138,149,255,.55);'
+               'box-shadow:0 30px 70px rgba(0,0,0,.6);}'
+               '.fbrilho{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,214,10,.35),rgba(255,214,10,0) 65%);}'
+               '.frecimg{position:absolute;object-fit:contain;object-position:50% 100%;transform-origin:50% 100%;}'
+               '.fcred{position:absolute;max-width:760px;padding:4px 10px;background:rgba(10,10,16,.78);'
+               'font-family:"JetBrains Mono",monospace;font-size:17px;color:#d8d8e2;border-radius:6px;'
+               'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
+               f'.fnome{{position:absolute;left:{540 - W // 2 + 20}px;top:{top + 78}px;background:#ffd60a;color:#121218;'
+               'font-size:34px;padding:8px 16px;border-radius:4px;white-space:nowrap;}')
+        t0 = max(0.1, t - 0.25)
+        js = js_titulo(p, n, t0)
+        js += f'tl.fromTo("#{p}-moldura", {{scale: 0.9, opacity: 0}}, {{scale: 1, opacity: 1, duration: 0.45, ease: "power3.out"}}, 0.05);\n'
+        js += f'tl.fromTo("#{p}-img", {{y: 120, opacity: 0, scale: 0.92}}, {{y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)"}}, 0.2);\n'
+        js += f'tl.to("#{p}-img", {{scale: 1.06, duration: {max(0.5, dur - 0.9):.2f}, ease: "none"}}, 0.8);\n'
+        js += f'tl.fromTo("#{p}-brilhof", {{opacity: 0, scale: 0.6}}, {{opacity: 1, scale: 1, duration: 0.8, ease: "power2.out"}}, 0.3);\n'
+        if nome:
+            js += f'tl.fromTo("#{p}-nome", {{x: -40, opacity: 0}}, {{x: 0, opacity: 1, duration: 0.35, ease: "back.out(1.8)"}}, {t0 + 0.6:.3f});\n'
+        return html, css, js
     html = (f'<div id="{p}-bloco" class="col topo">{tit}</div>'
             f'<div id="{p}-moldura" class="fmold" style="left:{540 - W // 2}px;top:{top}px;width:{W}px;height:{H}px">'
             f'<img id="{p}-img" class="fimg" src="{esc(s["_foto_src"])}" alt="" style="object-position:{foco}"/>'

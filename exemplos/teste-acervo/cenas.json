@@ -1,5 +1,5 @@
 {
-  "tema": "Teste da família foto (não publicar)",
+  "tema": "Teste do acervo (não publicar)",
   "cenas": [
     {
       "id": 1,
@@ -30,25 +30,37 @@
     {
       "id": 3,
       "bloco": "fato",
-      "familia": "objeto_profundidade",
-      "objeto": "podio",
+      "familia": "lista_cards",
       "titulo": [
-        "OS 3 ESTADOS",
+        "OS 5 ESTADOS",
         "MAIS POPULOSOS"
       ],
-      "destaque": "3",
-      "comparacao": [
+      "destaque": "5",
+      "itens": [
         {
           "rotulo": "São Paulo",
-          "valor": "44,4"
+          "valor": "44,4",
+          "unidade": " mi"
         },
         {
           "rotulo": "Minas Gerais",
-          "valor": "20,5"
+          "valor": "20,5",
+          "unidade": " mi"
         },
         {
           "rotulo": "Rio de Janeiro",
-          "valor": "16,1"
+          "valor": "16,1",
+          "unidade": " mi"
+        },
+        {
+          "rotulo": "Bahia",
+          "valor": "14,1",
+          "unidade": " mi"
+        },
+        {
+          "rotulo": "Paraná",
+          "valor": "11,4",
+          "unidade": " mi"
         }
       ],
       "fonte": "IBGE, Censo 2022",
@@ -57,14 +69,13 @@
     {
       "id": 4,
       "bloco": "mecanismo",
-      "familia": "objeto_profundidade",
+      "familia": "tipo_cinetico",
       "titulo": [
         "AS FAMÍLIAS",
         "ENCOLHERAM"
       ],
       "destaque": "ENCOLHERAM",
-      "ancora": "famílias",
-      "objeto": "moedas"
+      "ancora": "famílias"
     },
     {
       "id": 5,
@@ -80,65 +91,79 @@
         "valor": "2"
       },
       "fonte": "IBGE, Censo 2022",
-      "ancora": "menos",
-      "personagem": {
-        "pose": "pensa"
-      }
+      "ancora": "menos"
     },
     {
       "id": 6,
       "bloco": "mecanismo",
       "familia": "objeto_profundidade",
-      "objeto": "planeta",
+      "objeto": "pizza",
       "titulo": [
-        "MAIS IDOSOS,",
-        "MENOS BEBÊS"
+        "1 EM CADA 5",
+        "VIVE EM SP"
       ],
-      "destaque": "IDOSOS",
+      "destaque": "SP",
+      "comparacao": [
+        {
+          "rotulo": "São Paulo",
+          "valor": "44,4",
+          "unidade": " mi"
+        },
+        {
+          "rotulo": "Resto do país",
+          "valor": "158,7",
+          "unidade": " mi"
+        }
+      ],
+      "fonte": "IBGE, Censo 2022",
       "ancora": "vivem"
     },
     {
       "id": 7,
       "bloco": "mecanismo",
-      "familia": "objeto_profundidade",
-      "objeto": "barras",
+      "familia": "versus",
       "titulo": [
-        "DE 191 PARA",
-        "203 MILHÕES"
+        "SP CONTRA MG"
       ],
-      "destaque": "203",
+      "destaque": "SP",
       "comparacao": [
         {
-          "rotulo": "2010",
-          "valor": "190,8",
-          "unidade": " mi"
+          "rotulo": "São Paulo",
+          "valor": "44,4",
+          "unidade": "milhões"
         },
         {
-          "rotulo": "2022",
-          "valor": "203,1",
-          "unidade": " mi"
+          "rotulo": "Minas Gerais",
+          "valor": "20,5",
+          "unidade": "milhões"
         }
       ],
-      "fonte": "IBGE, Censos 2010 e 2022",
+      "fonte": "IBGE, Censo 2022",
       "ancora": "resultado"
     },
     {
       "id": 8,
       "bloco": "virada",
-      "familia": "numero_heroi",
+      "familia": "antes_depois",
       "titulo": [
-        "POR ANO, EM MÉDIA"
+        "DOZE ANOS",
+        "DE DIFERENÇA"
       ],
-      "dado": {
-        "valor": "0,52",
-        "unidade": "% de crescimento",
-        "rotulo": "Ritmo"
-      },
-      "fonte": "IBGE, Censo 2022",
-      "ancora": "ritmo",
-      "personagem": {
-        "pose": "surpreso"
-      }
+      "destaque": "DOZE",
+      "comparacao": [
+        {
+          "rotulo": "2010",
+          "valor": "190,8",
+          "unidade": "milhões"
+        },
+        {
+          "rotulo": "2022",
+          "valor": "203,1",
+          "unidade": "milhões"
+        }
+      ],
+      "fonte": "IBGE, Censos 2010 e 2022",
+      "ancora": "ritmo"
     },
     {
       "id": 9,
@@ -155,7 +180,8 @@
         "nome": "Dom Pedro II",
         "credito": "Foto: Hermann Witte, c. 1887 / Wikimedia Commons, domínio público",
         "licenca": "dominio publico",
-        "url_origem": "https://commons.wikimedia.org/wiki/File:Dom_Pedro_II_circa_1887.jpg"
+        "url_origem": "https://commons.wikimedia.org/wiki/File:Dom_Pedro_II_circa_1887.jpg",
+        "tratamento": "recorte"
       },
       "fonte": "IBGE",
       "ancora": "primeiro"
@@ -163,14 +189,27 @@
     {
       "id": 10,
       "bloco": "ressalva",
-      "familia": "citacao_fonte",
+      "familia": "linha_tempo",
       "titulo": [
-        "A POPULAÇÃO AINDA",
-        "CRESCE, SÓ QUE",
-        "MAIS DEVAGAR"
+        "150 ANOS",
+        "DE CENSO"
       ],
-      "destaque": "DEVAGAR",
-      "fonte": "IBGE, Censo 2022",
+      "destaque": "150",
+      "itens": [
+        {
+          "rotulo": "1872",
+          "texto": "Primeiro censo"
+        },
+        {
+          "rotulo": "2010",
+          "texto": "190,8 milhões"
+        },
+        {
+          "rotulo": "2022",
+          "texto": "203,1 milhões"
+        }
+      ],
+      "fonte": "IBGE",
       "ancora": "Isso"
     },
     {

@@ -4,7 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
-from .comum import BLOCOS, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
+from .comum import OBJETOS_3D, BLOCOS, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
 FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
@@ -86,13 +86,22 @@ def validar_imagem(i, im, pasta):
     if not isinstance(im, dict):
         return [erro("Diretor", "foto precisa de 'imagem' com arquivo, credito, licenca, url_origem e tipo", i)]
     for campo in ("arquivo", "credito", "licenca", "url_origem", "tipo"):
+        if campo == "url_origem" and norm(str(im.get("licenca", ""))).startswith("ilustracaoia"):
+            continue
         if not str(im.get(campo, "")).strip():
             e.append(erro("Diretor", f"imagem sem '{campo}'", i))
     lic = norm(str(im.get("licenca", "")))
     if im.get("licenca") and not any(lic.startswith(norm(x)) for x in LICENCAS_IMAGEM):
         e.append(erro("Diretor", f"licença '{im.get('licenca')}' não serve; use só: {', '.join(LICENCAS_IMAGEM)}", i))
     url = str(im.get("url_origem", "")).lower()
-    if url and not url.startswith(("http://", "https://")):
+    ia = norm(str(im.get("licenca", ""))).startswith("ilustracaoia")
+    if ia and im.get("tipo") == "pessoa":
+        e.append(erro("Diretor", "ilustração de IA nunca pode mostrar pessoa real; use foto licenciada", i))
+    if ia and "ia" not in norm(str(im.get("credito", ""))):
+        e.append(erro("Diretor", "ilustração de IA precisa do crédito \"Ilustração gerada por IA\"", i))
+    if im.get("tratamento", "natural") not in ("natural", "marca", "recorte"):
+        e.append(erro("Diretor", "tratamento da foto precisa ser natural, marca ou recorte", i))
+    if url and not ia and not url.startswith(("http://", "https://")):
         e.append(erro("Diretor", "url_origem precisa ser o link da página da imagem", i))
     if any(b in url for b in BANCOS_PROIBIDOS):
         e.append(erro("Diretor", "imagem de banco pago, agência ou buscador não pode; procure no Wikimedia Commons ou no kit de imprensa oficial", i))
@@ -194,16 +203,46 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
                 e.append(erro("Diretor", "mapa_lugar precisa de 'lugar' com 'nome', 'lat' e 'lon' (graus decimais)", i))
             elif len(str(lg["nome"])) > 24:
                 e.append(erro("Diretor", "o nome do lugar passa de 24 caracteres", i))
+        if fam in ("lista_cards", "linha_tempo"):
+            its = s.get("itens") or []
+            if not 3 <= len(its) <= 5:
+                e.append(erro("Diretor", f"{fam} precisa de 3 a 5 itens em 'itens'", i))
+            for it in its:
+                if not str(it.get("rotulo", "")).strip():
+                    e.append(erro("Diretor", f"todo item de {fam} precisa de 'rotulo'", i))
+                elif fam == "lista_cards" and len(str(it["rotulo"])) > 24:
+                    e.append(erro("Diretor", f"item \"{it['rotulo']}\" passa de 24 caracteres", i))
+                elif fam == "linha_tempo" and len(str(it["rotulo"])) > 10:
+                    e.append(erro("Diretor", f"data \"{it['rotulo']}\" passa de 10 caracteres", i))
+                if fam == "linha_tempo" and len(str(it.get("texto", ""))) > 26:
+                    e.append(erro("Diretor", f"o texto de \"{it['rotulo']}\" passa de 26 caracteres", i))
+            if fam == "lista_cards" and any(it.get("valor") for it in its):
+                tem_dado = True
+        if fam in ("versus", "antes_depois"):
+            comp = s.get("comparacao") or []
+            if len(comp) != 2:
+                e.append(erro("Diretor", f"{fam} precisa de exatamente 2 itens em 'comparacao'", i))
+            for it in comp:
+                if not it.get("rotulo") or not str(it.get("valor", "")).strip():
+                    e.append(erro("Diretor", f"cada lado de {fam} precisa de 'rotulo' e 'valor'", i))
+                elif len(str(it["valor"])) > 7:
+                    e.append(erro("Diretor", f"o valor \"{it['valor']}\" passa de 7 caracteres (use a unidade para o resto)", i))
+                elif len(str(it["rotulo"])) > 18:
+                    e.append(erro("Diretor", f"o rótulo \"{it['rotulo']}\" passa de 18 caracteres", i))
         if fam == "foto":
             e += validar_imagem(i, s.get("imagem"), pasta)
         if fam == "objeto_profundidade":
             obj = s.get("objeto", "globo")
-            objetos = ("globo", "cubo", "aneis", "moedas", "podio", "planeta", "barras")
+            objetos = ("globo", "cubo", "aneis") + OBJETOS_3D
             if obj not in objetos:
                 e.append(erro("Diretor", f"objeto '{obj}' não existe ({', '.join(objetos)})", i))
             comp = s.get("comparacao") or []
             if obj == "barras" and not (2 <= len(comp) <= 4 and all(_numero(x.get("valor")) is not None and x.get("rotulo") for x in comp)):
                 e.append(erro("Diretor", "objeto 'barras' precisa de 2 a 4 itens em 'comparacao', com 'rotulo' e 'valor' numérico", i))
+            if obj == "pizza" and not (2 <= len(comp) <= 4 and all(_numero(x.get("valor")) is not None and x.get("rotulo") for x in comp)):
+                e.append(erro("Diretor", "objeto 'pizza' precisa de 2 a 4 fatias em 'comparacao', com 'rotulo' e 'valor' numérico", i))
+            if obj == "linha" and not (3 <= len(comp) <= 6 and all(_numero(x.get("valor")) is not None and x.get("rotulo") for x in comp)):
+                e.append(erro("Diretor", "objeto 'linha' precisa de 3 a 6 pontos em 'comparacao' (ex.: anos), com 'rotulo' e 'valor' numérico", i))
             if obj == "podio" and not (len(comp) == 3 and all(x.get("rotulo") for x in comp)):
                 e.append(erro("Diretor", "objeto 'podio' precisa de exatamente 3 itens em 'comparacao' (1º, 2º e 3º), com 'rotulo'", i))
             if obj == "podio":
@@ -234,9 +273,14 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
         falta = [b for b in BLOCOS if b not in usados]
         if falta:
             e.append(erro("Diretor", f"nenhuma cena para o(s) bloco(s): {', '.join(falta)}"))
-        n3d = sum(1 for s in cenas if s.get("familia") in ("objeto_profundidade", "mapa_brasil", "mapa_lugar"))
+        n_fotos = sum(1 for s in cenas if s.get("familia") == "foto")
+        if n_fotos < 1:
+            e.append(erro("Diretor", "todo vídeo precisa de pelo menos 1 cena 'foto' (veja a seção \"Fotos\" do AGENTS.md: "
+                                     "fonte liberada do assunto; se não houver, foto de banco gratuito do tema ou ilustração de IA)"))
+        n3d = sum(1 for s in cenas if s.get("familia") in ("objeto_profundidade", "mapa_brasil", "mapa_lugar", "lista_cards",
+                                                            "versus", "linha_tempo", "antes_depois"))
         if n3d < 2:
-            av.append(f"só {n3d} cena(s) com objeto 3D ou mapa; o combinado é de 2 a 4 por vídeo")
+            av.append(f"só {n3d} cena(s) com objeto 3D, mapa ou cartão 3D; o combinado é de 2 a 4 por vídeo")
     if e:
         raise Falha("cenas", e, av)
     return av

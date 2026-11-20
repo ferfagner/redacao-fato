@@ -76,9 +76,9 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 - títulos em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras;
 - toda cena com número leva `fonte`;
 - cada cena tem uma `ancora`, que é uma palavra do mesmo bloco da narração;
-- **use de 2 a 4 cenas com objeto 3D ou mapa** e escolha o objeto que conta a história: `podio` para ranking, `barras` para comparação, `moedas` para dinheiro, `planeta` para espaço, `mapa_brasil` para estados e `mapa_lugar` para um lugar;
+- **use de 2 a 4 cenas de 3D:** um objeto do acervo (28 opções), um mapa ou um cartão 3D (`lista_cards`, `versus`, `linha_tempo`, `antes_depois`), escolhendo o que conta a história (veja o `AGENTS.md`);
 - se fizer sentido, escolha a pose do mascote em `personagem`;
-- **fotos:** se o assunto for uma pessoa pública, um jogo, um filme ou um lugar, procure uma foto no navegador, só no Wikimedia Commons ou no kit de imprensa oficial, e salve em `imagens/`. Use a família `foto`, com `licenca`, `credito` e `url_origem`, como manda a seção "Fotos" do `AGENTS.md`. Foto do Google Imagens, de rede social, de jornal ou de banco de imagens é proibida. Se não achar foto liberada, siga sem foto.
+- **fotos (obrigatório, pelo menos 1):** procure no navegador na ordem da seção "Fotos" do `AGENTS.md` (Wikimedia Commons, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA, nunca de pessoa real). Salve em `imagens/`, use a família `foto` com `licenca`, `credito`, `url_origem` e `tratamento` (`recorte` para pessoas).
 
 ## 4a. Descrição e hashtags do post
 

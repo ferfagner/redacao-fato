@@ -46,6 +46,8 @@ fi
 echo "== hyperframes"
 HF=$(python3 -c "from fato.comum import HF_VERSAO; print(HF_VERSAO)")
 npx --yes "hyperframes@$HF" browser ensure >/dev/null 2>&1 || { echo "ERRO: não consegui preparar o Chrome do HyperFrames"; exit 1; }
+# o recorte de fundo das fotos instala um componente na primeira vez: faz isso já, com a foto de exemplo
+npx --yes "hyperframes@$HF" remove-background exemplos/teste-acervo/imagens/dom-pedro-ii.jpg -o /tmp/recorte-teste.png >/dev/null 2>&1   && echo "  recorte de fundo: ok" || echo "  (aviso) recorte de fundo indisponível; fotos com tratamento 'recorte' vão sair como 'marca'"
 # o doctor marca como falha itens opcionais (ex.: whisper); só os obrigatórios contam
 npx --yes "hyperframes@$HF" doctor --json 2>/dev/null | python3 -c "
 import json, sys
@@ -56,4 +58,4 @@ print('  doctor: ok' if not ruins else '  doctor: veja os avisos acima')
 "
 
 echo "== conferência"
-python3 -m fato validar exemplos/censo-2022 >/dev/null && echo "pipeline pronto"
+python3 -m fato validar exemplos/teste-acervo >/dev/null && echo "pipeline pronto"

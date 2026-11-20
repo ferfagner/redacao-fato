@@ -48,6 +48,42 @@
       "unidade": "milhões de habitantes em São Paulo (mais de 1 em cada 5)",
       "ano": 2022,
       "instituicao": "IBGE"
+    },
+    {
+      "valor": "20,5",
+      "unidade": "mi MG",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "16,1",
+      "unidade": "mi RJ",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "14,1",
+      "unidade": "mi BA",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "11,4",
+      "unidade": "mi PR",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "158,7",
+      "unidade": "mi fora de SP",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "150",
+      "unidade": "anos de censo",
+      "ano": 2022,
+      "instituicao": "IBGE"
     }
   ],
   "fontes": [
@@ -64,6 +100,6 @@
   ],
   "confianca": "alto",
   "fonte_tela": "IBGE, Censo 2022",
-  "_obs": "PROTÓTIPO para testar mascote e mapas. Populações por UF do Censo 2022 arredondadas; URLs são páginas iniciais.",
+  "_obs": "TESTE de mecânica dos objetos 3D e cartões 3D. Moedas e planeta são decorativos. Não publicar.",
   "categoria": "brasil"
 }

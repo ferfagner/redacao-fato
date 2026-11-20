@@ -118,7 +118,10 @@ def cmd_revisar(pasta: Path, saida: Path):
     mixado = saida / "trilha.wav"
     som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name, ficha.get("categoria", "")))
     projeto = saida / "projeto"
+    from . import gerar as _g
+    _g.AVISOS.clear()
     srt = gerar(projeto, cenas, tempos, narr, mixado, titulo=tema, pasta=pasta)
+    av += _g.AVISOS
     (saida / "legendas.srt").write_text(srt, encoding="utf-8")
     chk = _check(projeto)
     erros, avisos_chk = _resumo_check(chk)
