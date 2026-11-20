@@ -1,7 +1,7 @@
 # Briefing para a sessão de Coordenador (v3, HyperFrames)
 
 Copie o bloco entre as linhas e cole como primeira mensagem na sessão de Coordenador do Manus. Antes de colar:
-- troque `[REPO]` pelo endereço do repositório no GitHub (ex.: `https://github.com/ferfagner/redacao-fato`);
+- o repositório já está preenchido (`https://github.com/ferfagner/redacao-fato`, privado: o Manus precisa de acesso ao GitHub);
 - troque `[MODO_AUTO]` pela opção escolhida.
 
 ---
@@ -10,14 +10,14 @@ Monte o time de produção do perfil **thebestnewsbr** (vídeos de fatos) e deix
 
 ## Contexto
 
-O perfil publica **um vídeo vertical de cerca de 60 s por dia** sobre um fato verificável, no Instagram, no Facebook e no TikTok. Os agentes só escrevem três arquivos JSON. O vídeo sai do repositório **[REPO]**, que já faz a voz, a legenda, a montagem em HyperFrames, a checagem das áreas seguras e o render.
+O perfil publica **um vídeo vertical de cerca de 60 s por dia** sobre um fato verificável, no Instagram, no Facebook e no TikTok. Os agentes só escrevem três arquivos JSON. O vídeo sai do repositório **https://github.com/ferfagner/redacao-fato**, que já faz a voz, a legenda, a montagem em HyperFrames, a checagem das áreas seguras e o render.
 
 **Leia o `AGENTS.md` do repositório antes de tudo.** Ele tem os contratos dos arquivos, os comandos e o que fazer com cada erro. Este briefing não repete esses detalhes de propósito: em caso de dúvida, vale o `AGENTS.md`.
 
 Em toda rodada de produção:
 
 ```bash
-git clone --depth 1 [REPO] redacao-fato && cd redacao-fato && bash setup.sh
+git clone --depth 1 https://github.com/ferfagner/redacao-fato redacao-fato && cd redacao-fato && bash setup.sh
 mkdir -p pautas/AAAA-MM-DD-slug   # ficha.json, roteiro.json e cenas.json vão aqui
 python3 -m fato validar pautas/AAAA-MM-DD-slug
 python3 -m fato revisar pautas/AAAA-MM-DD-slug
