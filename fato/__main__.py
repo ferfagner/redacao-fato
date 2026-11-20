@@ -142,7 +142,23 @@ def cmd_render(pasta: Path, saida: Path):
         raise RuntimeError("render falhou:\n" + (r.stdout + r.stderr)[-3000:])
     conf = conferir(video, ler_json(saida / "tempos.json")["narracao"]["total"])
     conf["tempo_render_min"] = round((time.time() - t0) / 60, 1)
+    if conf["ok"]:
+        conf["entrega"] = entregar(pasta, saida, video)
     return conf
+
+
+def entregar(pasta: Path, saida: Path, video: Path):
+    """A entrega é só isto: o vídeo e um .txt com a descrição pronta para colar (hashtags no fim)."""
+    pub = ler_json(pasta / "publicacao.json")
+    texto = str(pub["descricao"]).strip() + "\n\n" + " ".join(pub["hashtags"]) + "\n"
+    dest = saida / "entrega"
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir()
+    nome = pasta.name
+    shutil.copy(video, dest / f"{nome}.mp4")
+    (dest / f"{nome}.txt").write_text(texto, encoding="utf-8")
+    return {"pasta": "saida/entrega", "video": f"{nome}.mp4", "descricao": f"{nome}.txt"}
 
 
 def conferir(video: Path, alvo: float):

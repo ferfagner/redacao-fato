@@ -10,7 +10,7 @@ Monte o time de produção do perfil **thebestnewsbr** (vídeos de fatos) e deix
 
 ## Contexto
 
-O perfil publica **um vídeo vertical de cerca de 60 s por dia** sobre um fato verificável, no Instagram, no Facebook e no TikTok. Os agentes só escrevem três arquivos JSON. O vídeo sai do repositório **https://github.com/ferfagner/redacao-fato**, que já faz a voz, a legenda, a montagem em HyperFrames, a checagem das áreas seguras e o render.
+O time produz **um vídeo vertical de cerca de 60 s por dia** sobre um fato verificável. **O Manus não publica em nenhuma rede.** Ele salva cada vídeo no meu Google Drive, numa pasta nova, com um `.txt` da descrição, e eu publico. Os agentes só escrevem três arquivos JSON. O vídeo sai do repositório **https://github.com/ferfagner/redacao-fato**, que já faz a voz, a legenda, a montagem em HyperFrames, a checagem das áreas seguras e o render.
 
 **Leia o `AGENTS.md` do repositório antes de tudo.** Ele tem os contratos dos arquivos, os comandos e o que fazer com cada erro. Este briefing não repete esses detalhes de propósito: em caso de dúvida, vale o `AGENTS.md`.
 
@@ -148,7 +148,7 @@ Listas, nesta ordem:
 - Em produção
 - Precisa de você
 - Vetado
-- Publicado
+- No Drive
 
 Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "brasil", "tecnologia", "games" e "mundo".
 
@@ -169,7 +169,7 @@ Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "
 
 ## Tarefa 4: duas rotinas, em duas tarefas separadas
 
-Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A pesquisa do Radar é feita no navegador e não precisa de conector. Não chute uid.
+Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello. A Rotina B leva também o uid do conector do **Google Drive** (confira com `connector ensure`; se aparecer um cartão de autorização, pare e me mostre). A pesquisa do Radar é feita no navegador e não precisa de conector. Não chute uid.
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
@@ -182,22 +182,20 @@ Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), apli
 3. **Checador** grava `ficha.json`. Se vetar, comente o motivo, mova para "Vetado" e passe ao próximo card aprovado.
 4. **Roteirista**, depois **Diretor**, depois o **Roteirista** grava o `publicacao.json` (descrição, hashtags em alta pesquisadas no navegador e palavras-chave, seção "Publicação" do `AGENTS.md`), depois a **revisão de linguagem pelo Gemini** (obrigatória: roteiro, títulos das cenas e publicação, com o prompt e o `revisao_linguagem.json` da seção "Revisão de linguagem" do `AGENTS.md`), depois `validar` e depois **Revisor, etapa A**. Cada agente corrige no máximo duas vezes.
 5. `revisar`, depois **Revisor, etapa B**. Se houver correções, devolva a quem errou, rode `revisar` de novo e volte à etapa B. No máximo duas rodadas.
-6. Com o "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, não publique.
-7. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não publique nada. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
-8. **Publique `saida/video.mp4`:**
-   - em cada rede, use a `descricao` e as `hashtags` do `publicacao.json` (ou as de `por_plataforma`, quando houver): Reels no Instagram e no Facebook;
-   - no TikTok, só como rascunho e só se houver conector disponível;
-   - a narração é voz sintética: quando a plataforma oferecer a marcação de "conteúdo gerado por IA", ative;
-   - use o primeiro quadro do vídeo como capa (é o gancho na caixa azul).
-9. Mova o card para "Publicado" e comente os links, a duração e as duas fontes.
-10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_ig, link_fb, link_tt, status`.
-11. Envie um resumo com o vídeo, as fontes e as métricas do vídeo de ontem.
+6. Com o "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, não salve nada no Drive.
+7. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não salve nada no Drive. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
+8. **Salve no Google Drive, sem publicar em nenhuma rede.** O `render` deixa em `saida/entrega/` exatamente dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição pronta para colar, com as hashtags no fim (`<pasta>.txt`).
+   - Crie uma **pasta nova** para este vídeo dentro de `thebestnewsbr/videos/` no meu Drive, com o nome `AAAA-MM-DD - <título do card>`. Crie `thebestnewsbr/videos/` se ainda não existir.
+   - Envie para ela **só esses dois arquivos**, nada mais.
+9. Mova o card para "No Drive" e comente o link da pasta.
+10. Acrescente uma linha ao `log.csv` com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status`.
+11. Envie um resumo curto com o link da pasta no Drive.
 
 **Se "Aprovado" estiver vazio:** [MODO_AUTO]
 - Opção 1: não produza nada e me envie um aviso.
 - Opção 2: produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais, com a etiqueta "auto" e o fluxo completo.
 
-**Descrição e hashtags do post:** vêm do `publicacao.json`, montado pelo Roteirista e revisado pelo Gemini:
+**Descrição e hashtags (o `.txt` salvo no Drive):** vêm do `publicacao.json`, montado pelo Roteirista e revisado pelo Gemini:
 - as hashtags em alta são pesquisadas no TikTok Creative Center (Brasil, 7 dias) e na busca das redes, sempre com relação direta com o assunto;
 - a descrição abre com o gancho e uma palavra-chave e fecha com as fontes;
 - vale a identidade thebestnewsbr: no máximo um emoji e nunca no começo.
@@ -206,7 +204,8 @@ As regras completas estão na seção "Publicação" do `AGENTS.md`.
 
 ## Regras
 
-- Nada é publicado sem os dois "aprovado" do Revisor e sem `render` com `ok: true`.
+- **Nunca publique em rede social.** O destino é só o Google Drive.
+- Nada vai para o Drive sem os dois "aprovado" do Revisor e sem `render` com `ok: true`.
 - **Todo texto que o público lê ou ouve passa pelo Gemini antes:** narração, títulos das cenas, descrição e hashtags do post e títulos dos cards. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso. O Gemini simplifica a linguagem, mas não muda fatos nem números.
 - Não invente conector, conta nem credencial. Se faltar uma integração, use `connector ensure` e me devolva o cartão.
 - Nenhuma senha ou chave aparece no chat, no card, no repositório ou no `log.csv`.

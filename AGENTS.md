@@ -40,6 +40,7 @@ O que fica em `saida/`:
 - `folha.png` e `quadros/cenaNN.png`
 - `check.json`
 - `video.mp4`
+- `entrega/`: os dois arquivos que vão para o Google Drive (`<pasta>.mp4` e `<pasta>.txt`)
 
 ## Fluxo
 
@@ -53,7 +54,7 @@ O que fica em `saida/`:
 8. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
 9. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
 10. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
-11. Publique `saida/video.mp4` com a descrição e as hashtags do `publicacao.json`.
+11. **Não publique em rede nenhuma.** O `render` deixa em `saida/entrega/` só dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição com as hashtags (`<pasta>.txt`). Salve os dois numa pasta nova do Google Drive (`thebestnewsbr/videos/AAAA-MM-DD - <tema>`).
 
 ## Publicação: descrição, hashtags e palavras-chave (Roteirista)
 

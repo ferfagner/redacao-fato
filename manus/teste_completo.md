@@ -1,6 +1,6 @@
 # Teste completo no Manus: pesquisa real, sem publicar
 
-Cole o bloco entre as linhas numa tarefa nova do Manus. Ele roda o fluxo inteiro de um dia (Radar, Checador, Roteirista, Diretor, Revisor e render) com uma pauta real. Ele **não publica**, não cria perfis, não mexe no Trello e não agenda nada. No fim, entrega o vídeo e tudo o que foi produzido para você avaliar.
+Cole o bloco entre as linhas numa tarefa nova do Manus. Ele roda o fluxo inteiro de um dia (Radar, Checador, Roteirista, Diretor, Revisor e render) e salva o vídeo e a descrição numa pasta nova do seu Google Drive com uma pauta real. Ele **não publica**, não cria perfis, não mexe no Trello e não agenda nada. No fim, entrega o vídeo e tudo o que foi produzido para você avaliar.
 
 ---
 
@@ -125,16 +125,16 @@ Se precisar corrigir, ajuste e rode `revisar` de novo, no máximo 2 rodadas.
 
 Rode `python3 -m fato render pautas/teste-AAAA-MM-DD` e anote o tempo. Se `ok` vier `false`, me mostre os `problemas`.
 
-## 8. Não publique. Me entregue:
+## 8. Salve no Google Drive (sem publicar)
 
-1. A lista das 8 pautas do Radar, com notas, e qual foi escolhida e por quê.
-2. A ficha do Checador, com as duas URLs.
-3. O roteiro (texto dos 6 blocos) e a lista de cenas com as famílias usadas. Se usou fotos, o link de origem e a licença de cada uma.
-4. Os arquivos `saida/video.mp4`, `saida/folha.png` e `saida/legendas.srt`.
-5. O `saida/relatorio.json` do `revisar` e o do `render`.
-6. Quantas rodadas de correção houve em cada etapa e o que foi corrigido.
-7. Os tempos de `setup.sh`, `revisar` e `render`.
-8. O `publicacao.json` final, revisado pelo Gemini: a descrição pronta para colar, as hashtags, as palavras-chave e onde as hashtags em alta foram pesquisadas. Junto, a lista do que o Gemini sugeriu e quais sugestões você aceitou ou descartou.
+O `render` deixa em `pautas/teste-AAAA-MM-DD/saida/entrega/` exatamente dois arquivos:
+- o vídeo, `teste-AAAA-MM-DD.mp4`;
+- a descrição pronta para colar, com as hashtags no fim, `teste-AAAA-MM-DD.txt`.
+
+1. Habilite o conector do **Google Drive** com `connector ensure`. Se aparecer um cartão de autorização, pare e me mostre.
+2. No meu Drive, crie uma **pasta nova** dentro de `thebestnewsbr/videos/`, com o nome `AAAA-MM-DD - <tema do vídeo>`. Crie `thebestnewsbr/videos/` se ainda não existir.
+3. Envie para essa pasta **só esses dois arquivos**, nada mais.
+4. Me responda só com o link da pasta. Se algo falhar, mostre o erro.
 
 Não edite nada fora de `pautas/`, não escreva HTML e não troque de renderizador. Nenhuma senha ou chave pode aparecer na resposta.
 
