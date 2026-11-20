@@ -1,0 +1,68 @@
+{
+  "fato": "O Censo 2022 contou 203,1 milhões de habitantes, com crescimento médio de 0,52% ao ano desde 2010, o menor ritmo desde o primeiro recenseamento, em 1872.",
+  "numeros": [
+    {
+      "valor": "203,1",
+      "unidade": "milhões de habitantes",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "190,8",
+      "unidade": "milhões de habitantes",
+      "ano": 2010,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "6,5",
+      "unidade": "% de aumento entre 2010 e 2022",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "0,52",
+      "unidade": "% ao ano",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "1872",
+      "unidade": "ano do primeiro recenseamento",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "2",
+      "unidade": "filhos por mulher (fecundidade abaixo de 2)",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "6",
+      "unidade": "filhos por mulher nos anos 1960",
+      "ano": 1960,
+      "instituicao": "IBGE"
+    },
+    {
+      "valor": "44,4",
+      "unidade": "milhões de habitantes em São Paulo (mais de 1 em cada 5)",
+      "ano": 2022,
+      "instituicao": "IBGE"
+    }
+  ],
+  "fontes": [
+    {
+      "url": "https://censo2022.ibge.gov.br/",
+      "instituicao": "IBGE",
+      "ano": 2023
+    },
+    {
+      "url": "https://agenciabrasil.ebc.com.br/",
+      "instituicao": "Agência Brasil",
+      "ano": 2023
+    }
+  ],
+  "confianca": "alto",
+  "fonte_tela": "IBGE, Censo 2022",
+  "_obs": "PROTÓTIPO para testar mascote e mapas. Populações por UF do Censo 2022 arredondadas; URLs são páginas iniciais."
+}

@@ -27,7 +27,9 @@ Medido num notebook Windows: `revisar` leva cerca de 1 min e `render` cerca de 3
 
 - `fato/validar.py`: regras dos três arquivos. Cada erro diz para qual agente volta.
 - `fato/narrar.py`: voz por bloco, corte de silêncio, −16 LUFS e ajuste de velocidade (de −10% a +20%). Também calcula o tempo de cada palavra e liga cada cena à sua âncora.
-- `fato/familias.py`: as seis famílias de cena.
+- `fato/familias.py` e `fato/mapas.py`: as famílias de cena (seis básicas, mais mapa do Brasil e globo).
+- `fato/som.py`: efeitos sonoros e trilha (opcional, em `modelo/assets/trilhas/`).
+- `modelo/assets/lib/mascote.js` e `globo.js`: o mascote e o globo em Three.js. O globo usa a imagem Blue Marble da NASA, que é de domínio público, e a malha dos estados é a do IBGE.
 - `fato/gerar.py`: monta o projeto HyperFrames (fundo, cenas, legenda e barra de progresso).
 - `fato/__main__.py`: os comandos, a checagem, a folha de quadros e a conferência do vídeo.
 - `modelo/`: fontes e logo copiados para cada projeto.

@@ -1,9 +1,14 @@
 """Monta o projeto HyperFrames a partir das cenas, dos tempos e da narração."""
+import json
+import re
 import shutil
 from pathlib import Path
 
 from .comum import MODELO
 from .familias import FUNCOES, esc, js_destaque, placa_fonte
+from .mapas import GLOBO_JS, mapa_brasil, mapa_lugar
+
+TODAS = dict(FUNCOES, mapa_brasil=mapa_brasil, mapa_lugar=mapa_lugar)
 
 GSAP = '<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>'
 
@@ -66,21 +71,72 @@ FMT_JS = ("function fmt(v,c){const s=v.toFixed(c);const [i,d]=s.split('.');"
 def _cena_html(cid, s, tempo):
     p = cid
     dur = round(tempo["fim"] - tempo["ini"], 3)
-    corpo, css, js = FUNCOES[s["familia"]](p, s, tempo["ancora"], dur)
+    r = TODAS[s["familia"]](p, s, tempo["ancora"], dur)
+    corpo, css, js = r[:3]
+    modulo = r[3] if len(r) > 3 else None
     fon_html, fon_js = placa_fonte(p, s.get("fonte"))
     js += fon_js + js_destaque(p, tempo["destaque"])
     # saída: some no fim do slot (a próxima cena entra por cima)
     js += f'tl.fromTo("#{p}-wrap", {{opacity: 1}}, {{opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false}}, {max(0.3, dur - 0.22):.3f});\n'
+    extra, tipo = "", ""
+    if modulo is not None:  # cena com Three.js: módulo, registra o timeline depois de carregar
+        tipo = ' type="module"'
+        extra = GLOBO_JS.format(dados=json.dumps(modulo), p=p)
     return f"""<template>
   <style>{TOKENS}{CSS_CENA}{css}</style>
   <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920">
     <div id="{p}-wrap" class="wrap">{corpo}{fon_html}</div>
   </div>
-  <script>
+  <script{tipo}>
     {FMT_JS}
     const tl = gsap.timeline({{ paused: true }});
     {js}
+    {extra}
     window.__timelines["{cid}"] = tl;
+  </script>
+</template>
+"""
+
+
+def _mascote_html(cenas, tempos, narr):
+    """Mascote em cima das cenas e embaixo da legenda: lugar e pose por cena, boca pela fala."""
+    total = narr["total"]
+    lugares, poses = [], []
+    padrao = {"numero_heroi": "aponta", "dado_comparado": "aponta", "mapa_brasil": "aponta", "mapa_lugar": "aponta",
+              "citacao_fonte": "pensa", "objeto_profundidade": "fala", "tipo_cinetico": "fala"}
+    for i, (s, tp) in enumerate(zip(cenas, tempos)):
+        if i == 0:
+            lugar = [0, 540, 850, 0.95]           # grande, embaixo da caixa do gancho
+            pose = "surpreso"
+        elif i == len(cenas) - 1:
+            lugar = [tp["ini"], 540, 975, 0.72]    # fecho
+            pose = "comemora"
+        else:
+            lugar = [tp["ini"], 690, 985, 0.5]     # canto, entre a placa da fonte e a legenda
+            pose = padrao.get(s["familia"], "fala")
+        pose = (s.get("personagem") or {}).get("pose", pose)
+        if not lugares or lugares[-1][1:] != lugar[1:]:
+            lugares.append(lugar)
+        poses.append([round(tp["ini"] + max(0, tp["ancora"] - 0.1), 3) if i else 0, pose])
+    pal = [[w["ini"], w["fim"], max(1, min(4, len(re.findall(r"[aeiouáéíóúâêôãõà]+", w["texto"].lower()))))]
+           for w in narr["palavras"]]
+    dados = json.dumps({"lugares": lugares, "poses": poses, "palavras": pal})
+    return f"""<template>
+  <style>
+    #root{{position:absolute;inset:0;}}
+    #mascote-cv{{position:absolute;left:0;top:0;width:1080px;height:1920px;}}
+  </style>
+  <div id="root" data-composition-id="mascote" data-width="1080" data-height="1920">
+    <canvas id="mascote-cv" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script type="module">
+    import {{ criarMascote }} from "./assets/lib/mascote.js";
+    const m = await criarMascote(document.getElementById("mascote-cv"), {dados});
+    const tl = gsap.timeline({{ paused: true }});
+    const st = {{ t: 0 }};
+    tl.to(st, {{ t: {total}, duration: {total}, ease: "none", onUpdate: () => m.render(st.t) }}, 0);
+    m.render(0);
+    window.__timelines["mascote"] = tl;
   </script>
 </template>
 """
@@ -217,6 +273,8 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo=""):
         cid = f"c{s['id']:02d}"
         (projeto / "compositions" / f"{cid}.html").write_text(_cena_html(cid, s, tp), encoding="utf-8")
         host(cid, tp["ini"], round(tp["fim"] - tp["ini"], 3), 2, faixa=1)
+    (projeto / "compositions" / "mascote.html").write_text(_mascote_html(cenas, tempos, narr), encoding="utf-8")
+    host("mascote", 0, total, 4, faixa=5)
     leg_html, leg_linhas = _legenda_html(_grupos_legenda(narr["palavras"]), total)
     (projeto / "compositions" / "legenda.html").write_text(leg_html, encoding="utf-8")
     host("legenda", 0, total, 5, kind="captions", faixa=2)

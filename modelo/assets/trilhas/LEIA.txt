@@ -1,0 +1,2 @@
+Coloque aqui trilhas instrumentais com licença para redes sociais (mp3).
+O pipeline escolhe uma por vídeo e mistura baixo, por baixo da voz.

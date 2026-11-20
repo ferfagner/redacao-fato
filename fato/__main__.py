@@ -17,6 +17,7 @@ from pathlib import Path
 from .comum import Falha, duracao, ler_json, npx_hf, rodar, salvar_json
 from .gerar import gerar
 from .narrar import narrar, tempos_cenas
+from .som import escolher_trilha, eventos, mixar
 from .validar import validar_cenas, validar_ficha, validar_roteiro
 
 
@@ -94,15 +95,17 @@ def cmd_revisar(pasta: Path, saida: Path):
     av += narr.pop("avisos")
     tempos = tempos_cenas(cenas, narr)
     salvar_json(saida / "tempos.json", {"narracao": narr, "cenas": [dict(id=s["id"], **t) for s, t in zip(cenas, tempos)]})
+    mixado = saida / "trilha.wav"
+    som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name))
     projeto = saida / "projeto"
-    srt = gerar(projeto, cenas, tempos, narr, wav, titulo=tema)
+    srt = gerar(projeto, cenas, tempos, narr, mixado, titulo=tema)
     (saida / "legendas.srt").write_text(srt, encoding="utf-8")
     chk = _check(projeto)
     erros, avisos_chk = _resumo_check(chk)
     salvar_json(saida / "check.json", chk)
     folha = _folha(projeto, saida, cenas, tempos)
     return {"etapa": "revisar", "ok": not erros, "duracao_s": narr["total"], "velocidade_voz": narr["rate"],
-            "folha": "folha.png", "quadros": folha, "legendas": "legendas.srt",
+            "som": som, "folha": "folha.png", "quadros": folha, "legendas": "legendas.srt",
             "check_erros": erros, "check_avisos": avisos_chk, "avisos": av,
             "para_o_revisor": "Confira folha.png (uma imagem por cena), legendas.srt e as listas de avisos.",
             "tempo_s": round(time.time() - t0, 1)}

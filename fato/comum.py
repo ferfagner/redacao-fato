@@ -12,7 +12,11 @@ MODELO = RAIZ / "modelo"
 HF_VERSAO = "0.9.72"
 
 BLOCOS = ["gancho", "fato", "mecanismo", "virada", "ressalva", "chamada"]
-FAMILIAS = ["numero_heroi", "tipo_cinetico", "dado_comparado", "objeto_profundidade", "citacao_fonte", "fecho_chamada"]
+FAMILIAS = ["numero_heroi", "tipo_cinetico", "dado_comparado", "objeto_profundidade", "citacao_fonte", "fecho_chamada",
+            "mapa_brasil", "mapa_lugar"]
+POSES = ["fala", "aponta", "surpreso", "pensa", "comemora", "nega"]
+UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+       "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
 
 
 class Falha(Exception):

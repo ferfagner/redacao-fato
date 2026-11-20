@@ -4,7 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
-from .comum import BLOCOS, FAMILIAS, Falha, erro, norm, palavras
+from .comum import BLOCOS, FAMILIAS, POSES, UFS, Falha, erro, norm, palavras
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
 FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
@@ -124,6 +124,31 @@ def validar_cenas(c, roteiro, ficha):
             for it in comp:
                 if not it.get("rotulo") or _numero(it.get("valor")) is None:
                     e.append(erro("Diretor", "cada item de 'comparacao' precisa de 'rotulo' e 'valor' numérico", i))
+        if fam == "mapa_brasil":
+            m = s.get("mapa") or {}
+            vals, dests = m.get("valores") or {}, m.get("destaques") or ([m["destaque"]] if m.get("destaque") else [])
+            if not vals and not dests:
+                e.append(erro("Diretor", "mapa_brasil precisa de 'mapa' com 'valores' (UF: número) ou 'destaques' (lista de UFs)", i))
+            ruins = [u for u in list(vals) + list(dests) if str(u).upper() not in UFS]
+            if ruins:
+                e.append(erro("Diretor", f"UF desconhecida no mapa: {', '.join(map(str, ruins))}", i))
+            if any(_numero(v) is None for v in vals.values()):
+                e.append(erro("Diretor", "todo valor do mapa precisa ser numérico (ex.: \"44,4\")", i))
+            if vals:
+                tem_dado = True
+        if fam == "mapa_lugar":
+            lg = s.get("lugar") or {}
+            try:
+                ok = lg.get("nome") and -90 <= float(lg["lat"]) <= 90 and -180 <= float(lg["lon"]) <= 180
+            except (KeyError, TypeError, ValueError):
+                ok = False
+            if not ok:
+                e.append(erro("Diretor", "mapa_lugar precisa de 'lugar' com 'nome', 'lat' e 'lon' (graus decimais)", i))
+            elif len(str(lg["nome"])) > 24:
+                e.append(erro("Diretor", "o nome do lugar passa de 24 caracteres", i))
+        pers = s.get("personagem")
+        if pers and (pers.get("pose") not in POSES):
+            e.append(erro("Diretor", f"pose do personagem desconhecida: {pers.get('pose')} ({', '.join(POSES)})", i))
         if (tem_dado or fam == "citacao_fonte") and not s.get("fonte"):
             e.append(erro("Diretor", "cena com dado ou citação precisa de 'fonte'", i))
         if s.get("dado") and s["dado"].get("valor"):

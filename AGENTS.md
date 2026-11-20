@@ -125,6 +125,26 @@ As famílias e seus campos extras:
 | `objeto_profundidade` | objeto 3D girando com o título | `objeto`: `globo`, `cubo` ou `aneis` |
 | `citacao_fonte` | cartão com aspas e a fonte | o título é a citação |
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
+| `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
+| `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
+
+### Personagem (mascote)
+
+O mascote do thebestnewsbr é o quadro da logo com olhos, boca e braços. Ele narra o vídeo inteiro, mexendo a boca no tempo da fala.
+- Na cena 1 ele aparece grande e surpreso, logo abaixo da caixa do gancho.
+- Nas cenas do meio ele fica pequeno, entre a placa da fonte e a legenda.
+- No fecho ele comemora.
+
+A pose de cada cena é automática e muda na âncora: aponta para números e mapas, pensa nas citações e fala nas demais. Para trocar, use `"personagem": {"pose": "…"}`, com uma destas poses: `fala`, `aponta`, `surpreso`, `pensa`, `comemora` ou `nega`.
+
+### Som
+
+O código mistura sozinho:
+- a narração;
+- os efeitos sonoros: woosh nos cortes, pop quando um número ou pino aparece, clique nas barras e sino no fecho;
+- uma trilha, se houver alguma em `modelo/assets/trilhas/`. Ela abaixa quando a voz fala.
+
+O volume final fica em −16 LUFS. Os agentes não escolhem som.
 
 ## O que o código garante, e o Revisor não precisa medir
 
