@@ -4,7 +4,7 @@ import re
 import shutil
 from pathlib import Path
 
-from .comum import MODELO
+from .comum import MODELO, norm
 from .familias import FUNCOES, esc, js_destaque, placa_fonte
 from .mapas import GLOBO_JS, OBJETO_JS, mapa_brasil, mapa_lugar
 
@@ -137,14 +137,16 @@ def _mascote_html(cenas, tempos, narr):
             lugar = [tp["ini"], 540, 975, 0.72]    # fecho
             pose = "comemora"
         else:
-            lugar = [tp["ini"], 690, 985, 0.5]     # canto, entre a placa da fonte e a legenda
+            lugar = [tp["ini"], 735, 998, 0.62]    # canto, entre a placa da fonte e a legenda
             pose = padrao.get(s["familia"], "fala")
         pose = (s.get("personagem") or {}).get("pose", pose)
         if not lugares or lugares[-1][1:] != lugar[1:]:
             lugares.append(lugar)
         poses.append([round(tp["ini"] + max(0, tp["ancora"] - 0.1), 3) if i else 0, pose])
-    pal = [[w["ini"], w["fim"], max(1, min(4, len(re.findall(r"[aeiouáéíóúâêôãõà]+", w["texto"].lower()))))]
-           for w in narr["palavras"]]
+    pal = []
+    for w in narr["palavras"]:   # [ini, fim, sílabas, vogais] — a boca toma a forma de cada vogal
+        vog = "".join(g[0] for g in re.findall(r"[aeiou]+", norm(w["texto"])))
+        pal.append([w["ini"], w["fim"], max(1, min(5, len(vog))), vog[:5] or "a"])
     dados = json.dumps({"lugares": lugares, "poses": poses, "palavras": pal})
     return f"""<template>
   <style>

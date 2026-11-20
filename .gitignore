@@ -3,3 +3,4 @@ __pycache__/
 saida/
 pautas/*/saida/
 .hyperframes/
+ferramentas/saida_bancada/
