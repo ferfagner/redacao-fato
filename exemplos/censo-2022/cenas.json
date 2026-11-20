@@ -1,0 +1,157 @@
+{
+  "tema": "Censo 2022: o Brasil nunca cresceu tão devagar",
+  "cenas": [
+    {
+      "id": 1,
+      "bloco": "gancho",
+      "familia": "tipo_cinetico",
+      "titulo": [
+        "O BRASIL NUNCA",
+        "CRESCEU TÃO",
+        "DEVAGAR"
+      ],
+      "destaque": "DEVAGAR",
+      "duracao_estimada": 3.5
+    },
+    {
+      "id": 2,
+      "bloco": "fato",
+      "familia": "numero_heroi",
+      "titulo": [
+        "NO ÚLTIMO CENSO"
+      ],
+      "dado": {
+        "valor": "203",
+        "unidade": "milhões de pessoas",
+        "rotulo": "População em 2022"
+      },
+      "fonte": "IBGE, Censo 2022",
+      "ancora": "Censo",
+      "duracao_estimada": 4
+    },
+    {
+      "id": 3,
+      "bloco": "fato",
+      "familia": "dado_comparado",
+      "titulo": [
+        "SÓ 6,5% A MAIS",
+        "EM 12 ANOS"
+      ],
+      "destaque": "6,5%",
+      "comparacao": [
+        {
+          "rotulo": "2010",
+          "valor": "190,8",
+          "unidade": " mi"
+        },
+        {
+          "rotulo": "2022",
+          "valor": "203,1",
+          "unidade": " mi"
+        }
+      ],
+      "fonte": "IBGE, Censos 2010 e 2022",
+      "ancora": "seis",
+      "duracao_estimada": 4
+    },
+    {
+      "id": 4,
+      "bloco": "mecanismo",
+      "familia": "tipo_cinetico",
+      "titulo": [
+        "AS FAMÍLIAS",
+        "ENCOLHERAM"
+      ],
+      "destaque": "ENCOLHERAM",
+      "ancora": "famílias",
+      "duracao_estimada": 4
+    },
+    {
+      "id": 5,
+      "bloco": "mecanismo",
+      "familia": "tipo_cinetico",
+      "rotulo": "Fecundidade",
+      "titulo": [
+        "MENOS DE 2",
+        "FILHOS POR MULHER"
+      ],
+      "destaque": "2",
+      "dado": {
+        "valor": "2"
+      },
+      "fonte": "IBGE, Censo 2022",
+      "ancora": "menos",
+      "duracao_estimada": 5
+    },
+    {
+      "id": 6,
+      "bloco": "mecanismo",
+      "familia": "objeto_profundidade",
+      "objeto": "globo",
+      "titulo": [
+        "MAIS IDOSOS,",
+        "MENOS BEBÊS"
+      ],
+      "destaque": "IDOSOS",
+      "ancora": "vivem",
+      "duracao_estimada": 7
+    },
+    {
+      "id": 7,
+      "bloco": "mecanismo",
+      "familia": "tipo_cinetico",
+      "titulo": [
+        "UM PAÍS QUE",
+        "ENVELHECE RÁPIDO"
+      ],
+      "destaque": "ENVELHECE",
+      "ancora": "resultado",
+      "duracao_estimada": 4
+    },
+    {
+      "id": 8,
+      "bloco": "virada",
+      "familia": "numero_heroi",
+      "titulo": [
+        "O MENOR DESDE",
+        "1872"
+      ],
+      "destaque": "1872",
+      "dado": {
+        "valor": "0,52",
+        "unidade": "% ao ano",
+        "rotulo": "Crescimento"
+      },
+      "fonte": "IBGE, Censo 2022",
+      "ancora": "ritmo",
+      "duracao_estimada": 9
+    },
+    {
+      "id": 9,
+      "bloco": "ressalva",
+      "familia": "citacao_fonte",
+      "titulo": [
+        "A POPULAÇÃO AINDA",
+        "CRESCE, SÓ QUE",
+        "MAIS DEVAGAR"
+      ],
+      "destaque": "DEVAGAR",
+      "fonte": "IBGE, Censo 2022",
+      "ancora": "Isso",
+      "duracao_estimada": 7
+    },
+    {
+      "id": 10,
+      "bloco": "chamada",
+      "familia": "fecho_chamada",
+      "titulo": [
+        "MANDA PRA QUEM",
+        "AMA NÚMEROS"
+      ],
+      "destaque": "NÚMEROS",
+      "chamada": "Manda esse vídeo",
+      "ancora": "Manda",
+      "duracao_estimada": 4
+    }
+  ]
+}
