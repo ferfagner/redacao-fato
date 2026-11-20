@@ -169,3 +169,33 @@ def tempos_cenas(cenas, narr):
     if e:
         raise Falha("tempos", e)
     return out
+
+
+NUMEROS = {"zero", "um", "uma", "dois", "duas", "tres", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze",
+           "doze", "treze", "quatorze", "catorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove", "vinte",
+           "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa", "cem", "cento", "duzentos",
+           "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos", "mil",
+           "milhao", "milhoes", "bilhao", "bilhoes", "trilhao", "trilhoes", "metade", "dobro", "triplo"}
+
+
+def batidas(tempos, narr, passo=2.2, minimo=1.8):
+    """Momentos de "soco" visual dentro de cada cena (tempo relativo à cena), a cada ~2 s,
+    sempre numa palavra forte da fala (número ou palavra longa), para a tela nunca ficar parada."""
+    pals = narr["palavras"]
+    for tp in tempos:
+        a, b = tp["ini"] + tp["ancora"] + 1.0, tp["fim"] - 0.6
+        dentro = [p for p in pals if a <= p["ini"] <= b]
+        escolhidos, prox = [], a
+        while True:
+            janela = [p for p in dentro if prox <= p["ini"] <= prox + 1.2]
+            if not janela:
+                depois = [p for p in dentro if p["ini"] >= prox]
+                if not depois:
+                    break
+                janela = depois[:1]
+            forte = lambda p: (norm(p["texto"]) in NUMEROS) * 3 + (len(norm(p["texto"])) >= 8) * 2 + (len(norm(p["texto"])) >= 6)
+            p = max(janela, key=forte)
+            escolhidos.append(round(p["ini"] - tp["ini"], 3))
+            prox = p["ini"] + max(minimo, passo - 0.4)
+        tp["batidas"] = escolhidos
+    return tempos

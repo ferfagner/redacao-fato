@@ -76,8 +76,8 @@ def validar_roteiro(r):
 def validar_cenas(c, roteiro, ficha):
     e, av = [], []
     cenas = (c or {}).get("cenas") or []
-    if not 9 <= len(cenas) <= 11:
-        e.append(erro("Diretor", f"são {len(cenas)} cenas; o combinado é de 9 a 11"))
+    if not 9 <= len(cenas) <= 14:
+        e.append(erro("Diretor", f"são {len(cenas)} cenas; o combinado é de 9 a 14 (ideal: 11 a 13)"))
     texto_bloco = {b["id"]: " ".join(norm(w) for w in palavras(b["texto"])) for b in roteiro["blocos"]}
     numeros_ficha = " ".join(str(n.get("valor", "")) for n in ficha.get("numeros") or [])
     ultimo_bloco = 0

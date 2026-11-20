@@ -15,6 +15,8 @@ def eventos(cenas, tempos):
         ta = tp["ini"] + tp["ancora"]
         if i > 0:
             ev.append(("whoosh", max(0, tp["ini"] - 0.08), 0.22))
+        for bt in tp.get("batidas", []):              # tique discreto em cada "soco" de zoom
+            ev.append(("click", tp["ini"] + bt, 0.10))
         fam = s["familia"]
         if fam == "numero_heroi":
             ev.append(("pop", ta + 1.05, 0.30))          # o contador chega no valor

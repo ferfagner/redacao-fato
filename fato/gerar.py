@@ -62,7 +62,8 @@ CSS_CENA = """
 .fonte{position:absolute;left:120px;top:868px;background:var(--placa);border:2px solid var(--linha);border-radius:8px;padding:12px 20px;
   font-family:'JetBrains Mono',monospace;font-weight:500;font-size:28px;letter-spacing:.04em;color:var(--tinta);}
 .fonte .fk{color:var(--amarelo);font-weight:700;margin-right:8px;}
-.palco3d{position:absolute;inset:0;perspective:1600px;perspective-origin:540px 560px;}
+.pz{position:absolute;inset:0;transform-origin:540px 430px;}
+.palco3d{position:absolute;inset:0;perspective:1600px;perspective-origin:540px 560px;transform-origin:540px 430px;}
 .c3d{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:540px 560px;}
 .painel{position:absolute;left:84px;width:912px;top:262px;height:590px;border-radius:24px;overflow:hidden;
   background:linear-gradient(160deg,rgba(42,64,240,.22),rgba(26,26,38,.80) 45%,rgba(15,15,23,.88));
@@ -87,9 +88,15 @@ def _cena_html(cid, s, tempo):
     js += fon_js + js_destaque(p, tempo["destaque"])
     # cartão 3D: o conteúdo entra girando em perspectiva e depois flutua até o fim da cena
     painel = s["id"] != 1 and s["familia"] != "citacao_fonte"
-    corpo = (f'<div class="palco3d"><div id="{p}-c3d" class="c3d">'
+    corpo = (f'<div id="{p}-pz" class="pz"><div id="{p}-cam" class="palco3d"><div id="{p}-c3d" class="c3d">'
              + (f'<div class="painel"><div id="{p}-brilho" class="brilho"></div></div>' if painel else "")
-             + corpo + '</div></div>')
+             + corpo + '</div></div></div>')
+    # câmera: aproxima devagar a cena inteira (nunca fica parado)
+    js += f'tl.fromTo("#{p}-cam", {{scale: 1}}, {{scale: 1.06, duration: {dur:.2f}, ease: "none"}}, 0);\n'
+    # batidas: "soco" de zoom nas palavras fortes da fala, a cada ~2 s
+    for bt in tempo.get("batidas", []):
+        js += (f'tl.to("#{p}-pz", {{scale: 1.045, duration: 0.09, ease: "power2.out"}}, {bt:.3f});'
+               f'tl.to("#{p}-pz", {{scale: 1, duration: 0.32, ease: "power2.inOut"}}, {bt + 0.09:.3f});\n')
     lado = -1 if s["id"] % 2 else 1
     if s["id"] == 1:   # o gancho já está na tela no quadro 0 (é a capa)
         js += f'tl.fromTo("#{p}-c3d", {{rotationY: -14, rotationX: 8}}, {{rotationY: 0, rotationX: 0, duration: 0.9, ease: "power3.out"}}, 0);\n'
@@ -101,7 +108,8 @@ def _cena_html(cid, s, tempo):
            f'ease: "sine.inOut"}}, {ti});\n')
     if painel:
         js += f'tl.fromTo("#{p}-brilho", {{xPercent: -120}}, {{xPercent: 420, duration: 1.1, ease: "power2.inOut"}}, 0.35);\n'
-    # saída: some no fim do slot (a próxima cena entra por cima)
+    # saída: o cartão é empurrado para o lado do próximo e some (a próxima cena entra por cima)
+    js += (f'tl.fromTo("#{p}-pz", {{x: 0}}, {{x: {-170 * lado}, duration: 0.24, ease: "power2.in", immediateRender: false}}, {max(0.3, dur - 0.24):.3f});\n')
     js += f'tl.fromTo("#{p}-wrap", {{opacity: 1}}, {{opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false}}, {max(0.3, dur - 0.22):.3f});\n'
     extra, tipo = "", ""
     if modulo is not None:  # cena com Three.js: módulo, registra o timeline depois de carregar
@@ -197,21 +205,29 @@ def _legenda_html(grupos, total):
         for k, w in enumerate(ws):
             spans.append(f'<span id="lg{g}-{k}" class="lw">{esc(w["texto"])}</span>')
             prox = ws[k + 1]["ini"] if k + 1 < len(ws) else fim
+            # palavra falada: acende em amarelo e dá um "pulo" de escala (legenda cinética)
             js.append(f'tl.set("#lg{g}-{k}", {{color: "#ffd60a"}}, {w["ini"]:.3f});'
                       f'tl.set("#lg{g}-{k}", {{color: "#ffffff"}}, {prox:.3f});')
-        divs.append(f'<div id="lg{g}" class="grupo">{" ".join(spans)}</div>')
+            vai = min(0.08, (prox - w["ini"]) * 0.4)
+            volta = min(0.2, prox - w["ini"] - vai - 0.01)
+            if vai > 0.03 and volta > 0.03:   # o pulinho termina antes da próxima palavra
+                js.append(f'tl.fromTo("#lg{g}-{k}", {{scale: 1}}, {{scale: 1.1, duration: {vai:.3f}, ease: "power2.out", immediateRender: false}}, {w["ini"]:.3f});'
+                          f'tl.to("#lg{g}-{k}", {{scale: 1, duration: {volta:.3f}, ease: "power2.inOut"}}, {w["ini"] + vai:.3f});')
+        divs.append(f'<div id="lg{g}" class="grupo"><div id="lg{g}-in" class="gin">{" ".join(spans)}</div></div>')
         js.append(f'tl.set("#lg{g}", {{opacity: 1, visibility: "visible"}}, {ini:.3f});'
-                  f'tl.fromTo("#lg{g}", {{y: 14}}, {{y: 0, duration: 0.12, ease: "power2.out", immediateRender: false}}, {ini:.3f});'
+                  f'tl.fromTo("#lg{g}-in", {{y: 26, scale: 0.86}}, {{y: 0, scale: 1, duration: 0.16, ease: "back.out(2.2)", immediateRender: false}}, {ini:.3f});'
                   f'tl.set("#lg{g}", {{opacity: 0, visibility: "hidden"}}, {fim:.3f});')
     grupos_html = "".join(divs)
     return f"""<template>
   <style>
     @font-face{{font-family:'Archivo Narrow';src:url('assets/fonts/ArchivoNarrow-Bold.woff2') format('woff2');font-weight:700;}}
     #root{{position:absolute;inset:0;}}
-    .grupo{{position:absolute;left:120px;width:660px;top:1090px;text-align:center;opacity:0;visibility:hidden;
-      font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:66px;line-height:72px;text-transform:uppercase;
+    /* centralizada no quadro e presa pela base (y = 1208, acima do fim da área livre dos Reels) */
+    .grupo{{position:absolute;left:150px;width:780px;bottom:712px;text-align:center;opacity:0;visibility:hidden;
+      font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:68px;line-height:76px;text-transform:uppercase;
       color:#ffffff;-webkit-text-stroke:12px #000000;paint-order:stroke fill;}}
-    .lw{{display:inline-block;}}
+    .gin{{transform-origin:50% 100%;}}
+    .lw{{display:inline-block;transform-origin:50% 80%;margin:0 .05em;}}
   </style>
   <div id="root" data-composition-id="legenda" data-width="1080" data-height="1920">
     {grupos_html}

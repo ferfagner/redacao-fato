@@ -66,11 +66,12 @@ Escreva `roteiro.json` com os 6 blocos e as faixas de palavras do `AGENTS.md` (t
 - português do Brasil falado, frases curtas, sem jargão;
 - gancho sem pergunta;
 - números por extenso, como serão falados, sem parênteses;
+- retenção: o gancho abre uma pergunta que só se responde na virada, e o `mecanismo` e a `virada` começam com uma frase-ponte verdadeira que reabre a curiosidade ("Mas tem um detalhe.");
 - só o que está na ficha.
 
 ## 4. Diretor
 
-Escreva `cenas.json`, com 9 a 11 cenas:
+Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito é 9 e o máximo 14):
 - a cena 1 é `tipo_cinetico` do gancho e a última é `fecho_chamada`;
 - títulos em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras;
 - toda cena com número leva `fonte`;

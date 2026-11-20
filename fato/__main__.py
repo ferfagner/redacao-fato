@@ -16,7 +16,7 @@ from pathlib import Path
 
 from .comum import Falha, duracao, ler_json, npx_hf, rodar, salvar_json
 from .gerar import gerar
-from .narrar import narrar, tempos_cenas
+from .narrar import batidas, narrar, tempos_cenas
 from .som import escolher_trilha, eventos, mixar
 from .validar import validar_cenas, validar_ficha, validar_roteiro
 
@@ -63,6 +63,10 @@ def _resumo_check(dados):
     anda(dados)
     # o perfil não publica no YouTube Shorts: avisos só dele não contam
     avisos = [a for a in avisos if not re.search(r"safe area: YouTube Shorts \([^)]*\)\.?$", a)]
+    # a legenda fica centralizada por escolha do dono: a coluna de botões do TikTok pode cobrir a ponta direita
+    avisos = [a for a in avisos if not re.search(r"safe area: TikTok \(right edge\)(, YouTube Shorts \([^)]*\))?\.?$", a)]
+    # tamanho do arquivo da legenda é gerado pelo código, não é problema de quem revisa
+    avisos = [a for a in avisos if "HTML composition file has" not in a]
     return sorted(set(erros)), sorted(set(avisos))
 
 
@@ -93,7 +97,10 @@ def cmd_revisar(pasta: Path, saida: Path):
     wav = saida / "narracao.wav"
     narr = narrar(roteiro, saida / "voz", wav)
     av += narr.pop("avisos")
-    tempos = tempos_cenas(cenas, narr)
+    tempos = batidas(tempos_cenas(cenas, narr), narr)
+    for s_, tp in zip(cenas, tempos):
+        if tp["fim"] - tp["ini"] > 6.5:
+            av.append(f"cena {s_['id']} dura {tp['fim'] - tp['ini']:.1f} s: acima de 6,5 s o vídeo perde ritmo; vale dividir")
     salvar_json(saida / "tempos.json", {"narracao": narr, "cenas": [dict(id=s["id"], **t) for s, t in zip(cenas, tempos)]})
     mixado = saida / "trilha.wav"
     som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name))

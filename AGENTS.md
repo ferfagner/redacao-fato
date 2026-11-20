@@ -91,6 +91,10 @@ São seis blocos, nesta ordem e com estes ids. O total vai de 165 a 180 palavras
 ```
 
 - Escreva como se fala: os números vão por extenso ("duzentos e três milhões"), sem parênteses nem siglas soletradas.
+- **Retenção.** O vídeo precisa prender até o fim:
+  - o gancho abre uma pergunta que só se responde na virada (um "loop aberto");
+  - o `mecanismo` e a `virada` começam com uma frase-ponte que reabre a curiosidade, por volta de 15 s e de 35 s. Exemplos: "Mas tem um detalhe.", "E aqui vem a parte estranha.", "Só que ninguém conta isso.";
+  - a frase-ponte nunca pode mentir: o que ela promete aparece logo depois.
 - A voz começa na velocidade normal. Se o vídeo passar de 65 s, ela acelera até +20%. Se ainda assim não couber, o relatório pede o corte e diz quantas palavras tirar.
 
 ## cenas.json (Diretor)
@@ -108,7 +112,7 @@ São seis blocos, nesta ordem e com estes ids. O total vai de 165 a 180 palavras
 ```
 
 Regras que o validador confere:
-- De 9 a 11 cenas, com ids 1, 2, 3… e na ordem dos blocos. Todo bloco tem pelo menos uma cena.
+- De 9 a 14 cenas (ideal: **11 a 13**, de 3 a 6 s cada), com ids 1, 2, 3… e na ordem dos blocos. Todo bloco tem pelo menos uma cena. Cena acima de 6,5 s gera aviso, e acima de 9 s volta para o Diretor.
 - A cena 1 é `gancho` + `tipo_cinetico`: aparece na caixa azul já no primeiro quadro, que é a capa do vídeo. A última cena é `fecho_chamada`.
 - `titulo`: lista de até 3 linhas, cada uma com até 4 palavras e 22 caracteres, e no máximo 9 palavras no total. Escreva em caixa alta.
 - `destaque`: uma palavra do título, que fica em amarelo e pulsa quando é falada.
@@ -127,6 +131,16 @@ As famílias e seus campos extras:
 | `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
 | `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
+
+### Ritmo (automático)
+
+O código garante uma mudança visual a cada 2 a 3 segundos, sempre ligada à fala:
+- **batidas:** um "soco" de zoom nas palavras fortes (números e palavras longas), com um tique sonoro discreto;
+- **câmera:** aproxima devagar durante toda a cena;
+- **troca de cena:** o cartão é empurrado para o lado e o próximo entra girando;
+- **legenda cinética:** centralizada embaixo, a palavra falada acende em amarelo e dá um pulinho.
+
+O Diretor contribui com cenas curtas, de 3 a 6 s.
 
 ### Cartões 3D
 
