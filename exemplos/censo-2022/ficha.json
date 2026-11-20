@@ -58,5 +58,6 @@
   ],
   "confianca": "alto",
   "fonte_tela": "IBGE, Censo 2022",
-  "_obs": "EXEMPLO de teste do pipeline. As URLs são as páginas iniciais, não as matérias."
+  "_obs": "EXEMPLO de teste do pipeline. As URLs são as páginas iniciais, não as matérias.",
+  "categoria": "brasil"
 }

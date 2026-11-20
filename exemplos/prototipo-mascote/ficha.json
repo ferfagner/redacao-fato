@@ -64,5 +64,6 @@
   ],
   "confianca": "alto",
   "fonte_tela": "IBGE, Censo 2022",
-  "_obs": "PROTÓTIPO para testar mascote e mapas. Populações por UF do Censo 2022 arredondadas; URLs são páginas iniciais."
+  "_obs": "PROTÓTIPO para testar mascote e mapas. Populações por UF do Censo 2022 arredondadas; URLs são páginas iniciais.",
+  "categoria": "brasil"
 }

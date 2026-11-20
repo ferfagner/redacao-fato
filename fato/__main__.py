@@ -106,7 +106,7 @@ def cmd_revisar(pasta: Path, saida: Path):
             av.append(f"cena {s_['id']} dura {tp['fim'] - tp['ini']:.1f} s: acima de 6,5 s o vídeo perde ritmo; vale dividir")
     salvar_json(saida / "tempos.json", {"narracao": narr, "cenas": [dict(id=s["id"], **t) for s, t in zip(cenas, tempos)]})
     mixado = saida / "trilha.wav"
-    som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name))
+    som = mixar(wav, eventos(cenas, tempos), narr["total"], mixado, escolher_trilha(tema or pasta.name, ficha.get("categoria", "")))
     projeto = saida / "projeto"
     srt = gerar(projeto, cenas, tempos, narr, mixado, titulo=tema, pasta=pasta)
     (saida / "legendas.srt").write_text(srt, encoding="utf-8")

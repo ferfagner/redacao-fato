@@ -38,6 +38,8 @@ def validar_ficha(f):
         for campo in ("valor", "ano", "instituicao"):
             if not n.get(campo):
                 e.append(erro("Checador", f"número {i}: falta '{campo}' (número sem ano e instituição não passa)"))
+    if f.get("categoria") and str(f["categoria"]).lower() not in ("ciencia", "brasil", "tecnologia", "games", "mundo"):
+        e.append(erro("Checador", "categoria precisa ser: ciencia, brasil, tecnologia, games ou mundo"))
     if not f.get("fonte_tela"):
         e.append(erro("Checador", "falta 'fonte_tela' (ex.: \"IBGE, 2024\")"))
     if e:

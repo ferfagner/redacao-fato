@@ -64,11 +64,13 @@ O que fica em `saida/`:
     {"url": "https://… (outro domínio)", "instituicao": "…", "ano": 2023}
   ],
   "confianca": "alto",
-  "fonte_tela": "IBGE, Censo 2022"
+  "fonte_tela": "IBGE, Censo 2022",
+  "categoria": "brasil"
 }
 ```
 
 - Pauta vetada: `{"vetado": true, "motivo": "uma linha"}`.
+- `categoria` é uma destas: `ciencia`, `brasil`, `tecnologia`, `games` ou `mundo`. Ela vem do Radar e define a trilha musical do vídeo.
 - As duas fontes precisam ser de domínios diferentes.
 - Todo número precisa de valor, ano e instituição.
 
@@ -201,7 +203,7 @@ A pose de cada cena é automática e muda na âncora: aponta para números e map
 O código mistura sozinho:
 - a narração;
 - os efeitos sonoros: woosh nos cortes, pop quando um número ou pino aparece, clique nas barras e sino no fecho;
-- uma trilha, se houver alguma em `modelo/assets/trilhas/`. Ela abaixa quando a voz fala.
+- a trilha, escolhida pela `categoria` da ficha entre as faixas licenciadas de `modelo/assets/trilhas/` (veja o `LICENCAS.md`). Ela abaixa quando a voz fala.
 
 O volume final fica em −16 LUFS. Os agentes não escolhem som.
 

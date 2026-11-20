@@ -31,8 +31,21 @@ def eventos(cenas, tempos):
     return [(SFX / f"{n}.mp3", round(t, 3), v) for n, t, v in ev if (SFX / f"{n}.mp3").exists()]
 
 
-def escolher_trilha(semente: str):
-    lista = sorted(TRILHAS.glob("*.mp3"))
+# categoria da pauta -> pastas de trilha, em ordem de preferência
+POR_CATEGORIA = {"ciencia": ["ciencia", "tecnologia"], "tecnologia": ["tecnologia", "ciencia"],
+                 "brasil": ["brasil", "mundo"], "mundo": ["mundo", "brasil"], "games": ["games", "tecnologia"]}
+
+
+def escolher_trilha(semente: str, categoria: str = ""):
+    """Escolhe uma trilha da categoria da pauta (a mesma pauta sempre recebe a mesma trilha)."""
+    pastas = POR_CATEGORIA.get((categoria or "").strip().lower(), [])
+    lista = []
+    for p in pastas:
+        lista = sorted((TRILHAS / p).glob("*.mp3"))
+        if lista:
+            break
+    if not lista:
+        lista = sorted(TRILHAS.rglob("*.mp3"))
     if not lista:
         return None
     k = int(hashlib.sha1(semente.encode("utf-8")).hexdigest(), 16) % len(lista)
@@ -50,10 +63,13 @@ def mixar(voz: Path, evs, total, saida: Path, trilha: Path = None):
     n = len(evs) + 1
     if trilha:
         entradas += ["-stream_loop", "-1", "-i", trilha]
-        filtros.append(f"[{n}]aresample=48000,aformat=channel_layouts=stereo,volume=0.22,atrim=0:{total},"
+        # cada faixa é normalizada antes (as do banco têm volumes diferentes) para a trilha ficar
+        # ~12 LU abaixo da voz: presente, sem brigar com a fala
+        filtros.append(f"[{n}]aresample=48000,aformat=channel_layouts=stereo,atrim=0:{total + 1},"
+                       f"loudnorm=I=-27:TP=-5:LRA=11,aresample=48000,atrim=0:{total},"
                        f"afade=t=in:d=0.4,afade=t=out:st={max(0, total - 1.5)}:d=1.5[bgm0]")
-        # a voz abaixa a trilha (sidechain); a voz em si segue limpa
-        filtros.append("[bgm0][vozsc]sidechaincompress=threshold=0.03:ratio=8:attack=20:release=350[bgm]")
+        # a voz abaixa a trilha um pouco (sidechain suave); a voz em si segue limpa
+        filtros.append("[bgm0][vozsc]sidechaincompress=threshold=0.05:ratio=3:attack=20:release=400[bgm]")
         mix.append("[bgm]")
     filtros.append(f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0:dropout_transition=0,"
                    f"atrim=0:{total},loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[out]")

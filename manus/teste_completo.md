@@ -58,7 +58,7 @@ Monte a lista das 8 melhores, cada uma com título, categoria, veículo, URL, da
 
 Confirme o fato central em **duas fontes independentes, de domínios diferentes**, de preferência primárias (estudo, relatório oficial, dado de órgão público). Duas matérias que citam a mesma nota não contam como duas fontes. Todo número precisa de valor, ano e instituição.
 
-Grave `ficha.json` no formato do `AGENTS.md`. Se o fato não fechar, registre o motivo e volte ao passo 1 com a próxima pauta, no máximo 3 tentativas.
+Grave `ficha.json` no formato do `AGENTS.md`, com a `categoria` da pauta escolhida (ela define a trilha musical). Se o fato não fechar, registre o motivo e volte ao passo 1 com a próxima pauta, no máximo 3 tentativas.
 
 ## 3. Roteirista
 
