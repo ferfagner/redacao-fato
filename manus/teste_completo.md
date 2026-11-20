@@ -80,6 +80,12 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 - se fizer sentido, escolha a pose do mascote em `personagem`;
 - **fotos:** se o assunto for uma pessoa pública, um jogo, um filme ou um lugar, procure uma foto no navegador, só no Wikimedia Commons ou no kit de imprensa oficial, e salve em `imagens/`. Use a família `foto`, com `licenca`, `credito` e `url_origem`, como manda a seção "Fotos" do `AGENTS.md`. Foto do Google Imagens, de rede social, de jornal ou de banco de imagens é proibida. Se não achar foto liberada, siga sem foto.
 
+## 4b. Revisão de linguagem pelo Gemini (obrigatória)
+
+Escreva uma primeira versão da legenda do post (molde no passo 8). Depois mande ao Gemini, pela conexão da conta, o prompt da seção "Revisão de linguagem" do `AGENTS.md`, com o roteiro, os títulos das cenas e a legenda colados no fim. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso.
+
+Aplique as mudanças em `roteiro.json` e `cenas.json`, descartando as que mudarem fatos, números ou limites, e grave `revisao_linguagem.json` no formato do `AGENTS.md`. Sem esse arquivo, o `validar` não passa.
+
 ## 5. Validar e Revisor, etapa A
 
 Rode `python3 -m fato validar pautas/teste-AAAA-MM-DD`. Se der código 2, corrija o arquivo indicado em cada erro e rode de novo, no máximo 3 vezes.
@@ -119,7 +125,7 @@ Rode `python3 -m fato render pautas/teste-AAAA-MM-DD` e anote o tempo. Se `ok` v
 5. O `saida/relatorio.json` do `revisar` e o do `render`.
 6. Quantas rodadas de correção houve em cada etapa e o que foi corrigido.
 7. Os tempos de `setup.sh`, `revisar` e `render`.
-8. Uma sugestão de legenda para o post, neste molde (no máximo um emoji, nunca no começo):
+8. A legenda do post já revisada pelo Gemini (`legenda_post`), no molde abaixo (no máximo um emoji, nunca no começo), mais a lista de mudanças que o Gemini sugeriu e quais você aceitou ou descartou:
 
 ```
 {gancho}

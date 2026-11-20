@@ -173,19 +173,19 @@ Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
-Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
+Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Antes de criar os cards, passe os títulos e as descrições pelo Gemini para deixá-los simples e claros, sem mudar os fatos. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
 
 **Rotina B: tarefa "Produção Fato", todos os dias às 7h30 (America/Sao_Paulo).**
 
 1. Pegue o card mais antigo de "Aprovado" e mova para "Em produção".
 2. Prepare o repositório e a pasta da pauta, conforme o Contexto.
 3. **Checador** grava `ficha.json`. Se vetar, comente o motivo, mova para "Vetado" e passe ao próximo card aprovado.
-4. **Roteirista**, depois **Diretor**, depois `validar`, depois **Revisor, etapa A**. Cada agente corrige no máximo duas vezes.
+4. **Roteirista**, depois **Diretor**, depois a **revisão de linguagem pelo Gemini** (obrigatória: roteiro, títulos das cenas e legenda do post, com o prompt e o `revisao_linguagem.json` da seção "Revisão de linguagem" do `AGENTS.md`), depois `validar` e depois **Revisor, etapa A**. Cada agente corrige no máximo duas vezes.
 5. `revisar`, depois **Revisor, etapa B**. Se houver correções, devolva a quem errou, rode `revisar` de novo e volte à etapa B. No máximo duas rodadas.
 6. Com o "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, não publique.
 7. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não publique nada. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
 8. **Publique `saida/video.mp4`:**
-   - Reels no Instagram e no Facebook, com a legenda do molde abaixo;
+   - Reels no Instagram e no Facebook, com a `legenda_post` do `revisao_linguagem.json` (já revisada pelo Gemini, no molde abaixo);
    - no TikTok, só como rascunho e só se houver conector disponível;
    - a narração é voz sintética: quando a plataforma oferecer a marcação de "conteúdo gerado por IA", ative;
    - use o primeiro quadro do vídeo como capa (é o gancho na caixa azul).
@@ -212,6 +212,7 @@ Salva pra mostrar pra alguém 👀
 ## Regras
 
 - Nada é publicado sem os dois "aprovado" do Revisor e sem `render` com `ok: true`.
+- **Todo texto que o público lê ou ouve passa pelo Gemini antes:** narração, títulos das cenas, legenda do post e títulos dos cards. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso. O Gemini simplifica a linguagem, mas não muda fatos nem números.
 - Não invente conector, conta nem credencial. Se faltar uma integração, use `connector ensure` e me devolva o cartão.
 - Nenhuma senha ou chave aparece no chat, no card, no repositório ou no `log.csv`.
 - Não renderize vídeo nesta sessão, salvo um teste do exemplo: `python3 -m fato revisar exemplos/censo-2022`.

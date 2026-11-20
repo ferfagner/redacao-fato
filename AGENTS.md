@@ -46,12 +46,63 @@ O que fica em `saida/`:
 1. O **Checador** grava `ficha.json`.
 2. O **Roteirista** grava `roteiro.json`.
 3. O **Diretor** grava `cenas.json`.
-4. Rode `validar`. Se der código 2, devolva os erros e rode de novo, no máximo duas vezes por agente.
-5. **Revisor, etapa A:** lê a ficha, o roteiro e as cenas.
-6. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
-7. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
-8. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
-9. Publique `saida/video.mp4`.
+4. **Revisão de linguagem pelo Gemini** (obrigatória): o roteiro, os títulos das cenas e a legenda do post passam pelo Gemini, e o resultado fica em `revisao_linguagem.json`. Veja a seção "Revisão de linguagem".
+5. Rode `validar`. Se der código 2, devolva os erros e rode de novo, no máximo duas vezes por agente.
+6. **Revisor, etapa A:** lê a ficha, o roteiro e as cenas.
+7. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
+8. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
+9. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
+10. Publique `saida/video.mp4`, com a legenda do post que saiu da revisão do Gemini.
+
+## Revisão de linguagem (Gemini, obrigatória)
+
+Todo texto que o público vai ler ou ouvir passa pelo Gemini antes de virar vídeo: a narração (`roteiro.json`), os títulos e rótulos das cenas (`cenas.json`) e a legenda do post. O objetivo é que **qualquer pessoa entenda de primeira, ouvindo uma vez só**: do adolescente ao idoso, com qualquer escolaridade.
+
+**Como fazer:** mande ao Gemini, pela conexão da conta, o prompt abaixo com os textos colados no fim. Aplique as mudanças nos arquivos e grave `revisao_linguagem.json` na pasta da pauta. Se o Gemini sugerir algo que quebre uma regra (mudar um número, inventar um fato, passar do limite de palavras), descarte a sugestão e registre o motivo.
+
+```text
+Você revisa a linguagem de vídeos curtos de fatos para o público geral brasileiro: de adolescentes a idosos, com qualquer escolaridade. A pessoa vai OUVIR a narração uma vez só, no celular, e ler títulos curtos na tela.
+
+Reescreva o que for preciso para que qualquer pessoa entenda de primeira:
+- troque palavra difícil, técnica, estrangeira ou sigla por palavra do dia a dia; se o termo for essencial, explique em poucas palavras;
+- frases de até 15 palavras na narração, uma ideia por frase, na voz ativa;
+- sem gíria regional ou de nicho, sem ironia que possa ser mal entendida e sem duplo sentido;
+- números do jeito que se fala ("duzentos e três milhões"), sem parênteses;
+- não acrescente nem retire fatos, números, nomes, datas ou fontes;
+- mantenha o número de palavras de cada bloco da narração (no máximo 3 a mais ou a menos);
+- títulos com no máximo 4 palavras por linha, até 3 linhas e 9 palavras no total, em caixa alta;
+- legenda do post: frases curtas, no máximo um emoji e nunca no começo, com as fontes no fim.
+
+Responda só com JSON, neste formato:
+{"roteiro": {"gancho": "...", "fato": "...", "mecanismo": "...", "virada": "...", "ressalva": "...", "chamada": "..."},
+ "titulos": [{"cena": 1, "titulo": ["...", "..."]}],
+ "legenda_post": "...",
+ "mudancas": [{"onde": "roteiro.mecanismo", "antes": "...", "depois": "...", "motivo": "..."}],
+ "nota_clareza": 9}
+
+TEXTOS:
+<cole aqui o roteiro (6 blocos), os títulos de cada cena e a legenda do post>
+```
+
+**`revisao_linguagem.json`** (o validador confere):
+
+```json
+{
+  "ferramenta": "gemini",
+  "data": "2026-11-21",
+  "textos_revisados": ["roteiro", "titulos", "legenda_post"],
+  "nota_clareza": 9,
+  "legenda_post": "texto final da legenda do post",
+  "mudancas": [{"onde": "roteiro.mecanismo", "antes": "taxa de fecundidade", "depois": "número de filhos por mulher", "motivo": "termo técnico"}],
+  "descartadas": [{"sugestao": "...", "motivo": "mudava o número da ficha"}]
+}
+```
+
+O validador confere:
+- **Revisão registrada:** `ferramenta` é `gemini`, e `textos_revisados` inclui `roteiro`, `titulos` e `legenda_post`.
+- **Nota de clareza:** `nota_clareza` vai de 1 a 10. Abaixo de 7, volta para o Roteirista reescrever.
+- **Legenda do post:** existe, tem até 2.200 caracteres e no máximo um emoji, nunca no começo.
+- **Narração:** o próprio validador mede a facilidade de leitura (índice Flesch adaptado ao português). Frase com mais de 20 palavras gera aviso, e texto difícil volta para o Roteirista.
 
 ## ficha.json (Checador)
 

@@ -18,6 +18,7 @@ from .comum import Falha, duracao, ler_json, npx_hf, rodar, salvar_json
 from .gerar import gerar
 from .narrar import batidas, narrar, tempos_cenas
 from .som import escolher_trilha, eventos, mixar
+from .linguagem import legibilidade, validar_revisao
 from .validar import validar_cenas, validar_ficha, validar_roteiro
 
 
@@ -25,13 +26,19 @@ def _carregar(pasta: Path):
     ficha, roteiro, cenas = (ler_json(pasta / n) for n in ("ficha.json", "roteiro.json", "cenas.json"))
     validar_ficha(ficha)
     av = validar_roteiro(roteiro)
+    e_leg, av_leg, facilidade = legibilidade(roteiro)
+    if e_leg:
+        raise Falha("roteiro", e_leg, av_leg)
+    av += av_leg
     av += validar_cenas(cenas, roteiro, ficha, pasta)
-    return ficha, roteiro, cenas["cenas"], cenas.get("tema", ""), av
+    ling = validar_revisao(pasta)
+    ling["facilidade_leitura"] = facilidade
+    return ficha, roteiro, cenas["cenas"], cenas.get("tema", ""), av, ling
 
 
 def cmd_validar(pasta: Path, saida: Path):
-    *_, av = _carregar(pasta)
-    return {"etapa": "validar", "ok": True, "avisos": av}
+    *_, av, ling = _carregar(pasta)
+    return {"etapa": "validar", "ok": True, "linguagem": ling, "avisos": av}
 
 
 def _check(projeto: Path):
@@ -95,7 +102,7 @@ def _folha(projeto: Path, saida: Path, cenas, tempos):
 
 
 def cmd_revisar(pasta: Path, saida: Path):
-    ficha, roteiro, cenas, tema, av = _carregar(pasta)
+    ficha, roteiro, cenas, tema, av, ling = _carregar(pasta)
     t0 = time.time()
     wav = saida / "narracao.wav"
     narr = narrar(roteiro, saida / "voz", wav)
@@ -115,7 +122,7 @@ def cmd_revisar(pasta: Path, saida: Path):
     salvar_json(saida / "check.json", chk)
     folha = _folha(projeto, saida, cenas, tempos)
     return {"etapa": "revisar", "ok": not erros, "duracao_s": narr["total"], "velocidade_voz": narr["rate"],
-            "som": som, "folha": "folha.png", "quadros": folha, "legendas": "legendas.srt",
+            "linguagem": ling, "som": som, "folha": "folha.png", "quadros": folha, "legendas": "legendas.srt",
             "check_erros": erros, "check_avisos": avisos_chk, "avisos": av,
             "para_o_revisor": "Confira folha.png (uma imagem por cena), legendas.srt e as listas de avisos.",
             "tempo_s": round(time.time() - t0, 1)}
