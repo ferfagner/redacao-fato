@@ -50,7 +50,7 @@ Instrução: você encontra o que merece virar vídeo. Todo dia é um tema novo.
 **Como pesquisar.** Pesquise **pelo navegador**, sem conector e sem login: busca do Google, Google Notícias e YouTube abertos como páginas comuns.
 - O **YouTube** serve para descobrir o que o público está procurando: vídeos em alta, buscas por categoria e quantas visualizações os vídeos sobre o tema tiveram nas últimas 24 a 48 horas. Ele mede o interesse, mas **não é fonte do fato**. Nunca baixe nem use trechos, imagens ou áudio de vídeos do YouTube.
 - O **Google** serve para achar a origem: a matéria, o comunicado ou o estudo.
-- O **Gemini**, se estiver disponível nesta conta, pode resumir e agrupar as candidatas. Mesmo assim, toda pauta precisa de uma URL de origem que você mesmo abriu no navegador.
+- O **Gemini** pode ser usado sempre que ajudar: resumir, agrupar candidatas, comparar fontes ou traduzir um estudo em inglês. Ele ajuda, mas não confirma: toda pauta e todo número precisam de uma URL de origem que você mesmo abriu no navegador.
 
 Se uma página pedir login, cookie pago ou CAPTCHA, pule essa página e siga com outra fonte. Não crie conta e não peça conector para pesquisa.
 
