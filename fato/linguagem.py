@@ -2,6 +2,7 @@
 import re
 from pathlib import Path
 
+from . import plataformas
 from .comum import Falha, erro, ler_json, norm
 
 IFL_MIN_TOTAL = 60     # abaixo disso o roteiro volta para o Roteirista
@@ -100,6 +101,9 @@ def _descricao(txt, onde, chaves, e, av):
     if not 80 <= len(txt) <= 2200:
         e.append(erro("Roteirista", f"{onde}: a descrição tem {len(txt)} caracteres; o combinado é de 80 a 2.200"))
         return
+    pe, pa = plataformas.checar(txt, onde)
+    e += [erro("Roteirista", m) for m in pe]
+    av += pa
     primeira = txt.splitlines()[0]
     if len(primeira) > 125:
         av.append(f"{onde}: a primeira linha passa de 125 caracteres; ela é o que aparece antes do \"mais\"")

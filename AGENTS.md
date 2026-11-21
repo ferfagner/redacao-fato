@@ -78,7 +78,7 @@ Proibido:
 **3. Escreva a descrição:**
 1. **Primeira linha**, com até 125 caracteres, que é o que aparece antes do "mais": o gancho com uma palavra-chave.
 2. **De 2 a 3 frases curtas** contando o fato em linguagem simples, com o dado principal.
-3. **Uma pergunta ou chamada** que puxe comentário ou salvamento, sem prometer o que o vídeo não entrega.
+3. **Uma pergunta de verdade sobre o assunto** ("Qual desses números te surpreendeu?"). Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra: veja "Regras das plataformas".
 4. **`Fontes: …`** no fim.
 
 Use no máximo um emoji, nunca no começo, e sem hashtag no meio do texto.
@@ -91,7 +91,7 @@ Use no máximo um emoji, nunca no começo, e sem hashtag no meio do texto.
 
 Somos 203 milhões de pessoas, só 6,5% a mais que em 2010. As famílias encolheram e o país está envelhecendo.
 
-Você sabia disso? Salva pra mostrar pra alguém 👀
+Você sabia disso? Qual número mais te surpreendeu? 👀
 
 Fontes: IBGE; Agência Brasil",
   "hashtags": ["#thebestnewsbr", "#censo2022", "#ibge", "#curiosidades", "#brasil"],
@@ -110,6 +110,49 @@ O validador confere:
 - são de 3 a 6 hashtags, com `#thebestnewsbr`, sem as genéricas proibidas e sem repetição;
 - são de 3 a 6 palavras-chave;
 - `fonte_hashtags` informa onde e quando as hashtags foram pesquisadas.
+
+## Regras das plataformas (TikTok e Instagram)
+
+Vale para tudo o que o público lê ou ouve: narração, títulos das cenas, texto do botão da chamada e descrição. O TikTok e o Instagram tiram do "Para você" e do "Explorar" o que quebra estas regras, recusam como anúncio quando o vídeo é impulsionado e, se acontecer de novo, deixam a conta inteira sem recomendação por um tempo. Exemplo real: o texto "MANDA PRA QUEM PROCURA EMPREGO MANDA ESSE VÍDEO" foi barrado no anúncio porque parecia oferta de vaga sem dizer qual vaga, quanto paga e como se inscrever.
+
+**1. Sem isca de engajamento.** Proibido pedir interação para ganhar alcance:
+- mandar ou compartilhar ("manda pra quem…", "manda esse vídeo", "compartilha com…");
+- marcar alguém ("marca aquele amigo…");
+- curtir, salvar ou comentar uma palavra combinada ("curte se…", "salva pra depois", "comenta SIM");
+- prometer continuação para ganhar seguidor ("segue pra parte 2") e "link na bio".
+
+Pode: uma pergunta de verdade sobre o assunto ("Qual desses números te surpreendeu?", "Você já sabia disso?") ou a frase da marca, "Um fato novo por dia".
+
+**2. Notícia não é oferta.** Em assunto de emprego, renda, crédito, benefício, aposentadoria, imposto ou prêmio:
+- fale do dado, nunca com o público como se o vídeo oferecesse algo ("quem procura emprego", "quem precisa de dinheiro", "vagas abertas", "dinheiro esquecido", "saque já", "receba até", "garanta o seu");
+- se o fato envolver um direito ou um serviço, diga onde conferir na fonte oficial ("confira no site do governo"), sem prometer que a pessoa vai receber.
+
+**3. Sem manchete que o vídeo não sustenta.** Nada de "URGENTE", "CHOCANTE", "BOMBA", "ninguém te conta", "a mídia esconde". O gancho promete só o que o fato entrega. Todo número tem fonte e ano.
+
+**4. Assuntos sensíveis.**
+- **Política e eleições:** sem opinião, sem pedir voto e sem apoiar lado. O TikTok proíbe impulsionar conteúdo político, e a Meta exige autorização para anúncio de política ou tema social. Vídeo desse tipo leva o aviso "não impulsionar" (veja abaixo).
+- **Saúde e finanças:** informe, nunca recomende tratamento, remédio, investimento ou aposta.
+- **Tragédia, crime e guerra:** sem imagem chocante, sem ferido nem morto e sem criança em destaque.
+
+**5. Conteúdo original.**
+- Nunca use vídeo do TikTok, do Instagram ou do YouTube, nem vídeo com marca-d'água de outra rede (o validador recusa).
+- A narração, a montagem e os dados são nossos; o b-roll é só fundo.
+
+**6. Rótulo de IA.**
+- Se o vídeo usar imagem realista feita por IA, avise "marcar como conteúdo de IA ao postar".
+- Ilustração e mascote não precisam de rótulo.
+
+**Avisos para quem posta.** Quando couber, o Roteirista grava em `publicacao.json` a lista `"avisos_postagem"` (ex.: `["não impulsionar: assunto político", "marcar como conteúdo de IA"]`). Ela não entra no `.txt`; o Coordenador copia os avisos no card do Trello, na entrega.
+
+**O validador barra os itens 1 e 2 sozinho** (`fato/plataformas.py`): o erro volta para o Roteirista ou para o Diretor com o trecho que quebrou a regra. Os termos do item 3 viram aviso para o Revisor. O resto é conferido pelo Revisor, na etapa A.
+
+Fontes, conferidas em 21/11/2026:
+- [Diretrizes do TikTok, Integridade e autenticidade](https://www.tiktok.com/community-guidelines/en/integrity-authenticity/);
+- [política de anúncios do TikTok sobre conteúdo enganoso](https://ads.tiktok.com/help/article/tiktok-ads-policy-misleading-and-false-content);
+- [política de anúncios do TikTok sobre emprego](https://ads.tiktok.com/help/article/housing-employment-credit-hec-ad-policy);
+- [recomendações do Instagram](https://creators.instagram.com/blog/instagram-recommendations-eligibility-tips-creators);
+- [conteúdo que a Meta distribui menos](https://transparency.meta.com/enforcement/taking-action/lowering-distribution-of-problematic-content/);
+- [padrões de anúncio da Meta sobre oportunidade irreal](https://transparency.meta.com/policies/ad-standards/deceptive-content/unrealistic-outcomes).
 
 ## Revisão de linguagem (Gemini, obrigatória)
 
@@ -192,7 +235,7 @@ São seis blocos, nesta ordem e com estes ids. O total vai de 165 a 180 palavras
 | `mecanismo` | 66 a 74 | o porquê |
 | `virada` | 26 a 32 | o que quase ninguém sabe |
 | `ressalva` | 20 a 26 | o limite do dado |
-| `chamada` | 8 a 12 | pedido para enviar ou salvar |
+| `chamada` | 8 a 12 | pergunta sobre o assunto ou "um fato novo por dia"; nunca pedido de envio, curtida, marcação ou salvamento (veja "Regras das plataformas") |
 
 ```json
 {"blocos": [{"id": "gancho", "texto": "…"}, {"id": "fato", "texto": "…"}, {"id": "mecanismo", "texto": "…"},

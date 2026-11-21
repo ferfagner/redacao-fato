@@ -87,7 +87,7 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 Siga a seção "Publicação" do `AGENTS.md`:
 1. Pesquise **no navegador, sem login**, as hashtags em alta: TikTok Creative Center (Hashtags populares, Brasil, 7 dias), a busca do TikTok e do Instagram, e o Google Trends (Brasil, 7 dias).
 2. Escolha de 3 a 6 hashtags: `#thebestnewsbr`, mais as do assunto e da categoria, e no máximo uma em alta com relação direta. Nada de `#fyp`, `#viral` e similares.
-3. Escreva a descrição: primeira linha com o gancho e uma palavra-chave, de 2 a 3 frases simples com o dado, uma chamada para comentar ou salvar e as fontes no fim.
+3. Escreva a descrição: primeira linha com o gancho e uma palavra-chave, de 2 a 3 frases simples com o dado, uma pergunta de verdade sobre o assunto (sem pedir para mandar, compartilhar, marcar, curtir ou salvar) e as fontes no fim.
 4. Escolha de 3 a 6 palavras-chave de busca.
 5. Grave tudo em `publicacao.json`.
 

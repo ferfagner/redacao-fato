@@ -101,6 +101,11 @@ Instrução: você transforma a ficha numa narração de **165 a 180 palavras**,
 - Escreva os números por extenso, como serão falados, sem parênteses.
 - **Retenção:** o gancho abre uma pergunta que só se responde na virada. O `mecanismo` e a `virada` começam com uma frase-ponte que reabre a curiosidade ("Mas tem um detalhe.", "E aqui vem a parte estranha."), sempre verdadeira.
 - Use só o que está na ficha.
+- **Regras das plataformas (seção do `AGENTS.md`):**
+  - a `chamada` é uma pergunta de verdade sobre o assunto ("Qual desses números te surpreendeu?") ou "Um fato novo por dia". Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra.
+  - Em emprego, renda, crédito ou benefício, fale do dado, nunca com o público como se fosse oferta ("quem procura emprego", "vagas abertas", "dinheiro esquecido").
+  - Sem "URGENTE", "CHOCANTE" ou "ninguém te conta".
+  - Vale também para a descrição do post. Quando o assunto for político ou o vídeo usar imagem realista de IA, preencha `avisos_postagem` no `publicacao.json`.
 
 Antes de escrever, leia `ganchos`, `teste_da_semana` e `aprendizados` em `estrategia/estrategia.json` do repositório e prefira o tipo de gancho que está funcionando, sem quebrar as regras acima. Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa só no bloco indicado.
 
@@ -111,6 +116,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - A cena 1 é o gancho (`tipo_cinetico`) e a última é `fecho_chamada`.
 - O título vai em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras.
 - O destaque é uma palavra do título.
+- Títulos e texto do botão da chamada seguem as "Regras das plataformas" do `AGENTS.md`. O título do fecho repete a pergunta da chamada, nunca um pedido de envio.
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
 - Leia `cenas` e `teste_da_semana` em `estrategia/estrategia.json` do repositório e prefira as famílias que estão funcionando, sem deixar de cumprir as regras do `AGENTS.md`.
@@ -126,7 +132,13 @@ Etapa A (ficha, roteiro e cenas):
 - toda cena com dado tem fonte;
 - não há erro de português;
 - toda cena (menos a `foto`) tem vídeo de fundo com licença e `url_origem`, e o total passa de 4 trechos;
-- o gancho promete o que o vídeo entrega.
+- o gancho promete o que o vídeo entrega;
+- nada quebra as "Regras das plataformas" do `AGENTS.md`:
+  - sem isca de engajamento;
+  - notícia de emprego, renda ou benefício não parece oferta;
+  - sem manchete exagerada;
+  - política sem lado, e saúde e finanças sem recomendação;
+  - os `avisos_postagem` estão preenchidos quando cabem.
 
 Etapa B (`saida/folha.png`, `saida/legendas.srt` e `saida/relatorio.json`):
 - a leitura de cada cena está clara;
@@ -193,7 +205,7 @@ Clone o repositório (como no Contexto), leia `estrategia/estrategia.json` e o `
 8. **Salve no Google Drive, sem publicar em nenhuma rede.** O `render` deixa em `saida/entrega/` exatamente dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição pronta para colar, com as hashtags no fim (`<pasta>.txt`).
    - Crie uma **pasta nova** para este vídeo dentro de `thebestnewsbr/videos/` no meu Drive, com o nome `AAAA-MM-DD - <título do card>`. Crie `thebestnewsbr/videos/` se ainda não existir.
    - Envie para ela **só esses dois arquivos**, nada mais.
-9. Mova o card para "No Drive" e comente o link da pasta.
+9. Mova o card para "No Drive" e comente o link da pasta e, se houver, os `avisos_postagem` do `publicacao.json` (ex.: "não impulsionar: assunto político").
 10. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana`.
    - `familias`: as famílias das cenas separadas por `;`.
    - `gancho_tipo`: um destes: `numero` (abre com um número), `contraste` (algo que parece errado ou ao contrário), `segredo` (algo escondido ou pouco conhecido), `superlativo` (o maior, o primeiro, o único), `comparacao` (um contra o outro) ou `outro`.
@@ -206,7 +218,8 @@ Clone o repositório (como no Contexto), leia `estrategia/estrategia.json` e o `
 **Descrição e hashtags (o `.txt` salvo no Drive):** vêm do `publicacao.json`, montado pelo Roteirista e revisado pelo Gemini:
 - as hashtags em alta são pesquisadas no TikTok Creative Center (Brasil, 7 dias) e na busca das redes, sempre com relação direta com o assunto;
 - a descrição abre com o gancho e uma palavra-chave e fecha com as fontes;
-- vale a identidade thebestnewsbr: no máximo um emoji e nunca no começo.
+- vale a identidade thebestnewsbr: no máximo um emoji e nunca no começo;
+- seguem as "Regras das plataformas" do `AGENTS.md`: sem pedir envio, curtida, marcação ou salvamento e sem parecer oferta.
 
 As regras completas estão na seção "Publicação" do `AGENTS.md`.
 
@@ -214,6 +227,11 @@ As regras completas estão na seção "Publicação" do `AGENTS.md`.
 
 - **Nunca publique em rede social.** O destino é só o Google Drive.
 - Nada vai para o Drive sem os dois "aprovado" do Revisor e sem `render` com `ok: true`.
+- **Regras do TikTok e do Instagram** (seção "Regras das plataformas" do `AGENTS.md`):
+  - nada de isca de engajamento ("manda pra quem…", "compartilha", "marca alguém", "comenta SIM", "salva pra depois");
+  - notícia não é oferta de vaga, renda ou benefício;
+  - sem manchete exagerada.
+  - O `validar` barra as duas primeiras. Não tente contornar com outra grafia: reescreva.
 - **Todo texto que o público lê ou ouve passa pelo Gemini antes:** narração, títulos das cenas, descrição e hashtags do post e títulos dos cards. O objetivo é que qualquer pessoa entenda de primeira, do adolescente ao idoso. O Gemini simplifica a linguagem, mas não muda fatos nem números.
 - Não invente conector, conta nem credencial. Se faltar uma integração, use `connector ensure` e me devolva o cartão.
 - Nenhuma senha ou chave aparece no chat, no card, no repositório ou no `log.csv`.

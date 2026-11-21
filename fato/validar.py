@@ -4,6 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
+from . import plataformas
 from .comum import OBJETOS_3D, BLOCOS, modelos_reais, FAMILIAS, LICENCAS_IMAGEM, LICENCAS_VIDEO, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
@@ -61,6 +62,9 @@ def validar_roteiro(r):
             e.append(erro("Roteirista", f"bloco '{b['id']}' tem {n} palavras; o combinado é {lo} a {hi}"))
         elif n < lo or n > hi:
             av.append(f"bloco '{b['id']}' tem {n} palavras (faixa {lo} a {hi})")
+        pe, pa = plataformas.checar(b.get("texto", ""), f"bloco '{b['id']}'")
+        e += [erro("Roteirista", m) for m in pe]
+        av += pa
         if "(" in b.get("texto", ""):
             e.append(erro("Roteirista", f"bloco '{b['id']}': tire os parênteses, a voz lê tudo o que está escrito"))
         if re.search(r"\d", b.get("texto", "")):
@@ -195,6 +199,11 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
         if not tit or not all(isinstance(x, str) and x.strip() for x in tit):
             e.append(erro("Diretor", "falta 'titulo' (lista de linhas)", i))
             continue
+        for txt, onde in ((" ".join(tit), "título"), (s.get("chamada"), "texto do botão da chamada")):
+            if txt:
+                pe, pa = plataformas.checar(txt, onde)
+                e += [erro("Diretor", m, i) for m in pe]
+                av += [f"cena {i}: {m}" for m in pa]
         if len(tit) > 3:
             e.append(erro("Diretor", f"título com {len(tit)} linhas; o máximo é 3", i))
         for ln in tit:

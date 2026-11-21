@@ -355,12 +355,12 @@
       "bloco": "chamada",
       "familia": "fecho_chamada",
       "titulo": [
-        "MANDA PRA QUEM",
-        "AMA NÚMEROS"
+        "QUAL NÚMERO",
+        "TE SURPREENDEU?"
       ],
-      "destaque": "NÚMEROS",
-      "chamada": "Manda esse vídeo",
-      "ancora": "Manda",
+      "destaque": "NÚMERO",
+      "chamada": "Um fato novo por dia",
+      "ancora": "Qual",
       "broll": [
         {
           "arquivo": "videos/pedestres.mp4",
