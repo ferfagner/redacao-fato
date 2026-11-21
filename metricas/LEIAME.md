@@ -12,6 +12,12 @@ Leva uns 30 a 40 minutos, uma vez só. Faça na ordem.
 
 ## Parte 1: a planilha e o script (10 min)
 
+> **Atalho (feito em 20/11/2026):** a planilha e o script foram criados pelo `clasp`, a ferramenta oficial do Google, a partir de `metricas/coletor.gs` e `metricas/appsscript.json`:
+> `npx @google/clasp@3.4.1 create-script --type sheets --title "thebestnewsbr - Métricas"`, depois `push` e `create-deployment`.
+> Com esse caminho, a URL de retorno é preenchida sozinha. **As chaves entram pelo menu da planilha: Métricas > Configurar chaves**, sem abrir as Propriedades do script.
+> Para atualizar o script depois de mudar o `coletor.gs`: `clasp push` e `clasp create-deployment --deploymentId <id>`, para manter a mesma URL.
+
+
 1. No Google Drive, abra a pasta `thebestnewsbr` e crie uma planilha chamada **`thebestnewsbr - Métricas`**. O nome precisa ser exatamente esse, porque o Analista procura por ele.
 2. Na planilha: **Extensões > Apps Script**.
 3. Apague o que estiver no editor, cole todo o conteúdo de `metricas/coletor.gs` e clique em **Salvar**. Dê ao projeto o nome "Métricas".

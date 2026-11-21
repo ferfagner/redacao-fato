@@ -30,10 +30,38 @@ const TT_ESCOPOS = ['user.info.basic', 'video.list'];
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Métricas')
+    .addItem('Configurar chaves', 'configurarChaves')
     .addItem('Coletar agora', 'coletar')
     .addItem('Ligar a coleta diária (6h)', 'ligarColetaDiaria')
     .addItem('Mostrar link para conectar as redes', 'mostrarLinkConexao')
     .addToUi();
+}
+
+const CHAVES = [
+  ['TIKTOK_CLIENT_KEY', 'Client key do app do TikTok'],
+  ['TIKTOK_CLIENT_SECRET', 'Client secret do app do TikTok'],
+  ['META_APP_ID', 'ID do app da Meta'],
+  ['META_APP_SECRET', 'Chave secreta do app da Meta'],
+  ['META_CONFIG_ID', 'ID da configuração do Login do Facebook para Empresas (opcional)'],
+  ['PAGINA', 'Nome da página do Facebook (opcional, só se tiver mais de uma)'],
+];
+
+/** Pede cada chave numa janelinha e guarda nas propriedades do script (ninguém mais vê). */
+function configurarChaves() {
+  const ui = SpreadsheetApp.getUi();
+  for (const [k, desc] of CHAVES) {
+    const tem = prop(k) ? ' (já preenchida; deixe em branco para manter)' : '';
+    const r = ui.prompt('Configurar chaves', desc + tem + ':', ui.ButtonSet.OK_CANCEL);
+    if (r.getSelectedButton() !== ui.Button.OK) break;
+    const v = r.getResponseText().trim();
+    if (v) props().setProperty(k, v);
+  }
+  ui.alert('Chaves guardadas. Agora use Métricas > Mostrar link para conectar as redes.');
+}
+
+/** URL de retorno do login: a do app da Web deste script (ou a da propriedade REDIRECT_URI). */
+function retorno() {
+  return props().getProperty('REDIRECT_URI') || ScriptApp.getService().getUrl() || '';
 }
 
 function ligarColetaDiaria() {
@@ -43,9 +71,9 @@ function ligarColetaDiaria() {
 }
 
 function mostrarLinkConexao() {
-  const url = prop('REDIRECT_URI');
+  const url = retorno();
   avisar(url ? 'Abra este link no navegador (logado na sua conta Google):\n\n' + url
-    : 'Falta a propriedade REDIRECT_URI. Veja o passo a passo em metricas/LEIAME.md.');
+    : 'O script ainda não foi publicado como app da Web. Veja o passo a passo em metricas/LEIAME.md.');
 }
 
 function avisar(msg) {
@@ -71,8 +99,8 @@ function pagina(html) {
 }
 
 function inicio() {
-  const red = prop('REDIRECT_URI');
-  if (!red) return 'Falta a propriedade <b>REDIRECT_URI</b> (a URL deste app da Web, terminada em /exec).';
+  const red = retorno();
+  if (!red) return 'Não achei a URL deste app da Web (terminada em /exec); preencha a propriedade <b>REDIRECT_URI</b>.';
   const links = [];
   if (prop('META_APP_ID')) {
     const q = { client_id: prop('META_APP_ID'), redirect_uri: red, state: novoEstado('meta'), response_type: 'code' };
@@ -112,7 +140,7 @@ function callback(p) {
 function conectarMeta(code) {
   const G = 'https://graph.facebook.com/' + META_V;
   const curto = jget(G + '/oauth/access_token', { client_id: prop('META_APP_ID'), client_secret: prop('META_APP_SECRET'),
-    redirect_uri: prop('REDIRECT_URI'), code: code });
+    redirect_uri: retorno(), code: code });
   const longo = jget(G + '/oauth/access_token', { grant_type: 'fb_exchange_token', client_id: prop('META_APP_ID'),
     client_secret: prop('META_APP_SECRET'), fb_exchange_token: curto.access_token });
   // a chave da página tirada de uma chave longa de usuário não vence
@@ -133,7 +161,7 @@ function conectarMeta(code) {
 function conectarTikTok(code) {
   const r = jpost('https://open.tiktokapis.com/v2/oauth/token/', { client_key: prop('TIKTOK_CLIENT_KEY'),
     client_secret: prop('TIKTOK_CLIENT_SECRET'), code: code, grant_type: 'authorization_code',
-    redirect_uri: prop('REDIRECT_URI') });
+    redirect_uri: retorno() });
   if (!r.refresh_token) throw new Error('o TikTok não devolveu a chave: ' + seguro(r.error_description || r.error || ''));
   const falta = TT_ESCOPOS.filter(s => String(r.scope || '').indexOf(s) < 0);
   props().setProperties({ TT_REFRESH: r.refresh_token, TT_OPEN_ID: r.open_id || '' });
