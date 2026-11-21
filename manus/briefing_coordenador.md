@@ -203,18 +203,19 @@ Clone o repositório (como no Contexto), leia `estrategia/estrategia.json` e o `
 4. **Roteirista**, depois **Diretor**, depois o **Roteirista** grava o `publicacao.json` (descrição, hashtags em alta pesquisadas no navegador e palavras-chave, seção "Publicação" do `AGENTS.md`), depois a **revisão de linguagem pelo Gemini** (obrigatória: roteiro, títulos das cenas e publicação, com o prompt e o `revisao_linguagem.json` da seção "Revisão de linguagem" do `AGENTS.md`), depois `validar` e depois **Revisor, etapa A**. Cada agente corrige no máximo duas vezes.
 5. `revisar`, depois **Revisor, etapa B**. Se houver correções, devolva a quem errou, rode `revisar` de novo e volte à etapa B. No máximo duas rodadas.
 6. Com o "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, não salve nada no Drive.
-7. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não salve nada no Drive. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
-8. **Salve no Google Drive, sem publicar em nenhuma rede.** O `render` deixa em `saida/entrega/` exatamente dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição pronta para colar, com as hashtags no fim (`<pasta>.txt`).
+7. **Gemini fora do ar (503 ou 429):** siga "Se o Gemini não responder" no AGENTS.md (troque de modelo e insista por até 30 min). Só depois disso guarde a pasta em `thebestnewsbr/pendentes/` e mova o card para "Precisa de você" com "retomar na revisão de linguagem".
+8. **Se travar** (reprovação depois da segunda rodada, `render` com problema ou falha técnica repetida): não salve nada no Drive. Mova o card para "Precisa de você", anexe `folha.png` e o `relatorio.json` e me avise.
+9. **Salve no Google Drive, sem publicar em nenhuma rede.** O `render` deixa em `saida/entrega/` exatamente dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição pronta para colar, com as hashtags no fim (`<pasta>.txt`).
    - Crie uma **pasta nova** para este vídeo dentro de `thebestnewsbr/videos/` no meu Drive, com o nome `AAAA-MM-DD - <título do card>`. Crie `thebestnewsbr/videos/` se ainda não existir.
    - Envie para ela **só esses dois arquivos**, nada mais.
-9. Mova o card para "No Drive" e comente o link da pasta e, se houver, os `avisos_postagem` do `publicacao.json` (ex.: "não impulsionar: assunto político").
-10. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana, chamada`.
+10. Mova o card para "No Drive" e comente o link da pasta e, se houver, os `avisos_postagem` do `publicacao.json` (ex.: "não impulsionar: assunto político").
+11. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana, chamada`.
    - `familias`: as famílias das cenas separadas por `;`.
    - `gancho_tipo`: um destes: `numero` (abre com um número), `contraste` (algo que parece errado ou ao contrário), `segredo` (algo escondido ou pouco conhecido), `superlativo` (o maior, o primeiro, o único), `comparacao` (um contra o outro) ou `outro`.
    - `descricao_inicio`: as primeiras 80 letras da descrição do `.txt`. É assim que o Analista (agente do Claude) liga o post ao vídeo, então eu não posso apagar o começo da descrição ao postar.
    - `teste_da_semana`: `a`, `b` ou vazio, conforme o teste de `estrategia/estrategia.json` que este vídeo seguiu.
    - `chamada`: o texto do bloco `chamada` do roteiro. Antes da revisão do Gemini, leia as 10 últimas desta coluna e passe ao Gemini como "chamadas recentes".
-11. Envie um resumo curto com o link da pasta no Drive.
+12. Envie um resumo curto com o link da pasta no Drive.
 
 **Se "Aprovado" estiver vazio:** produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais. Marque o card com a etiqueta "auto" e siga o fluxo completo. Como nada é publicado, o vídeo só vai para o Drive, e eu decido se posto. Se nenhum card tiver nota 85 ou mais, não produza nada e me envie um aviso.
 

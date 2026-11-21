@@ -174,6 +174,13 @@ Todo texto que o público vai ler ou ouvir passa pelo Gemini antes de virar víd
 
 **Como fazer:** mande ao Gemini, pela conexão da conta, o prompt abaixo com os textos colados no fim. Aplique as mudanças nos arquivos e grave `revisao_linguagem.json` na pasta da pauta. Se o Gemini sugerir algo que quebre uma regra (mudar um número, inventar um fato, passar do limite de palavras), descarte a sugestão e registre o motivo.
 
+**Se o Gemini não responder:**
+- **Modelos, nesta ordem:** `gemini-3.5-flash`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`. Nunca use os 2.x, que dão 404 para chaves novas. Se a lista de modelos da API mostrar um nome mais novo da mesma linha, ele pode entrar no fim da fila.
+- **Erro 503 (UNAVAILABLE, alta demanda) ou 429:** o problema é passageiro, não é erro seu. Passe para o próximo modelo da fila. Quando a fila acabar, espere e recomece do primeiro, esperando 1, 2, 4, 8 e 15 minutos entre as voltas, cerca de 30 minutos no total. Anote cada tentativa (modelo, hora e erro) em `revisao_linguagem.json`, no campo `tentativas`.
+- **Modelo menor:** o `flash-lite` faz a mesma revisão. Use o mesmo prompt e o mesmo formato de resposta, e registre o nome do modelo em `modelo`.
+- **Depois dos 30 minutos sem resposta:** aí sim, mova o card para "Precisa de você" com o comentário "Gemini fora do ar; retomar na revisão de linguagem". Guarde a pasta da pauta (sem `saida/`) no Drive, em `thebestnewsbr/pendentes/<pasta>/`, para a próxima rodada não refazer a ficha, o roteiro e as cenas.
+- **Nunca pule a revisão** nem escreva a chamada sem o Gemini.
+
 ```text
 Você revisa a linguagem de vídeos curtos de fatos para o público geral brasileiro: de adolescentes a idosos, com qualquer escolaridade. A pessoa vai OUVIR a narração uma vez só, no celular, e ler títulos curtos na tela.
 
