@@ -32,7 +32,7 @@ python3 -m fato render  pautas/AAAA-MM-DD-slug
 - O render leva cerca de 3 minutos.
 - **Não edite nada fora de `pautas/`, não escreva HTML e não troque de renderizador.** Se o `setup.sh` falhar, pare e me mostre a saída.
 
-**Imagens e som:** além do que o pipeline gera (tipografia, gráficos, objetos 3D e mascote), todo vídeo tem **pelo menos uma foto com licença livre** (as fontes liberadas estão no `AGENTS.md`), sempre com crédito na tela e tratamento automático, conforme a seção "Fotos" do `AGENTS.md`. Nada de vídeo, logo de veículo, foto de banco ou agência, nem música sem licença.
+**Imagens e som:** além do que o pipeline gera (tipografia, gráficos, objetos 3D e mascote), todo vídeo tem **pelo menos uma foto com licença livre** (as fontes liberadas estão no `AGENTS.md`), sempre com crédito na tela e tratamento automático, conforme a seção "Fotos" do `AGENTS.md`. Atrás de quase toda cena roda um **vídeo de fundo (b-roll)** real e liberado (Pexels, Pixabay, Mixkit, NASA ou kit de imprensa; no mínimo 4 trechos por vídeo), conforme a seção "Vídeo de fundo" do `AGENTS.md`. Nada de vídeo do YouTube, TikTok ou telejornal, logo de veículo, foto de banco pago ou agência, nem música sem licença.
 
 ## Tarefa 1: criar cinco perfis de agente
 
@@ -114,7 +114,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
 
-**Todo vídeo tem pelo menos uma foto (regra).** Procure no navegador, na ordem da seção "Fotos" do `AGENTS.md`: Wikimedia Commons, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA (nunca de pessoa real). Salve em `imagens/`, use a família `foto` com licença e crédito, e escolha o tratamento: `recorte` para pessoas, `marca` para fotos de banco, `natural` para o resto. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
+**Todo vídeo tem pelo menos uma foto (regra).** Procure no navegador, na ordem da seção "Fotos" do `AGENTS.md`: Wikimedia Commons, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA (nunca de pessoa real). Salve em `imagens/`, use a família `foto` com licença e crédito, e escolha o tratamento: `recorte` para pessoas, `marca` para fotos de banco, `natural` para o resto. **Todo vídeo tem vídeo de fundo (regra).** Para cada cena, menos a `foto`, procure de 1 a 3 trechos curtos que combinem com a frase falada naquele momento (Pexels Videos com orientação vertical primeiro; depois Pixabay, Mixkit, NASA, kit de imprensa), baixe a versão HD em `videos/` e preencha `broll` como no `AGENTS.md`. O mínimo é 4 trechos por vídeo. Para fotos, use também o **Openverse** (openverse.org, filtro de uso comercial), que reúne milhões de imagens com licença livre. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
 
 **Perfil 5, "Revisor".**
 

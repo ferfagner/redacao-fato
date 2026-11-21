@@ -78,7 +78,8 @@ Escreva `cenas.json`, com 11 a 13 cenas curtas (3 a 6 s cada; o mínimo aceito �
 - cada cena tem uma `ancora`, que é uma palavra do mesmo bloco da narração;
 - **use de 2 a 4 cenas de 3D:** um objeto do acervo (28 desenhados ou 54 modelos realistas, como `modelo:astronauta`; prefira o realista quando combinar), um mapa ou um cartão 3D (`lista_cards`, `versus`, `linha_tempo`, `antes_depois`), escolhendo o que conta a história (veja o `AGENTS.md`);
 - se fizer sentido, escolha a pose do mascote em `personagem`;
-- **fotos (obrigatório, pelo menos 1):** procure no navegador na ordem da seção "Fotos" do `AGENTS.md` (Wikimedia Commons, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA, nunca de pessoa real). Salve em `imagens/`, use a família `foto` com `licenca`, `credito`, `url_origem` e `tratamento` (`recorte` para pessoas).
+- **fotos (obrigatório, pelo menos 1):** procure no navegador na ordem da seção "Fotos" do `AGENTS.md` (Wikimedia Commons, Openverse, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA, nunca de pessoa real). Salve em `imagens/`, use a família `foto` com `licenca`, `credito`, `url_origem` e `tratamento` (`recorte` para pessoas).
+- **vídeo de fundo (obrigatório, pelo menos 4 trechos):** para cada cena, menos a `foto`, procure de 1 a 3 trechos que combinem com a frase falada (Pexels Videos com filtro vertical primeiro; depois Pixabay, Mixkit, NASA ou kit de imprensa). Baixe a versão HD em `videos/` e preencha `broll` com `arquivo`, `inicio`, `fonte`, `url_origem` e `licenca`, como na seção "Vídeo de fundo" do `AGENTS.md`. Para fotos, use também o Openverse (openverse.org).
 
 ## 4a. Descrição e hashtags do post
 
@@ -116,6 +117,7 @@ Rode `python3 -m fato revisar pautas/teste-AAAA-MM-DD`.
 Então abra `saida/folha.png` e `saida/legendas.srt` e, como Revisor, confira:
 - a leitura de cada cena está clara;
 - toda foto mostra mesmo a pessoa ou a coisa certa, e o crédito está visível;
+- o vídeo de fundo de cada cena combina com a frase falada e não mostra logo, marca ou criança em destaque;
 - nada fica cortado ou sobreposto;
 - a legenda bate com a fala.
 

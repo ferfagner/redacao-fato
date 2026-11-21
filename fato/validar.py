@@ -4,7 +4,7 @@ Cada erro diz para qual agente volta (Checador, Roteirista ou Diretor).
 """
 import re
 
-from .comum import OBJETOS_3D, BLOCOS, modelos_reais, FAMILIAS, LICENCAS_IMAGEM, POSES, UFS, Falha, erro, norm, palavras, rodar
+from .comum import OBJETOS_3D, BLOCOS, modelos_reais, FAMILIAS, LICENCAS_IMAGEM, LICENCAS_VIDEO, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
 FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
@@ -130,6 +130,43 @@ def validar_imagem(i, im, pasta):
     return e
 
 
+def validar_broll(i, itens, pasta, familia):
+    """Vídeo de fundo: de 1 a 3 trechos por cena, com licença e origem rastreável."""
+    e = []
+    if not isinstance(itens, list) or not 1 <= len(itens) <= 3:
+        return [erro("Diretor", "'broll' precisa ser uma lista de 1 a 3 itens", i)]
+    if familia == "foto":
+        e.append(erro("Diretor", "cena 'foto' não leva 'broll' (a foto já ocupa a tela)", i))
+    for it in itens:
+        if not isinstance(it, dict):
+            e.append(erro("Diretor", "cada item de 'broll' precisa ter arquivo, fonte, url_origem e licenca", i)); continue
+        for campo in ("arquivo", "fonte", "url_origem", "licenca"):
+            if not str(it.get(campo, "")).strip():
+                e.append(erro("Diretor", f"item de 'broll' sem '{campo}'", i))
+        lic = norm(str(it.get("licenca", "")))
+        if it.get("licenca") and not any(lic.startswith(norm(x)) for x in LICENCAS_VIDEO + LICENCAS_IMAGEM[:-1]):
+            e.append(erro("Diretor", f"licença de b-roll '{it.get('licenca')}' não serve; use: {', '.join(LICENCAS_VIDEO)}", i))
+        url = str(it.get("url_origem", "")).lower()
+        if url and not url.startswith(("http://", "https://")):
+            e.append(erro("Diretor", "url_origem do b-roll precisa ser o link da página do vídeo", i))
+        if any(b in url for b in BANCOS_PROIBIDOS) or "youtube.com" in url or "youtu.be" in url or "tiktok.com" in url:
+            e.append(erro("Diretor", "b-roll de banco pago, agência, YouTube ou TikTok não pode; use Pexels, Pixabay, NASA ou kit de imprensa", i))
+        try:
+            if float(it.get("inicio", 0) or 0) < 0:
+                e.append(erro("Diretor", "'inicio' do b-roll não pode ser negativo", i))
+        except (TypeError, ValueError):
+            e.append(erro("Diretor", "'inicio' do b-roll precisa ser um número (segundos)", i))
+        if pasta is not None and it.get("arquivo"):
+            arq = (pasta / it["arquivo"]).resolve()
+            if not arq.exists():
+                e.append(erro("Diretor", f"arquivo de b-roll não encontrado: {it['arquivo']}", i))
+            elif arq.suffix.lower() not in (".mp4", ".mov", ".webm", ".m4v", ".jpg", ".jpeg", ".png", ".webp"):
+                e.append(erro("Diretor", "o b-roll precisa ser MP4, MOV, WEBM ou uma imagem JPG/PNG/WEBP", i))
+            elif arq.stat().st_size > 150 * 1024 * 1024:
+                e.append(erro("Diretor", "o b-roll passa de 150 MB; baixe a versão HD (1080p), não a 4K", i))
+    return e
+
+
 def validar_cenas(c, roteiro, ficha, pasta=None):
     e, av = [], []
     cenas = (c or {}).get("cenas") or []
@@ -231,6 +268,8 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
                     e.append(erro("Diretor", f"o rótulo \"{it['rotulo']}\" passa de 18 caracteres", i))
         if fam == "foto":
             e += validar_imagem(i, s.get("imagem"), pasta)
+        if s.get("broll") is not None:
+            e += validar_broll(i, s.get("broll"), pasta, fam)
         if fam == "objeto_profundidade":
             obj = s.get("objeto", "globo")
             objetos = ("globo", "cubo", "aneis") + OBJETOS_3D
@@ -280,6 +319,12 @@ def validar_cenas(c, roteiro, ficha, pasta=None):
         if n_fotos < 1:
             e.append(erro("Diretor", "todo vídeo precisa de pelo menos 1 cena 'foto' (veja a seção \"Fotos\" do AGENTS.md: "
                                      "fonte liberada do assunto; se não houver, foto de banco gratuito do tema ou ilustração de IA)"))
+        n_br = sum(len(s.get("broll") or []) for s in cenas)
+        com_br = sum(1 for s in cenas if s.get("broll"))
+        if n_br < 4:
+            e.append(erro("Diretor", f"o vídeo tem só {n_br} trecho(s) de vídeo de fundo; o mínimo é 4 (veja \"Vídeo de fundo\" no AGENTS.md)"))
+        elif com_br < (len(cenas) - n_fotos) * 0.6:
+            av.append(f"só {com_br} de {len(cenas)} cenas têm vídeo de fundo; o combinado é quase todas (menos a cena 'foto')")
         n3d = sum(1 for s in cenas if s.get("familia") in ("objeto_profundidade", "mapa_brasil", "mapa_lugar", "lista_cards",
                                                             "versus", "linha_tempo", "antes_depois"))
         if n3d < 2:

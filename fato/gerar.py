@@ -10,6 +10,8 @@ from .mapas import GLOBO_JS, OBJETO_JS, mapa_brasil, mapa_lugar
 
 from .cartoes import CARTOES  # noqa: E402
 from .fotos import tratar  # noqa: E402
+from . import broll  # noqa: E402
+from .narrar import NUMEROS  # noqa: E402
 
 AVISOS = []   # avisos da montagem (ex.: recorte de foto que falhou)
 
@@ -76,6 +78,7 @@ CSS_CENA = """
 .brilho{position:absolute;top:-20%;left:0;width:30%;height:140%;
   background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.10),rgba(255,255,255,0));}
 .glbox{position:absolute;}
+.painel.vidro{background:linear-gradient(160deg,rgba(42,64,240,.34),rgba(15,15,23,.50) 50%,rgba(15,15,23,.62));-webkit-backdrop-filter:blur(18px) saturate(1.25);backdrop-filter:blur(18px) saturate(1.25);border-color:rgba(255,255,255,.22);}
 .c3d .col,.c3d .centro,.c3d .palco,.c3d .glbox{transform:translateZ(60px);}
 """
 
@@ -94,7 +97,7 @@ def _cena_html(cid, s, tempo):
     # cartão 3D: o conteúdo entra girando em perspectiva e depois flutua até o fim da cena
     painel = s["id"] != 1 and s["familia"] != "citacao_fonte"
     corpo = (f'<div id="{p}-pz" class="pz"><div id="{p}-cam" class="palco3d"><div id="{p}-c3d" class="c3d">'
-             + (f'<div class="painel"><div id="{p}-brilho" class="brilho"></div></div>' if painel else "")
+             + (f'<div class="painel{" vidro" if s.get("broll") else ""}"><div id="{p}-brilho" class="brilho"></div></div>' if painel else "")
              + corpo + '</div></div></div>')
     # câmera: aproxima devagar a cena inteira (nunca fica parado)
     js += f'tl.fromTo("#{p}-cam", {{scale: 1}}, {{scale: 1.06, duration: {dur:.2f}, ease: "none"}}, 0);\n'
@@ -108,13 +111,17 @@ def _cena_html(cid, s, tempo):
     else:
         js += (f'tl.fromTo("#{p}-c3d", {{rotationY: {32 * lado}, rotationX: 8, z: -120, opacity: 0}}, '
                f'{{rotationY: 0, rotationX: 0, z: 0, opacity: 1, duration: 0.65, ease: "power3.out"}}, 0);\n')
-    ti = 0.9 if s["id"] == 1 else 0.65
+        # transição em chicote: entra de lado com borrão de movimento
+        js += (f'tl.fromTo("#{p}-pz", {{x: {260 * lado}, filter: "blur(14px)"}}, '
+               f'{{x: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out"}}, 0);\n')
+    ti =0.9 if s["id"] == 1 else 0.65
     js += (f'tl.to("#{p}-c3d", {{rotationY: {-5 * lado}, rotationX: 2, duration: {max(0.5, dur - ti - 0.3):.2f}, '
            f'ease: "sine.inOut"}}, {ti});\n')
     if painel:
         js += f'tl.fromTo("#{p}-brilho", {{xPercent: -120}}, {{xPercent: 420, duration: 1.1, ease: "power2.inOut"}}, 0.35);\n'
     # saída: o cartão é empurrado para o lado do próximo e some (a próxima cena entra por cima)
-    js += (f'tl.fromTo("#{p}-pz", {{x: 0}}, {{x: {-170 * lado}, duration: 0.24, ease: "power2.in", immediateRender: false}}, {max(0.3, dur - 0.24):.3f});\n')
+    js += (f'tl.fromTo("#{p}-pz", {{x: 0, filter: "blur(0px)"}}, {{x: {-260 * lado}, filter: "blur(14px)", duration: 0.24, '
+           f'ease: "power2.in", immediateRender: false}}, {max(0.3, dur - 0.24):.3f});\n')
     js += f'tl.fromTo("#{p}-wrap", {{opacity: 1}}, {{opacity: 0, duration: 0.2, ease: "power1.in", immediateRender: false}}, {max(0.3, dur - 0.22):.3f});\n'
     extra, tipo = "", ""
     if modulo is not None:  # cena com Three.js: módulo, registra o timeline depois de carregar
@@ -199,7 +206,7 @@ def _grupos_legenda(pals, max_pal=5, max_chars=26):
     return grupos
 
 
-def _legenda_html(grupos, total):
+def _legenda_html(grupos, total, chaves=None):
     divs, js = [], []
     for g, ws in enumerate(grupos):
         ini = ws[0]["ini"] - 0.05
@@ -208,9 +215,26 @@ def _legenda_html(grupos, total):
         if g + 1 < len(grupos):  # nunca dois grupos na tela: sai antes do próximo entrar
             fim = min(fim, grupos[g + 1][0]["ini"] - 0.051)
         spans = []
+        # no máximo uma palavra-chave por linha: a de destaque da cena; senão, o número mais longo
+        destaques, numeros = chaves if chaves else (set(), set())
+        cand = [k for k, w in enumerate(ws) if norm(w["texto"]) in destaques] or \
+               sorted((k for k, w in enumerate(ws) if norm(w["texto"]) in numeros), key=lambda k: -len(ws[k]["texto"]))
+        escolhida = cand[0] if cand else None
         for k, w in enumerate(ws):
-            spans.append(f'<span id="lg{g}-{k}" class="lw">{esc(w["texto"])}</span>')
             prox = ws[k + 1]["ini"] if k + 1 < len(ws) else fim
+            if k == escolhida:   # palavra-chave: caixa amarela entra quando é falada, texto fica escuro
+                spans.append(f'<span id="lg{g}-{k}" class="lw chave"><span id="lg{g}-{k}-bx" class="cbx"></span>'
+                             f'<span id="lg{g}-{k}-t" class="ct">{esc(w["texto"])}</span></span>')
+                js.append(f'tl.set("#lg{g}-{k}-bx", {{scaleX: 0, rotation: -2}}, 0);'
+                          f'tl.fromTo("#lg{g}-{k}-bx", {{scaleX: 0, rotation: -2}}, {{scaleX: 1, rotation: -2, duration: 0.12, ease: "power2.out", immediateRender: false}}, {w["ini"]:.3f});'
+                          f'tl.set("#lg{g}-{k}-t", {{color: "#121218"}}, {w["ini"] + 0.04:.3f});')
+                vai = min(0.08, (prox - w["ini"]) * 0.4)
+                volta = min(0.2, prox - w["ini"] - vai - 0.01)
+                if vai > 0.03 and volta > 0.03:
+                    js.append(f'tl.fromTo("#lg{g}-{k}", {{scale: 1}}, {{scale: 1.16, duration: {vai:.3f}, ease: "power2.out", immediateRender: false}}, {w["ini"]:.3f});'
+                              f'tl.to("#lg{g}-{k}", {{scale: 1.06, duration: {volta:.3f}, ease: "power2.inOut"}}, {w["ini"] + vai:.3f});')
+                continue
+            spans.append(f'<span id="lg{g}-{k}" class="lw">{esc(w["texto"])}</span>')
             # palavra falada: acende em amarelo e dá um "pulo" de escala (legenda cinética)
             js.append(f'tl.set("#lg{g}-{k}", {{color: "#ffd60a"}}, {w["ini"]:.3f});'
                       f'tl.set("#lg{g}-{k}", {{color: "#ffffff"}}, {prox:.3f});')
@@ -234,6 +258,10 @@ def _legenda_html(grupos, total):
       color:#ffffff;-webkit-text-stroke:12px #000000;paint-order:stroke fill;}}
     .gin{{transform-origin:50% 100%;}}
     .lw{{display:inline-block;transform-origin:50% 80%;margin:0 .05em;}}
+    .chave{{position:relative;color:#ffd60a;padding:0 .1em;}}
+    .chave .cbx{{position:absolute;left:0;right:0;top:4px;bottom:2px;background:#ffd60a;border-radius:8px;transform-origin:0 50%;
+      box-shadow:0 6px 0 #000;}}
+    .chave .ct{{position:relative;-webkit-text-stroke:0;}}
   </style>
   <div id="root" data-composition-id="legenda" data-width="1080" data-height="1920">
     {grupos_html}
@@ -290,6 +318,57 @@ def _moldura_html(total):
 """
 
 
+def _efeitos_html(total, limites):
+    """Camada por cima das cenas: granulado de filme o tempo todo e um efeito em cada troca de cena
+    (alterna flash, vazamento de luz e glitch). Tudo no timeline, então é igual em qualquer quadro."""
+    js = []
+    # granulado: a textura pula de posição 12 vezes por segundo (sorteio fixo, sem Math.random)
+    passo, k, semente = 1 / 12, 0, 7
+    while k * passo < total:
+        semente = (semente * 1103515245 + 12345) % 2147483648
+        x, y = semente % 200 - 100, (semente // 200) % 200 - 100
+        js.append(f'tl.set("#ef-grao", {{x: {x}, y: {y}}}, {k * passo:.3f});')
+        k += 1
+    for n, t in enumerate(limites):
+        tipo = n % 3
+        if tipo == 0:     # flash rápido
+            js.append(f'tl.fromTo("#ef-flash", {{opacity: 0}}, {{opacity: 0.55, duration: 0.06, ease: "power1.out", immediateRender: false}}, {max(0, t - 0.04):.3f});'
+                      f'tl.to("#ef-flash", {{opacity: 0, duration: 0.22, ease: "power2.in"}}, {t + 0.02:.3f});')
+        elif tipo == 1:   # vazamento de luz nas cores da marca
+            js.append(f'tl.fromTo("#ef-luz", {{opacity: 0, xPercent: -30}}, {{opacity: 0.85, xPercent: 0, duration: 0.25, ease: "sine.out", immediateRender: false}}, {max(0, t - 0.15):.3f});'
+                      f'tl.to("#ef-luz", {{opacity: 0, xPercent: 25, duration: 0.5, ease: "sine.in"}}, {t + 0.1:.3f});')
+        else:             # glitch: faixas coloridas deslocadas por poucos quadros
+            for q, dx in enumerate((38, -54, 22, 0)):
+                js.append(f'tl.set("#ef-glitch", {{opacity: {0 if dx == 0 else 1}, x: {dx}}}, {t - 0.06 + q * 0.045:.3f});')
+    return f"""<template>
+  <style>
+    #root{{position:absolute;inset:0;overflow:hidden;pointer-events:none;}}
+    #ef-grao{{position:absolute;left:-150px;top:-150px;width:1380px;height:2220px;opacity:.10;mix-blend-mode:overlay;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}}
+    #ef-vinheta{{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.45) 100%);}}
+    #ef-flash{{position:absolute;inset:0;background:#ffffff;opacity:0;}}
+    #ef-luz{{position:absolute;inset:-20%;opacity:0;mix-blend-mode:screen;filter:blur(30px);
+      background:radial-gradient(ellipse 45% 60% at 20% 40%,rgba(255,214,10,.85),transparent 60%),
+                 radial-gradient(ellipse 50% 70% at 80% 60%,rgba(42,64,240,.9),transparent 65%);}}
+    #ef-glitch{{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+      background:linear-gradient(transparent 22%,rgba(0,255,240,.35) 22%,rgba(0,255,240,.35) 26%,transparent 26%,
+        transparent 51%,rgba(255,0,140,.35) 51%,rgba(255,0,140,.35) 57%,transparent 57%,
+        transparent 74%,rgba(255,214,10,.30) 74%,rgba(255,214,10,.30) 76%,transparent 76%);}}
+  </style>
+  <div id="root" data-composition-id="efeitos" data-width="1080" data-height="1920">
+    <div id="ef-vinheta"></div><div id="ef-luz"></div><div id="ef-glitch"></div><div id="ef-flash"></div><div id="ef-grao"></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({{ paused: true }});
+    tl.set("#ef-grao", {{x: 0}}, 0);
+    {chr(10).join(js)}
+    tl.to({{}}, {{duration: {total}}}, 0);
+    window.__timelines["efeitos"] = tl;
+  </script>
+</template>
+"""
+
+
 def _srt(linhas):
     def t(s):
         ms = int(round(s * 1000)); h, ms = divmod(ms, 3600000); m, ms = divmod(ms, 60000); s_, ms = divmod(ms, 1000)
@@ -337,15 +416,27 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo="", pasta: Path 
                 AVISOS.append(f"cena {s['id']}: {aviso}")
             s = dict(s, _foto_src=f"assets/fotos/{nome_arq}", _tratamento=trat)
         (projeto / "compositions" / f"{cid}.html").write_text(_cena_html(cid, s, tp), encoding="utf-8")
-        host(cid, tp["ini"], round(tp["fim"] - tp["ini"], 3), 2, faixa=1)
+        host(cid, tp["ini"], round(tp["fim"] - tp["ini"], 3), 4, faixa=1)
     (projeto / "compositions" / "mascote.html").write_text(_mascote_html(cenas, tempos, narr), encoding="utf-8")
-    host("mascote", 0, total, 4, faixa=5)
-    leg_html, leg_linhas = _legenda_html(_grupos_legenda(narr["palavras"]), total)
+    host("mascote", 0, total, 5, faixa=5)
+    limites = [tp["ini"] for tp in tempos[1:]]
+    (projeto / "compositions" / "efeitos.html").write_text(_efeitos_html(total, limites), encoding="utf-8")
+    host("efeitos", 0, total, 6, faixa=8)
+    # palavras-chave da legenda: números falados e as palavras de destaque das cenas
+    destaques = {norm(w) for s_ in cenas for w in str(s_.get("destaque", "")).split() if not w.isdigit()}
+    numeros = set(NUMEROS) - {"um", "uma"}
+    leg_html, leg_linhas = _legenda_html(_grupos_legenda(narr["palavras"]), total, (destaques, numeros))
     (projeto / "compositions" / "legenda.html").write_text(leg_html, encoding="utf-8")
-    host("legenda", 0, total, 5, kind="captions", faixa=2)
+    host("legenda", 0, total, 7, kind="captions", faixa=2)
     (projeto / "compositions" / "moldura.html").write_text(_moldura_html(total), encoding="utf-8")
-    host("moldura", 0, total, 6, faixa=3)
+    host("moldura", 0, total, 8, faixa=3)
     hosts_txt = "\n      ".join(hosts)
+    # vídeo de fundo (b-roll): fica embaixo das cenas, com um véu escuro para o texto continuar legível
+    trechos = broll.preparar(pasta, projeto, cenas, tempos) if pasta is not None else []
+    br_els, br_js = broll.html(trechos)
+    for t in trechos:
+        br_js += (f'\n      tl.set("#veu", {{opacity: 1}}, {t["ini"]});'
+                  f'tl.set("#veu", {{opacity: 0}}, {t["ini"] + t["dur"]:.3f});')
     (projeto / "index.html").write_text(f"""<!doctype html>
 <html lang="pt-BR" data-resolution="portrait">
   <head>
@@ -362,10 +453,13 @@ def gerar(projeto: Path, cenas, tempos, narr, wav: Path, titulo="", pasta: Path 
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920">
       {hosts_txt}
+      {br_els}
+      <div id="veu" style="position:absolute;inset:0;z-index:3;opacity:0;background:linear-gradient(180deg,rgba(10,10,16,.72) 0%,rgba(10,10,16,.30) 22%,rgba(10,10,16,.25) 50%,rgba(10,10,16,.55) 72%,rgba(10,10,16,.85) 100%);"></div>
       <audio id="narracao" class="clip" src="assets/narracao.wav" data-start="0" data-duration="{total}" data-track-index="4" data-volume="1"></audio>
     </div>
     <script>
       const tl = gsap.timeline({{ paused: true }});
+      {br_js}
       window.__timelines["main"] = tl;
     </script>
   </body>

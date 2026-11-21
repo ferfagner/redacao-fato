@@ -10,7 +10,23 @@
         "CRESCEU TÃO",
         "DEVAGAR"
       ],
-      "destaque": "DEVAGAR"
+      "destaque": "DEVAGAR",
+      "broll": [
+        {
+          "arquivo": "videos/sp_transito.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/33177651/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/pedestres.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/27697943/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 2,
@@ -25,7 +41,16 @@
         "rotulo": "População em 2022"
       },
       "fonte": "IBGE, Censo 2022",
-      "ancora": "Censo"
+      "ancora": "Censo",
+      "broll": [
+        {
+          "arquivo": "videos/formulario.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/7981920/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 3,
@@ -64,7 +89,30 @@
         }
       ],
       "fonte": "IBGE, Censo 2022",
-      "ancora": "mais"
+      "ancora": "mais",
+      "broll": [
+        {
+          "arquivo": "videos/ponte_estaiada.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/20786104/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/bandeira_bh.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/34276317/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/sp_transito.mp4",
+          "inicio": 3,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/33177651/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 4,
@@ -76,7 +124,23 @@
         "ENCOLHERAM"
       ],
       "destaque": "ENCOLHERAM",
-      "ancora": "famílias"
+      "ancora": "famílias",
+      "broll": [
+        {
+          "arquivo": "videos/familia_sala.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/9690678/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/familia_cozinha.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/12751539/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 5,
@@ -92,7 +156,23 @@
         "valor": "2"
       },
       "fonte": "IBGE, Censo 2022",
-      "ancora": "menos"
+      "ancora": "menos",
+      "broll": [
+        {
+          "arquivo": "videos/bebe_hospital.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/12159580/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/bebe_pes.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/7281355/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 6,
@@ -117,7 +197,23 @@
         }
       ],
       "fonte": "IBGE, Censo 2022",
-      "ancora": "vivem"
+      "ancora": "vivem",
+      "broll": [
+        {
+          "arquivo": "videos/pedestres.mp4",
+          "inicio": 2.5,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/27697943/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/ponte_estaiada.mp4",
+          "inicio": 2.5,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/20786104/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 7,
@@ -140,7 +236,23 @@
         }
       ],
       "fonte": "IBGE, Censo 2022",
-      "ancora": "resultado"
+      "ancora": "resultado",
+      "broll": [
+        {
+          "arquivo": "videos/bandeira_bh.mp4",
+          "inicio": 2.5,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/34276317/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/sp_transito.mp4",
+          "inicio": 1.5,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/33177651/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 8,
@@ -164,7 +276,16 @@
         }
       ],
       "fonte": "IBGE, Censos 2010 e 2022",
-      "ancora": "ritmo"
+      "ancora": "ritmo",
+      "broll": [
+        {
+          "arquivo": "videos/transito_timelapse.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/8064422/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 9,
@@ -211,7 +332,23 @@
         }
       ],
       "fonte": "IBGE",
-      "ancora": "Isso"
+      "ancora": "Isso",
+      "broll": [
+        {
+          "arquivo": "videos/idosos_casal.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/8878166/",
+          "licenca": "licenca pexels"
+        },
+        {
+          "arquivo": "videos/idosos_yoga.mp4",
+          "inicio": 0,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/8939355/",
+          "licenca": "licenca pexels"
+        }
+      ]
     },
     {
       "id": 11,
@@ -223,7 +360,16 @@
       ],
       "destaque": "NÚMEROS",
       "chamada": "Manda esse vídeo",
-      "ancora": "Manda"
+      "ancora": "Manda",
+      "broll": [
+        {
+          "arquivo": "videos/pedestres.mp4",
+          "inicio": 1,
+          "fonte": "Pexels",
+          "url_origem": "https://www.pexels.com/video/27697943/",
+          "licenca": "licenca pexels"
+        }
+      ]
     }
   ]
 }

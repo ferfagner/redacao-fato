@@ -301,9 +301,38 @@ Os modelos da NASA flutuam (sem chão) e giram devagar; os outros ficam apoiados
 
 ### Cartões 3D
 
-Toda cena entra como um cartão de vidro em perspectiva: gira, aproxima e depois flutua até o fim, alternando o lado a cada cena. Isso é automático.
+Toda cena entra como um cartão de vidro em perspectiva: chega de lado com borrão de movimento (chicote), gira, aproxima e depois flutua até o fim, alternando o lado a cada cena. Quando a cena tem vídeo de fundo, o cartão vira vidro fosco, desfocando o vídeo atrás. Na troca de cena entra um efeito (flash, vazamento de luz ou glitch, alternando) e o vídeo inteiro tem granulado de filme. Tudo isso é automático.
 
 O que depende do Diretor é usar **de 2 a 4 cenas de 3D por vídeo**, entre `objeto_profundidade`, `mapa_brasil`, `mapa_lugar`, `lista_cards`, `versus`, `linha_tempo` e `antes_depois`, variando de um vídeo para o outro. O validador avisa quando há menos de 2. Escolha o objeto que conta a história: ranking vira `podio`, comparação de valores vira `barras`, dinheiro vira `moedas`, espaço vira `planeta`, um lugar vira `mapa_lugar`.
+
+### Vídeo de fundo (b-roll, obrigatório)
+
+É o que mais deixa o vídeo "profissional": atrás de quase toda cena roda um vídeo real ligado à frase, trocando a cada ~2 s, e o cartão fica por cima. **Regra: pelo menos 4 trechos por vídeo** (o validador recusa menos) e, de preferência, em todas as cenas menos a `foto`.
+
+No `cenas.json`, a cena ganha `broll`, uma lista de **1 a 3 trechos**. O código divide o tempo da cena entre eles, corta na batida da fala, enquadra em 1080x1920, dá um "soco" de zoom em cada corte e escurece de leve para o texto continuar legível.
+
+```json
+{"id": 4, "familia": "objeto_profundidade", "objeto": "modelo:relogio_parede", "titulo": ["AS FAMÍLIAS", "ENCOLHERAM"],
+ "broll": [{"arquivo": "videos/familia-sala.mp4", "inicio": 0, "fonte": "Pexels", "url_origem": "https://www.pexels.com/video/9690678/", "licenca": "licenca pexels"},
+           {"arquivo": "videos/familia-cozinha.mp4", "inicio": 2, "fonte": "Pexels", "url_origem": "https://www.pexels.com/video/12751539/", "licenca": "licenca pexels"}],
+ "ancora": "famílias"}
+```
+
+- `inicio`: em que segundo do vídeo original o trecho começa (pule aberturas paradas ou com logo).
+- **Onde buscar, na ordem:**
+  1. **Pexels Videos**: busque em inglês, com o filtro de orientação vertical, por exemplo `https://www.pexels.com/search/videos/crowd%20brazil/?orientation=portrait`.
+  2. **Pixabay Videos**.
+  3. **Mixkit**.
+  4. **NASA** (images.nasa.gov) para espaço.
+  5. **Kit de imprensa oficial** (trailer de jogo ou filme), para games e lançamentos.
+  6. Wikimedia Commons (vídeos `CC`).
+- **Licenças aceitas:** `licenca pexels`, `licenca pixabay`, `licenca mixkit`, `dominio publico`, `CC0`, `CC BY`, `CC BY-SA` e `kit de imprensa oficial`.
+- **Como baixar do Pexels:** o link de download é `https://www.pexels.com/download/video/<id>/`. Ele redireciona para o arquivo em `videos.pexels.com`, que baixa normalmente por script. **Prefira a versão HD (1080x1920)**, não a 4K; o validador recusa arquivo acima de 150 MB.
+- **Proibido:** YouTube, TikTok, Instagram, telejornal, bancos pagos e agências.
+- **O vídeo precisa combinar com a frase falada naquele momento.** Por exemplo: "as famílias encolheram" pede família em casa; "203 milhões" pede multidão na rua. Prefira imagem do Brasil quando o assunto for o Brasil.
+- **Evite:** gente olhando para a câmera por muito tempo, marcas e logos em destaque, criança como assunto principal (bebê de costas ou mãos e pés serve) e qualquer coisa que pareça mostrar a pessoa do assunto sem ser ela.
+- Uma foto (`.jpg`, `.png` ou `.webp`) também serve como trecho: entra com zoom lento.
+- Salve os arquivos em `pautas/<pasta>/videos/`.
 
 ### Fotos (obrigatório: pelo menos 1 por vídeo)
 
@@ -314,12 +343,15 @@ O que depende do Diretor é usar **de 2 a 4 cenas de 3D por vídeo**, entre `obj
 | # | onde | bom para | `licenca` |
 |---|---|---|---|
 | 1 | **Wikimedia Commons** (commons.wikimedia.org) | pessoas públicas, atletas, atores, lugares, eventos | `CC0`, `dominio publico`, `CC BY` ou `CC BY-SA` (com a versão) |
+| 1b | **Openverse** (openverse.org): buscador de mais de 800 milhões de imagens com licença livre (Flickr, museus, Wikimedia). Filtre por "uso comercial" | quase tudo: pessoas, lugares, objetos, eventos | a CC que aparece na imagem (`CC BY`, `CC BY-SA`, `CC0`) |
 | 2 | **Agência Brasil** (agenciabrasil.ebc.com.br): as fotos são CC BY | política, economia, esporte e eventos no Brasil | `CC BY` |
 | 3 | **Fotos Públicas** (fotospublicas.com) e Flickr oficiais de governos, clubes e órgãos públicos com licença livre | eventos, autoridades, obras, esportes | `fotos publicas` ou a CC do Flickr |
 | 4 | **NASA, ESA, NOAA** (imagens oficiais) | espaço, clima, ciência | `dominio publico` (NASA) ou `CC BY` (ESA) |
 | 5 | **Kit de imprensa oficial** (páginas press, media ou newsroom de estúdios, editoras de games, ligas, empresas) | jogos, filmes, produtos, lançamentos | `kit de imprensa oficial` |
 | 6 | **Unsplash, Pexels e Pixabay** | foto do **tema**, quando não houver do assunto exato (um estádio, um celular, uma cidade, comida) | `licenca unsplash`, `licenca pexels` ou `licenca pixabay` |
 | 7 | **Ilustração gerada por IA** (Gemini ou outra ferramenta da conta) | último recurso, só para objeto, lugar genérico ou conceito | `ilustracao ia`, com crédito "Ilustração gerada por IA" |
+
+**Por que não "qualquer imagem da internet":** no Brasil toda foto tem direito autoral automaticamente, mesmo sem aviso no site. Quem fotografou pode pedir a remoção ao TikTok ou ao Instagram, e várias remoções derrubam o perfil. Por isso a regra é o contrário: **vale tudo que declara uso livre** (a tabela acima já cobre quase tudo); o resto fica de fora.
 
 **Continua proibido**, porque dá derrubada de vídeo ou processo:
 - Google Imagens, Pinterest, redes sociais e fotos de matérias de jornal;

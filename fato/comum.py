@@ -82,6 +82,10 @@ def palavras(texto: str):
 LICENCAS_IMAGEM = ["CC0", "dominio publico", "CC BY", "CC BY-SA", "kit de imprensa oficial", "licenca unsplash",
                    "licenca pexels", "licenca pixabay", "fotos publicas", "ilustracao ia"]
 
+# vídeo de fundo (b-roll): só fonte que libera o uso
+LICENCAS_VIDEO = ["licenca pexels", "licenca pixabay", "licenca mixkit", "CC0", "dominio publico", "CC BY", "CC BY-SA",
+                  "kit de imprensa oficial"]
+
 # objetos 3D do acervo (modelo/assets/lib/objetos.js)
 OBJETOS_3D = ("moedas", "podio", "planeta", "barras", "pizza", "linha", "trofeu", "medalha", "foguete", "lampada",
               "relogio", "ampulheta", "celular", "controle", "predios", "dinheiro", "coracao", "atomo", "dna",
