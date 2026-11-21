@@ -78,7 +78,7 @@ Proibido:
 **3. Escreva a descrição:**
 1. **Primeira linha**, com até 125 caracteres, que é o que aparece antes do "mais": o gancho com uma palavra-chave.
 2. **De 2 a 3 frases curtas** contando o fato em linguagem simples, com o dado principal.
-3. **Um pedido de opinião sobre uma parte específica do vídeo** ("O que você acha do Brasil envelhecer? Conta aqui nos comentários"). Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra: veja "Regras das plataformas".
+3. **Um pedido de opinião sobre uma parte específica do vídeo** (a mesma pergunta da chamada final, com outras palavras). Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra: veja "Regras das plataformas".
 4. **`Fontes: …`** no fim.
 
 Use no máximo um emoji, nunca no começo, e sem hashtag no meio do texto.
@@ -122,10 +122,18 @@ Vale para tudo o que o público lê ou ouve: narração, títulos das cenas, tex
 - prometer continuação para ganhar seguidor ("segue pra parte 2") e "link na bio".
 
 Pode, e é obrigatório no fim de todo vídeo (bloco `chamada`):
-- o convite para seguir a página ("Segue a página pra um fato novo por dia");
-- o pedido de opinião sobre uma parte específica do que foi contado ("comenta o que você acha do Brasil envelhecer").
+- o convite para seguir a página, dito de um jeito ligado ao assunto;
+- o pedido de opinião sobre uma parte específica do que foi contado, em pergunta ou em "comenta o que você acha de…".
 
-Isso é conversa sobre o assunto, não isca. Exemplo completo: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer."
+Isso é conversa sobre o assunto, não isca. **Cada vídeo tem a sua chamada**, escrita com o Gemini (seção "Revisão de linguagem"): nada de fórmula fixa. Exemplos só para mostrar o tom (copiar é recusado):
+- censo: "Quer entender o Brasil pelos números? Segue a página. E pra você, um país mais velho preocupa ou não?"
+- juros: "Segue pra entender o dinheiro sem complicação. E aí, juro alto assim pesa no seu bolso?"
+- games: "Tem mais curiosidade de games chegando, então segue a gente. Qual jogo antigo você queria ver de volta?"
+
+O validador recusa:
+- a chamada sem os dois;
+- a opinião vaga ("o que você acha disso");
+- a chamada parecida demais (60% das palavras ou mais) com os exemplos acima ou com as chamadas dos últimos 10 vídeos.
 
 O validador recusa a chamada sem os dois e também a opinião vaga ("o que você acha disso", "o que acha do vídeo").
 
@@ -180,15 +188,27 @@ Reescreva o que for preciso para que qualquer pessoa entenda de primeira:
 - descrição do post: primeira linha com o gancho e uma palavra-chave (até 125 caracteres), frases curtas, no máximo um emoji e nunca no começo, fontes no fim;
 - hashtags e palavras-chave: diga se alguma não tem relação com o assunto ou é genérica demais (não invente hashtags novas).
 
+CHAMADA FINAL (o último bloco da narração, de 14 a 20 palavras): escreva 3 opções diferentes entre si e escolha a melhor para "roteiro.chamada". Cada opção:
+- convida a seguir a página de um jeito ligado ao assunto deste vídeo (não use sempre "um fato novo por dia");
+- pede a opinião sobre o ponto mais curioso ou discutível que o vídeo contou, citando esse ponto (nada de "o que você acha disso");
+- soa como gente falando, sem fórmula, sem exagero;
+- não pede para mandar, compartilhar, marcar, curtir, salvar nem comentar uma palavra combinada;
+- não parece com nenhuma das CHAMADAS RECENTES abaixo.
+Faça também a pergunta final da descrição do post combinar com a chamada escolhida.
+
 Responda só com JSON, neste formato:
 {"roteiro": {"gancho": "...", "fato": "...", "mecanismo": "...", "virada": "...", "ressalva": "...", "chamada": "..."},
  "titulos": [{"cena": 1, "titulo": ["...", "..."]}],
  "publicacao": {"descricao": "...", "hashtags_sem_relacao": []},
+ "chamada_opcoes": ["...", "...", "..."],
  "mudancas": [{"onde": "roteiro.mecanismo", "antes": "...", "depois": "...", "motivo": "..."}],
  "nota_clareza": 9}
 
 TEXTOS:
 <cole aqui o roteiro (6 blocos), os títulos de cada cena e o publicacao.json>
+
+CHAMADAS RECENTES (não repita):
+<cole aqui as 10 últimas da coluna "chamada" do log.csv, ou "nenhuma">
 ```
 
 **`revisao_linguagem.json`** (o validador confere):
@@ -200,12 +220,17 @@ TEXTOS:
   "textos_revisados": ["roteiro", "titulos", "publicacao"],
   "nota_clareza": 9,
   "mudancas": [{"onde": "roteiro.mecanismo", "antes": "taxa de fecundidade", "depois": "número de filhos por mulher", "motivo": "termo técnico"}],
-  "descartadas": [{"sugestao": "...", "motivo": "mudava o número da ficha"}]
+  "descartadas": [{"sugestao": "...", "motivo": "mudava o número da ficha"}],
+  "chamada_opcoes": ["opção 1 do Gemini", "opção 2", "opção 3"],
+  "chamadas_recentes": ["as 10 últimas da coluna chamada do log.csv (lista vazia se não houver)"]
 }
 ```
 
 O validador confere:
 - **Revisão registrada:** `ferramenta` é `gemini`, e `textos_revisados` inclui `roteiro`, `titulos` e `publicacao`.
+- **Chamada própria:**
+  - `chamada_opcoes` tem pelo menos 3 opções e `chamadas_recentes` está presente;
+  - a chamada do roteiro não repete (60% das palavras ou mais) nenhuma recente nem os exemplos do manual.
 - **Nota de clareza:** `nota_clareza` vai de 1 a 10. Abaixo de 7, volta para o Roteirista reescrever.
 - **Narração:** o próprio validador mede a facilidade de leitura (índice Flesch adaptado ao português). Frase com mais de 20 palavras gera aviso, e texto difícil volta para o Roteirista.
 
@@ -241,7 +266,7 @@ São seis blocos, nesta ordem e com estes ids. O total vai de 165 a 180 palavras
 | `mecanismo` | 60 a 68 | o porquê |
 | `virada` | 26 a 32 | o que quase ninguém sabe |
 | `ressalva` | 20 a 26 | o limite do dado |
-| `chamada` | 14 a 20 | **obrigatório:** convite para seguir a página + pedido de opinião sobre uma parte específica do vídeo. Ex.: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer." Nunca pedido de envio, curtida, marcação ou salvamento (veja "Regras das plataformas") |
+| `chamada` | 14 a 20 | **obrigatório:** convite para seguir a página + pedido de opinião sobre uma parte específica do vídeo. Escrita para cada vídeo, com opções do Gemini; não repete as últimas. Nunca pedido de envio, curtida, marcação ou salvamento (veja "Regras das plataformas") |
 
 ```json
 {"blocos": [{"id": "gancho", "texto": "…"}, {"id": "fato", "texto": "…"}, {"id": "mecanismo", "texto": "…"},

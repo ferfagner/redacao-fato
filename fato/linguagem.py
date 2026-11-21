@@ -44,7 +44,7 @@ def legibilidade(roteiro):
     return e, av, total
 
 
-def validar_revisao(pasta: Path):
+def validar_revisao(pasta: Path, roteiro=None):
     """Exige o registro da revisão de linguagem feita pelo Gemini."""
     arq = pasta / "revisao_linguagem.json"
     if not arq.exists():
@@ -68,9 +68,52 @@ def validar_revisao(pasta: Path):
         e.append(erro("Coordenador", "'nota_clareza' (de 1 a 10, dada pelo Gemini) está faltando ou inválida"))
     elif nota < 7:
         e.append(erro("Roteirista", f"o Gemini deu nota {nota:g} de clareza; reescreva para ficar mais simples e revise de novo"))
+    if roteiro is not None:
+        e += _chamada_autentica(r, roteiro)
     if e:
         raise Falha("linguagem", e)
     return {"nota_clareza": nota, "mudancas": len(r.get("mudancas") or [])}
+
+
+# frases dos exemplos do manual: servem de modelo, nunca para copiar
+CHAMADAS_DO_MANUAL = [
+    "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer.",
+    "Quer entender o Brasil pelos números? Segue a página. E pra você, um país mais velho preocupa ou não?",
+    "Segue pra entender o dinheiro sem complicação. E aí, juro alto assim pesa no seu bolso?",
+    "Tem mais curiosidade de games chegando, então segue a gente. Qual jogo antigo você queria ver de volta?",
+]
+PALAVRAS_VAZIAS = {"a", "o", "as", "os", "de", "do", "da", "dos", "das", "e", "que", "pra", "para", "um", "uma", "voce",
+                   "aqui", "no", "na", "nos", "se", "com", "em", "me", "te", "eu", "seu", "sua", "isso", "esse", "essa"}
+SIMILAR_MAX = 0.6   # fração de palavras em comum acima da qual a chamada conta como repetida
+
+
+def _palavras_chave(t):
+    return {w for w in re.findall(r"\w+", plataformas._plano(t)) if w not in PALAVRAS_VAZIAS}
+
+
+def similaridade(a, b):
+    pa, pb = _palavras_chave(a), _palavras_chave(b)
+    return len(pa & pb) / len(pa | pb) if pa and pb else 0.0
+
+
+def _chamada_autentica(r, roteiro):
+    """A chamada final é escrita para cada vídeo (Gemini propõe opções) e não repete as últimas nem o exemplo do manual."""
+    e = []
+    chamada = next((b["texto"] for b in roteiro["blocos"] if b["id"] == "chamada"), "")
+    opcoes = [str(x) for x in (r.get("chamada_opcoes") or []) if str(x).strip()]
+    if len(opcoes) < 3:
+        e.append(erro("Coordenador", "faltam as opções de chamada do Gemini: 'chamada_opcoes' precisa de pelo menos 3 "
+                                     "(seção \"Revisão de linguagem\" do AGENTS.md)"))
+    if "chamadas_recentes" not in r:
+        e.append(erro("Coordenador", "falta 'chamadas_recentes' (as chamadas dos últimos 10 vídeos, da coluna 'chamada' do "
+                                     "log.csv; lista vazia se ainda não houver)"))
+    for velha in list(r.get("chamadas_recentes") or []) + CHAMADAS_DO_MANUAL:
+        s = similaridade(chamada, velha)
+        if s >= SIMILAR_MAX:
+            e.append(erro("Roteirista", f"a chamada final está parecida demais com \"{str(velha)[:80]}\" ({s:.0%} das palavras): "
+                                        "escreva uma nova, ligada ao assunto deste vídeo (o Gemini propõe opções)"))
+            break
+    return e
 
 
 # hashtags genéricas que não ajudam (ou que as plataformas tratam como spam): não use

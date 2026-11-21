@@ -72,7 +72,7 @@ def validar_roteiro(r):
     falta = plataformas.chamada_completa(blocos[-1].get("texto", ""))
     if falta:
         e.append(erro("Roteirista", "a chamada final precisa de " + " e de ".join(falta) +
-                      ". Ex.: \"Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer.\""))
+                      ". Escreva uma chamada própria deste vídeo, com o Gemini (seção \"Revisão de linguagem\" do AGENTS.md)"))
     if b := blocos[0]:
         if b["texto"].strip().endswith("?"):
             e.append(erro("Roteirista", "o gancho não pode ser uma pergunta"))

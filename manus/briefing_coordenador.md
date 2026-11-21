@@ -102,7 +102,7 @@ Instrução: você transforma a ficha numa narração de **165 a 180 palavras**,
 - **Retenção:** o gancho abre uma pergunta que só se responde na virada. O `mecanismo` e a `virada` começam com uma frase-ponte que reabre a curiosidade ("Mas tem um detalhe.", "E aqui vem a parte estranha."), sempre verdadeira.
 - Use só o que está na ficha.
 - **Regras das plataformas (seção do `AGENTS.md`):**
-  - **todo vídeo termina com** o convite para seguir a página e o pedido de opinião sobre uma parte específica do que foi contado. Ex.: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer." Opinião vaga ("o que você acha disso") não passa.
+  - **todo vídeo termina com** o convite para seguir a página e o pedido de opinião sobre uma parte específica do que foi contado. A chamada é **escrita para cada vídeo**: o Gemini propõe 3 opções ligadas ao ponto mais curioso ou discutível do assunto, sem repetir as chamadas dos últimos 10 vídeos (coluna `chamada` do `log.csv`), e o Roteirista escolhe uma. Fórmula fixa, opinião vaga ("o que você acha disso") e cópia dos exemplos do `AGENTS.md` não passam no `validar`.
   - Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra.
   - Em emprego, renda, crédito ou benefício, fale do dado, nunca com o público como se fosse oferta ("quem procura emprego", "vagas abertas", "dinheiro esquecido").
   - Sem "URGENTE", "CHOCANTE" ou "ninguém te conta".
@@ -208,11 +208,12 @@ Clone o repositório (como no Contexto), leia `estrategia/estrategia.json` e o `
    - Crie uma **pasta nova** para este vídeo dentro de `thebestnewsbr/videos/` no meu Drive, com o nome `AAAA-MM-DD - <título do card>`. Crie `thebestnewsbr/videos/` se ainda não existir.
    - Envie para ela **só esses dois arquivos**, nada mais.
 9. Mova o card para "No Drive" e comente o link da pasta e, se houver, os `avisos_postagem` do `publicacao.json` (ex.: "não impulsionar: assunto político").
-10. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana`.
+10. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana, chamada`.
    - `familias`: as famílias das cenas separadas por `;`.
    - `gancho_tipo`: um destes: `numero` (abre com um número), `contraste` (algo que parece errado ou ao contrário), `segredo` (algo escondido ou pouco conhecido), `superlativo` (o maior, o primeiro, o único), `comparacao` (um contra o outro) ou `outro`.
    - `descricao_inicio`: as primeiras 80 letras da descrição do `.txt`. É assim que o Analista (agente do Claude) liga o post ao vídeo, então eu não posso apagar o começo da descrição ao postar.
    - `teste_da_semana`: `a`, `b` ou vazio, conforme o teste de `estrategia/estrategia.json` que este vídeo seguiu.
+   - `chamada`: o texto do bloco `chamada` do roteiro. Antes da revisão do Gemini, leia as 10 últimas desta coluna e passe ao Gemini como "chamadas recentes".
 11. Envie um resumo curto com o link da pasta no Drive.
 
 **Se "Aprovado" estiver vazio:** produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais. Marque o card com a etiqueta "auto" e siga o fluxo completo. Como nada é publicado, o vídeo só vai para o Drive, e eu decido se posto. Se nenhum card tiver nota 85 ou mais, não produza nada e me envie um aviso.

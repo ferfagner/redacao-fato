@@ -31,7 +31,7 @@ def _carregar(pasta: Path):
         raise Falha("roteiro", e_leg, av_leg)
     av += av_leg
     av += validar_cenas(cenas, roteiro, ficha, pasta)
-    ling = validar_revisao(pasta)
+    ling = validar_revisao(pasta, roteiro)
     ling["facilidade_leitura"] = facilidade
     pub = validar_publicacao(pasta)
     av += pub.pop("avisos")

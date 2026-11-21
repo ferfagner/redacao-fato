@@ -70,11 +70,13 @@ def chamada_completa(texto):
     Devolve a lista do que falta (vazia = ok)."""
     t = _plano(texto)
     falta = []
-    if not re.search(r"\b(segue|siga|sigam)\b", t):
-        falta.append("o convite para seguir a página (\"Segue a página…\")")
-    m = re.search(r"\b(coment(a|e|em)|conta|diz)\b.{0,30}\b(acha|pensa|opiniao)\b(.*)", t)
-    if not m:
-        falta.append("o pedido de opinião (\"comenta o que você acha de…\")")
-    elif len([w for w in re.findall(r"\w+", m.groups()[-1]) if w not in VAGAS]) < 2:
-        falta.append("o assunto da opinião: depois de \"o que você acha\" diga de qual parte do vídeo (\"…acha do Brasil envelhecer\")")
+    if not re.search(r"\b(segue|siga|sigam|seguir|seguindo)\b", t):
+        falta.append("o convite para seguir a página")
+    # opinião: "comenta/conta/diz o que você acha/pensa de X" ou uma pergunta (com "?") sobre um ponto concreto
+    pedidos = [m.groups()[-1] for m in re.finditer(r"\b(coment(a|e|em)|conta|diz)\b.{0,30}\b(acha|pensa|opiniao)\b(.*)", t)]
+    pedidos += [_plano(q) for q in re.findall(r"[^.!?]*\?", str(texto or ""))]
+    if not pedidos:
+        falta.append("o pedido de opinião (uma pergunta ao público ou \"comenta o que você acha de…\")")
+    elif not any(len([w for w in re.findall(r"\w+", p) if w not in VAGAS]) >= 2 for p in pedidos):
+        falta.append("o assunto da opinião: diga de qual parte do vídeo (\"o que você acha disso\" é vago)")
     return falta

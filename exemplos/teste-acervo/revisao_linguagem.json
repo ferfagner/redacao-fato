@@ -16,5 +16,11 @@
       "motivo": "termo técnico"
     }
   ],
-  "descartadas": []
+  "descartadas": [],
+  "chamada_opcoes": [
+    "Segue a página pra mais números do Brasil. Você acha bom ou ruim o país envelhecer?",
+    "Quer ver o Brasil mudando em números? Segue a gente. Um país com menos crianças te preocupa?",
+    "Segue pra mais retratos do Brasil. Família menor é escolha ou falta de condição, pra você?"
+  ],
+  "chamadas_recentes": []
 }
