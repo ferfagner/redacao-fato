@@ -32,5 +32,7 @@ Medido num notebook Windows: `revisar` leva cerca de 5 min e `render` cerca de 8
 - `modelo/assets/lib/mascote.js` e `globo.js`: o mascote e o globo em Three.js. O globo usa a imagem Blue Marble da NASA, que é de domínio público, e a malha dos estados é a do IBGE.
 - `fato/broll.py`: corta e enquadra os trechos de vídeo de fundo de cada cena, no ritmo da fala.
 - `fato/gerar.py`: monta o projeto HyperFrames (fundo, vídeo de fundo, cenas, mascote, efeitos de transição, legenda e barra de progresso).
+- `fato/analisar.py`: análise semanal das métricas para o agente Analista (`python3 -m fato.analisar metricas.csv log.csv`).
+- `metricas/`: coletor das métricas do Instagram, Facebook e TikTok numa planilha do Drive (Apps Script) e o passo a passo em `metricas/LEIAME.md`.
 - `fato/__main__.py`: os comandos, a checagem, a folha de quadros e a conferência do vídeo.
 - `modelo/`: fontes e logo copiados para cada projeto.

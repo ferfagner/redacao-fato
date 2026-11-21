@@ -409,6 +409,39 @@ O código mistura sozinho:
 
 O volume final fica em −16 LUFS. Os agentes não escolhem som.
 
+## Métricas e estratégia (Analista)
+
+As métricas chegam sozinhas, todo dia, na planilha `thebestnewsbr/thebestnewsbr - Métricas` do Drive. O coletor (`metricas/coletor.gs`) lê as APIs oficiais do Instagram, do Facebook e do TikTok. A aba `metricas` tem uma linha por post: views, alcance, curtidas, comentários, compartilhamentos, salvamentos, tempo médio assistido (Instagram e Facebook), pulos nos 3 primeiros segundos (Instagram), além de views com 48 h e com 7 dias. O TikTok não informa tempo assistido pela API.
+
+Toda segunda, o Analista exporta essa aba como CSV, baixa `thebestnewsbr/log.csv` e roda:
+
+```bash
+python3 -m fato.analisar metricas.csv log.csv analise.json
+```
+
+Ele liga cada post ao vídeo do log pelo começo da descrição e pela data, e dá uma nota a cada vídeo. A nota 1,0 é a mediana da rede: acima de 1,2 é bom e abaixo de 0,8 é fraco. Os resultados saem agrupados por categoria, tipo de gancho, família de cena, duração e horário. Um grupo com menos de 3 vídeos sai com `conclusivo: false`.
+
+O que ele muda fica em `thebestnewsbr/estrategia.json` no Drive, que o Radar, o Roteirista e o Diretor leem antes de trabalhar:
+
+```json
+{
+  "atualizado_em": "2026-11-23",
+  "fase": "coleta",
+  "categorias": {"ciencia": 1.0, "brasil": 1.0, "tecnologia": 1.0, "games": 1.0, "mundo": 1.0},
+  "ganchos": {"preferir": [], "evitar": []},
+  "cenas": {"preferir": [], "evitar": []},
+  "teste_da_semana": {"variavel": "gancho_tipo", "a": "numero", "b": "contraste", "como": "Roteirista alterna: dias pares a, ímpares b"},
+  "aprendizados": ["frases curtas, uma por linha, com o número de vídeos que sustenta cada uma"]
+}
+```
+
+Limites, para a estratégia não ficar pulando:
+- **Pesos de categoria:** entre 0,7 e 1,3, e cada um anda no máximo 0,1 por semana. O Radar multiplica a nota da pauta pelo peso.
+- **Fase "coleta"** (menos de 10 vídeos com nota): não mude pesos nem preferências.
+- **Conclusões:** só de grupos com `conclusivo: true`.
+- **Testes:** um por semana, com uma variável só.
+- **Regras deste manual** (licenças, Gemini, formato, segurança editorial): a estratégia nunca muda. Mudança grande (parar uma categoria, mudar a duração alvo, mudar o horário) vira um card em "Precisa de você", não uma alteração.
+
 ## O que o código garante, e o Revisor não precisa medir
 
 - **Formato:** 1080×1920, 30 fps, H.264 e AAC, com a narração em −16 LUFS.
