@@ -29,7 +29,7 @@ python3 -m fato render  pautas/AAAA-MM-DD-slug
 
 - Código de saída 2: o `saida/relatorio.json` diz para qual agente cada erro volta. Mande só esses itens.
 - Código de saída 1: falha técnica. Tente de novo uma vez.
-- O render leva cerca de 3 minutos.
+- O `revisar` leva cerca de 5 minutos e o `render` cerca de 8 a 10 minutos (o vídeo final tem uns 160 MB, por causa do vídeo de fundo).
 - **Não edite nada fora de `pautas/`, não escreva HTML e não troque de renderizador.** Se o `setup.sh` falhar, pare e me mostre a saída.
 
 **Imagens e som:** além do que o pipeline gera (tipografia, gráficos, objetos 3D e mascote), todo vídeo tem **pelo menos uma foto com licença livre** (as fontes liberadas estão no `AGENTS.md`), sempre com crédito na tela e tratamento automático, conforme a seção "Fotos" do `AGENTS.md`. Atrás de quase toda cena roda um **vídeo de fundo (b-roll)** real e liberado (Pexels, Pixabay, Mixkit, NASA ou kit de imprensa; no mínimo 4 trechos por vídeo), conforme a seção "Vídeo de fundo" do `AGENTS.md`. Nada de vídeo do YouTube, TikTok ou telejornal, logo de veículo, foto de banco pago ou agência, nem música sem licença.
@@ -114,7 +114,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
 
-**Todo vídeo tem pelo menos uma foto (regra).** Procure no navegador, na ordem da seção "Fotos" do `AGENTS.md`: Wikimedia Commons, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA (nunca de pessoa real). Salve em `imagens/`, use a família `foto` com licença e crédito, e escolha o tratamento: `recorte` para pessoas, `marca` para fotos de banco, `natural` para o resto. **Todo vídeo tem vídeo de fundo (regra).** Para cada cena, menos a `foto`, procure de 1 a 3 trechos curtos que combinem com a frase falada naquele momento (Pexels Videos com orientação vertical primeiro; depois Pixabay, Mixkit, NASA, kit de imprensa), baixe a versão HD em `videos/` e preencha `broll` como no `AGENTS.md`. O mínimo é 4 trechos por vídeo. Para fotos, use também o **Openverse** (openverse.org, filtro de uso comercial), que reúne milhões de imagens com licença livre. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
+**Todo vídeo tem pelo menos uma foto (regra).** Procure no navegador, na ordem da seção "Fotos" do `AGENTS.md`: Wikimedia Commons, Openverse, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA (nunca de pessoa real). Salve em `imagens/`, use a família `foto` com licença e crédito, e escolha o tratamento: `recorte` para pessoas, `marca` para fotos de banco, `natural` para o resto. **Todo vídeo tem vídeo de fundo (regra).** Para cada cena, menos a `foto`, procure de 1 a 3 trechos curtos que combinem com a frase falada naquele momento (Pexels Videos com orientação vertical primeiro; depois Pixabay, Mixkit, NASA, kit de imprensa), baixe a versão HD em `videos/` e preencha `broll` como no `AGENTS.md`. O mínimo é 4 trechos por vídeo. Mantenha cada cena com até 6 s: cena longa perde ritmo; divida em duas com outra âncora. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
 
 **Perfil 5, "Revisor".**
 
@@ -124,11 +124,13 @@ Etapa A (ficha, roteiro e cenas):
 - os números da tela batem com a ficha;
 - toda cena com dado tem fonte;
 - não há erro de português;
+- toda cena (menos a `foto`) tem vídeo de fundo com licença e `url_origem`, e o total passa de 4 trechos;
 - o gancho promete o que o vídeo entrega.
 
 Etapa B (`saida/folha.png`, `saida/legendas.srt` e `saida/relatorio.json`):
 - a leitura de cada cena está clara;
 - toda foto mostra mesmo a pessoa ou a coisa certa, e o crédito está visível;
+- o vídeo de fundo de cada cena combina com a frase falada e não mostra logo, marca, criança em destaque nem alguém que pareça ser a pessoa do assunto sem ser ela;
 - nada fica cortado ou sobreposto;
 - a legenda bate com a fala;
 - `check_avisos` está vazio ou é aceitável.

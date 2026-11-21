@@ -1,6 +1,6 @@
 # redacao-fato
 
-Pipeline do vídeo diário de fatos do **thebestnewsbr**. Recebe três arquivos JSON escritos pelos agentes (ficha, roteiro e cenas) e devolve um vídeo vertical de cerca de 60 s, feito com [HyperFrames](https://hyperframes.heygen.com). O vídeo tem narração (edge-tts), legenda com a palavra falada em destaque, fonte na tela e a identidade da marca.
+Pipeline do vídeo diário de fatos do **thebestnewsbr**. Recebe três arquivos JSON escritos pelos agentes (ficha, roteiro e cenas) e devolve um vídeo vertical de cerca de 60 s, feito com [HyperFrames](https://hyperframes.heygen.com). O vídeo tem narração (edge-tts), legenda com a palavra falada e a palavra-chave em destaque, vídeo real de fundo (b-roll), cartões 3D, objetos e modelos 3D, mascote, transições, fonte na tela e a identidade da marca.
 
 - Manual dos agentes, com os contratos e o fluxo: [AGENTS.md](AGENTS.md)
 - Pauta de exemplo: [exemplos/teste-acervo](exemplos/teste-acervo)
@@ -21,7 +21,7 @@ python -m fato revisar exemplos/teste-acervo
 python -m fato render  exemplos/teste-acervo
 ```
 
-Medido num notebook Windows: `revisar` leva cerca de 1 min e `render` cerca de 3 min para um vídeo de 62 s.
+Medido num notebook Windows: `revisar` leva cerca de 5 min e `render` cerca de 8,5 min para um vídeo de 62 s (o arquivo final tem uns 160 MB).
 
 ## Estrutura
 
@@ -30,6 +30,7 @@ Medido num notebook Windows: `revisar` leva cerca de 1 min e `render` cerca de 3
 - `fato/familias.py` e `fato/mapas.py`: as famílias de cena (seis básicas, mais mapa do Brasil e globo).
 - `fato/som.py`: efeitos sonoros e trilha (opcional, em `modelo/assets/trilhas/`).
 - `modelo/assets/lib/mascote.js` e `globo.js`: o mascote e o globo em Three.js. O globo usa a imagem Blue Marble da NASA, que é de domínio público, e a malha dos estados é a do IBGE.
-- `fato/gerar.py`: monta o projeto HyperFrames (fundo, cenas, legenda e barra de progresso).
+- `fato/broll.py`: corta e enquadra os trechos de vídeo de fundo de cada cena, no ritmo da fala.
+- `fato/gerar.py`: monta o projeto HyperFrames (fundo, vídeo de fundo, cenas, mascote, efeitos de transição, legenda e barra de progresso).
 - `fato/__main__.py`: os comandos, a checagem, a folha de quadros e a conferência do vídeo.
 - `modelo/`: fontes e logo copiados para cada projeto.

@@ -23,5 +23,6 @@ Quero testar se o seu ambiente roda o meu pipeline de vídeo. Não crie perfis, 
 ## Como ler o resultado
 
 - Nos dois comandos, `ok: true` e a folha igual à do teste local significam que o ambiente funciona. Aí é só colar o `briefing_coordenador.md`.
-- **O render passou de 10 min:** o Chrome do Manus está sem placa de vídeo e o 3D ficou lento. Ainda funciona para um vídeo por dia, mas convém adiantar o horário da Rotina B.
+- **Tempo esperado:** `revisar` uns 5 min e `render` uns 8 a 10 min (o exemplo tem 12 trechos de vídeo de fundo).
+- **O render passou de 20 min:** o Chrome do Manus está sem placa de vídeo e o 3D ficou lento. Ainda funciona para um vídeo por dia, mas convém adiantar o horário da Rotina B.
 - **Falhou no `setup.sh` ou no `edge-tts`:** traga a mensagem de erro para ajustarmos o setup.
