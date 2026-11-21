@@ -38,6 +38,7 @@ function onOpen() {
     .addItem('Coletar agora', 'coletar')
     .addItem('Ligar a coleta diária (6h)', 'ligarColetaDiaria')
     .addItem('Mostrar link para conectar as redes', 'mostrarLinkConexao')
+    .addItem('Testar TikTok', 'testarTikTok')
     .addToUi();
 }
 
@@ -183,7 +184,11 @@ function coletar() {
   const t0 = Date.now();
   const linhas = [], erros = [];
   [['instagram', coletarInstagram], ['facebook', coletarFacebook], ['tiktok', coletarTikTok]].forEach(([rede, f]) => {
-    try { linhas.push(...f()); } catch (e) { erros.push(rede + ': ' + seguro(e.message)); }
+    try {
+      const r = f();
+      linhas.push(...r);
+      if (rede === 'tiktok' && !r.length) erros.push('tiktok: 0 vídeos dos últimos ' + DIAS + ' dias (use Métricas > Testar TikTok)');
+    } catch (e) { erros.push(rede + ': ' + seguro(e.message)); }
   });
   gravar(linhas);
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -251,13 +256,49 @@ function coletarFacebook() {
   return out;
 }
 
-function coletarTikTok() {
+/** Renova a conexão do TikTok e devolve { access_token, scope, ... }. */
+function tokenTikTok() {
   const refresh = prop('TT_REFRESH');
-  if (!refresh) return [];
+  if (!refresh) throw new Error('não conectado; abra o link de conexão e clique em Conectar TikTok');
   const tok = jpost('https://open.tiktokapis.com/v2/oauth/token/', { client_key: prop('TIKTOK_CLIENT_KEY'),
     client_secret: prop('TIKTOK_CLIENT_SECRET'), grant_type: 'refresh_token', refresh_token: refresh });
   if (!tok.access_token) throw new Error('não renovou a conexão (' + seguro(tok.error_description || tok.error || '') + '); conecte o TikTok de novo');
   if (tok.refresh_token) props().setProperty('TT_REFRESH', tok.refresh_token);
+  return tok;
+}
+
+/** Menu "Testar TikTok": mostra a conta conectada, as permissões e quantos vídeos a API devolve. */
+function testarTikTok() {
+  const linhas = [];
+  try {
+    const tok = tokenTikTok();
+    linhas.push('Conexão: ok');
+    const esc = String(tok.scope || '');
+    linhas.push('Permissões concedidas: ' + (esc || '(nenhuma informada)'));
+    const falta = TT_ESCOPOS.filter(s => esc && esc.indexOf(s) < 0);
+    if (falta.length) linhas.push('FALTA a permissão: ' + falta.join(', ') + ' (ative no app do TikTok e conecte de novo)');
+    const H = { Authorization: 'Bearer ' + tok.access_token };
+    const u = JSON.parse(UrlFetchApp.fetch('https://open.tiktokapis.com/v2/user/info/?fields=open_id,display_name',
+      { headers: H, muteHttpExceptions: true }).getContentText() || '{}');
+    const user = (u.data && u.data.user) || {};
+    linhas.push('Conta: ' + (user.display_name ? seguro(user.display_name) : '(não veio: ' + seguro(JSON.stringify(u.error || {})) + ')'));
+    const r = UrlFetchApp.fetch('https://open.tiktokapis.com/v2/video/list/?fields=id,create_time,title', {
+      method: 'post', contentType: 'application/json', payload: JSON.stringify({ max_count: 20 }), headers: H, muteHttpExceptions: true });
+    const j = JSON.parse(r.getContentText() || '{}');
+    const vids = (j.data && j.data.videos) || [];
+    linhas.push('Lista de vídeos: HTTP ' + r.getResponseCode() + ', ' + vids.length + ' vídeo(s) na 1ª página' +
+      (j.error && j.error.code !== 'ok' ? ', erro ' + seguro(j.error.code + ' ' + (j.error.message || '')) : ''));
+    if (vids.length) linhas.push('Mais recente: ' + new Date(vids[0].create_time * 1000).toLocaleString('pt-BR'));
+    else linhas.push('Se a conta tem vídeos públicos e veio 0: no modo Sandbox, confira se esta conta está em "Target users" do sandbox e se os vídeos não estão como "Só eu".');
+  } catch (e) {
+    linhas.push('Erro: ' + seguro(e.message));
+  }
+  avisar(linhas.join('\n'));
+}
+
+function coletarTikTok() {
+  if (!prop('TT_REFRESH')) throw new Error('não conectado; abra o link de conexão e clique em Conectar TikTok');
+  const tok = tokenTikTok();
   const campos = 'id,title,video_description,create_time,duration,share_url,view_count,like_count,comment_count,share_count';
   const out = [];
   let cursor = null, mais = true, voltas = 0;
