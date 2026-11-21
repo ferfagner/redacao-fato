@@ -8,8 +8,8 @@ from . import plataformas
 from .comum import OBJETOS_3D, BLOCOS, modelos_reais, FAMILIAS, LICENCAS_IMAGEM, LICENCAS_VIDEO, POSES, UFS, Falha, erro, norm, palavras, rodar
 
 # faixas de palavras por bloco do roteiro (mínimo, máximo)
-FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (66, 74), "virada": (26, 32),
-          "ressalva": (20, 26), "chamada": (8, 12)}
+FAIXAS = {"gancho": (8, 12), "fato": (26, 32), "mecanismo": (60, 68), "virada": (26, 32),
+          "ressalva": (20, 26), "chamada": (14, 20)}
 TOTAL = (165, 180)  # ~3 palavras por segundo na voz Antonio a 0%
 TOLERANCIA = 2  # palavras de folga por bloco antes de virar erro
 
@@ -69,6 +69,10 @@ def validar_roteiro(r):
             e.append(erro("Roteirista", f"bloco '{b['id']}': tire os parênteses, a voz lê tudo o que está escrito"))
         if re.search(r"\d", b.get("texto", "")):
             av.append(f"bloco '{b['id']}' tem algarismos; a voz costuma ler melhor números por extenso")
+    falta = plataformas.chamada_completa(blocos[-1].get("texto", ""))
+    if falta:
+        e.append(erro("Roteirista", "a chamada final precisa de " + " e de ".join(falta) +
+                      ". Ex.: \"Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer.\""))
     if b := blocos[0]:
         if b["texto"].strip().endswith("?"):
             e.append(erro("Roteirista", "o gancho não pode ser uma pergunta"))

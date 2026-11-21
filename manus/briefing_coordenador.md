@@ -102,7 +102,8 @@ Instrução: você transforma a ficha numa narração de **165 a 180 palavras**,
 - **Retenção:** o gancho abre uma pergunta que só se responde na virada. O `mecanismo` e a `virada` começam com uma frase-ponte que reabre a curiosidade ("Mas tem um detalhe.", "E aqui vem a parte estranha."), sempre verdadeira.
 - Use só o que está na ficha.
 - **Regras das plataformas (seção do `AGENTS.md`):**
-  - a `chamada` é uma pergunta de verdade sobre o assunto ("Qual desses números te surpreendeu?") ou "Um fato novo por dia". Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra.
+  - **todo vídeo termina com** o convite para seguir a página e o pedido de opinião sobre uma parte específica do que foi contado. Ex.: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer." Opinião vaga ("o que você acha disso") não passa.
+  - Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra.
   - Em emprego, renda, crédito ou benefício, fale do dado, nunca com o público como se fosse oferta ("quem procura emprego", "vagas abertas", "dinheiro esquecido").
   - Sem "URGENTE", "CHOCANTE" ou "ninguém te conta".
   - Vale também para a descrição do post. Quando o assunto for político ou o vídeo usar imagem realista de IA, preencha `avisos_postagem` no `publicacao.json`.
@@ -116,7 +117,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - A cena 1 é o gancho (`tipo_cinetico`) e a última é `fecho_chamada`.
 - O título vai em caixa alta, com até 3 linhas de até 4 palavras e 22 caracteres, e no máximo 9 palavras.
 - O destaque é uma palavra do título.
-- Títulos e texto do botão da chamada seguem as "Regras das plataformas" do `AGENTS.md`. O título do fecho repete a pergunta da chamada, nunca um pedido de envio.
+- Títulos e texto do botão da chamada seguem as "Regras das plataformas" do `AGENTS.md`. O título do fecho é a pergunta da opinião (ex.: "E VOCÊ, / O QUE ACHA?") e o botão é "SIGA @THEBESTNEWSBR".
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
 - Leia `cenas` e `teste_da_semana` em `estrategia/estrategia.json` do repositório e prefira as famílias que estão funcionando, sem deixar de cumprir as regras do `AGENTS.md`.
@@ -133,6 +134,7 @@ Etapa A (ficha, roteiro e cenas):
 - não há erro de português;
 - toda cena (menos a `foto`) tem vídeo de fundo com licença e `url_origem`, e o total passa de 4 trechos;
 - o gancho promete o que o vídeo entrega;
+- o fim tem o convite para seguir a página e o pedido de opinião sobre uma parte que o vídeo realmente contou;
 - nada quebra as "Regras das plataformas" do `AGENTS.md`:
   - sem isca de engajamento;
   - notícia de emprego, renda ou benefício não parece oferta;

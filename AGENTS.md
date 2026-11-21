@@ -78,7 +78,7 @@ Proibido:
 **3. Escreva a descrição:**
 1. **Primeira linha**, com até 125 caracteres, que é o que aparece antes do "mais": o gancho com uma palavra-chave.
 2. **De 2 a 3 frases curtas** contando o fato em linguagem simples, com o dado principal.
-3. **Uma pergunta de verdade sobre o assunto** ("Qual desses números te surpreendeu?"). Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra: veja "Regras das plataformas".
+3. **Um pedido de opinião sobre uma parte específica do vídeo** ("O que você acha do Brasil envelhecer? Conta aqui nos comentários"). Nunca peça para mandar, compartilhar, marcar, curtir, salvar ou comentar uma palavra: veja "Regras das plataformas".
 4. **`Fontes: …`** no fim.
 
 Use no máximo um emoji, nunca no começo, e sem hashtag no meio do texto.
@@ -121,7 +121,13 @@ Vale para tudo o que o público lê ou ouve: narração, títulos das cenas, tex
 - curtir, salvar ou comentar uma palavra combinada ("curte se…", "salva pra depois", "comenta SIM");
 - prometer continuação para ganhar seguidor ("segue pra parte 2") e "link na bio".
 
-Pode: uma pergunta de verdade sobre o assunto ("Qual desses números te surpreendeu?", "Você já sabia disso?") ou a frase da marca, "Um fato novo por dia".
+Pode, e é obrigatório no fim de todo vídeo (bloco `chamada`):
+- o convite para seguir a página ("Segue a página pra um fato novo por dia");
+- o pedido de opinião sobre uma parte específica do que foi contado ("comenta o que você acha do Brasil envelhecer").
+
+Isso é conversa sobre o assunto, não isca. Exemplo completo: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer."
+
+O validador recusa a chamada sem os dois e também a opinião vaga ("o que você acha disso", "o que acha do vídeo").
 
 **2. Notícia não é oferta.** Em assunto de emprego, renda, crédito, benefício, aposentadoria, imposto ou prêmio:
 - fale do dado, nunca com o público como se o vídeo oferecesse algo ("quem procura emprego", "quem precisa de dinheiro", "vagas abertas", "dinheiro esquecido", "saque já", "receba até", "garanta o seu");
@@ -232,10 +238,10 @@ São seis blocos, nesta ordem e com estes ids. O total vai de 165 a 180 palavras
 |---|---|---|
 | `gancho` | 8 a 12 | promessa concreta, nunca uma pergunta |
 | `fato` | 26 a 32 | o dado, com a instituição |
-| `mecanismo` | 66 a 74 | o porquê |
+| `mecanismo` | 60 a 68 | o porquê |
 | `virada` | 26 a 32 | o que quase ninguém sabe |
 | `ressalva` | 20 a 26 | o limite do dado |
-| `chamada` | 8 a 12 | pergunta sobre o assunto ou "um fato novo por dia"; nunca pedido de envio, curtida, marcação ou salvamento (veja "Regras das plataformas") |
+| `chamada` | 14 a 20 | **obrigatório:** convite para seguir a página + pedido de opinião sobre uma parte específica do vídeo. Ex.: "Segue a página pra um fato novo por dia e comenta o que você acha do Brasil envelhecer." Nunca pedido de envio, curtida, marcação ou salvamento (veja "Regras das plataformas") |
 
 ```json
 {"blocos": [{"id": "gancho", "texto": "…"}, {"id": "fato", "texto": "…"}, {"id": "mecanismo", "texto": "…"},
@@ -280,7 +286,7 @@ As famílias e seus campos extras:
 | `dado_comparado` | 2 a 4 barras | `comparacao: [{rotulo, valor, unidade}]`, com `valor` numérico ("190,8") |
 | `objeto_profundidade` | objeto 3D com o título | `objeto`: um dos 28 desenhados em código (tabela "Acervo de objetos 3D") **ou** um dos 54 modelos realistas, com `"modelo:<nome>"` (tabela "Modelos 3D realistas") |
 | `citacao_fonte` | cartão com aspas e a fonte | o título é a citação |
-| `fecho_chamada` | chamada, botão e logo | `chamada` (texto do botão, opcional) |
+| `fecho_chamada` | chamada, botão e logo | título com a pergunta da opinião (ex.: `["E VOCÊ,", "O QUE ACHA?"]`); `chamada` (texto do botão; padrão "SIGA @THEBESTNEWSBR") |
 | `mapa_brasil` | estados acendendo por valor, um em destaque | `mapa: {valores: {"SP": "44,4", …}, unidade, destaque: "SP", legenda}` ou `mapa: {destaques: ["CE", "PE"]}`. Use as siglas das UFs. Com `valores`, a `fonte` é obrigatória. |
 | `mapa_lugar` | globo da NASA girando até o lugar, com pino | `lugar: {nome, lat, lon}` em graus decimais, com o nome em até 24 caracteres |
 | `foto` | foto de pessoa, jogo, lugar, objeto ou evento num cartão, com nome e crédito | `imagem: {arquivo, tipo, nome, credito, licenca, url_origem}`, conforme a seção "Fotos" |

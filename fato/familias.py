@@ -227,7 +227,7 @@ def fecho_chamada(p, s, t, dur):
     linhas = s["titulo"]
     fs = tam_titulo(linhas, 84)
     tit, n = titulo_html(p, linhas, s.get("destaque"))
-    cta = esc(s.get("chamada") or "UM FATO NOVO POR DIA").upper()
+    cta = esc(s.get("chamada") or "SIGA @THEBESTNEWSBR").upper()
     html = (f'<div id="{p}-bloco" class="col topo">{tit}'
             f'<div id="{p}-cta" class="cta">{cta}</div>'
             f'<div id="{p}-logo" class="logo"><img src="assets/marca.svg" alt=""/>'

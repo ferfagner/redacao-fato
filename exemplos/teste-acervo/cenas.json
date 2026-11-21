@@ -355,12 +355,12 @@
       "bloco": "chamada",
       "familia": "fecho_chamada",
       "titulo": [
-        "QUAL NÚMERO",
-        "TE SURPREENDEU?"
+        "E VOCÊ,",
+        "O QUE ACHA?"
       ],
-      "destaque": "NÚMERO",
-      "chamada": "Um fato novo por dia",
-      "ancora": "Qual",
+      "destaque": "ACHA",
+      "chamada": "Siga @thebestnewsbr",
+      "ancora": "Segue",
       "broll": [
         {
           "arquivo": "videos/pedestres.mp4",

@@ -20,10 +20,10 @@ ISCA = [
     (r"\b(marca|marque|marquem) (ai |aqui )?(alguem|um amigo|uma amiga|amig[oa]s|quem|aquele|aquela|seu amigo|sua amiga|o amigo|a amiga)\b", "pede para marcar alguém"),
     (r"\b(curt(a|e|am)\b.{0,10}\b(se|esse|este|o video|ai|aqui)\b|deix(a|e) (seu|o|um) like|\bda (um )?like)",
      "pede curtida"),
-    (r"\b(coment(a|e|em)|digit(a|e)|escrev(a|e))\b.{0,25}\b(aqui|ai|abaixo|sim|nao|eu|quero|nos comentarios)\b",
+    (r"\b(coment(a|e|em)|digit(a|e)|escrev(a|e))\b.{0,25}\b(sim|nao|eu quero|quero|\d+|um emoji|um coracao)\b",
      "pede comentário com palavra combinada"),
     (r"\bsalv(a|e|em)\b.{0,25}\b(pra|para|esse|este|o video|ai|depois)\b", "pede para salvar"),
-    (r"\b(segue|siga|sigam)\b.{0,20}\b(parte \d|parte dois|pra mais|para mais|pra saber|para saber)\b",
+    (r"\b(segue|siga|sigam)\b.{0,20}\b(parte \d|parte dois|pra saber o resto|para saber o resto)\b",
      "promete continuação para ganhar seguidor"),
     (r"\blink na bio\b", "manda para link na bio (o vídeo não tem link)"),
 ]
@@ -58,3 +58,23 @@ def checar(texto, onde):
             if m:
                 saida.append(f"{onde}: {motivo} (\"{m.group(0)}\"). Regras das plataformas no AGENTS.md")
     return erros, avisos
+
+
+# palavras que não dizem de qual parte do vídeo se pede a opinião
+VAGAS = {"de", "do", "da", "dos", "das", "sobre", "disso", "isso", "tudo", "aqui", "ai", "nos", "comentarios", "video",
+         "esse", "este", "assunto", "noticia", "o", "a", "os", "as", "que", "voce", "acha", "pensa"}
+
+
+def chamada_completa(texto):
+    """A chamada final precisa convidar a seguir a página e pedir a opinião sobre um ponto do vídeo.
+    Devolve a lista do que falta (vazia = ok)."""
+    t = _plano(texto)
+    falta = []
+    if not re.search(r"\b(segue|siga|sigam)\b", t):
+        falta.append("o convite para seguir a página (\"Segue a página…\")")
+    m = re.search(r"\b(coment(a|e|em)|conta|diz)\b.{0,30}\b(acha|pensa|opiniao)\b(.*)", t)
+    if not m:
+        falta.append("o pedido de opinião (\"comenta o que você acha de…\")")
+    elif len([w for w in re.findall(r"\w+", m.groups()[-1]) if w not in VAGAS]) < 2:
+        falta.append("o assunto da opinião: depois de \"o que você acha\" diga de qual parte do vídeo (\"…acha do Brasil envelhecer\")")
+    return falta
