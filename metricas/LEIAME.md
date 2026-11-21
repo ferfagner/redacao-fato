@@ -12,7 +12,7 @@ Leva uns 30 a 40 minutos, uma vez só. Faça na ordem.
 
 ## Parte 1: a planilha e o script (10 min)
 
-> **Atalho (feito em 20/11/2026):** a planilha e o script foram criados pelo `clasp`, a ferramenta oficial do Google, a partir de `metricas/coletor.gs` e `metricas/appsscript.json`:
+> **Atalho (feito em 20/11/2026):** a planilha e o script foram criados pelo `clasp`, a ferramenta oficial do Google, a partir de `metricas/coletor.gs` e `metricas/appsscript.json` (deployment `AKfycbyIIcnTBfRVPYIFUp6SseCUuaIzTn3iwaVYh5urLxKZNfr9oVZh8uFGxaULgK8ib0LK`, script `1TtMg_2nVqLKKgLEhkEHzfHwHJU86qd7BQhUdOaG9s5QWJOJqDzwJ-_E0`):
 > `npx @google/clasp@3.4.1 create-script --type sheets --title "thebestnewsbr - Métricas"`, depois `push` e `create-deployment`.
 > Com esse caminho, a URL de retorno é preenchida sozinha. **As chaves entram pelo menu da planilha: Métricas > Configurar chaves**, sem abrir as Propriedades do script.
 > Para atualizar o script depois de mudar o `coletor.gs`: `clasp push` e `clasp create-deployment --deploymentId <id>`, para manter a mesma URL.
@@ -85,6 +85,20 @@ O app pode ficar em **modo de desenvolvimento**. Como você é o administrador, 
 5. Clique em **Métricas > Ligar a coleta diária (6h)**. Pronto.
 
 ---
+
+## Parte 5: enviar as métricas ao GitHub (5 min)
+
+Quem analisa as métricas é o **Analista, uma tarefa agendada do Claude**, que lê o repositório. Para isso, a planilha manda todo dia a aba `metricas` e o `thebestnewsbr/log.csv` do Drive para `metricas/dados/` no repositório.
+
+1. No GitHub, vá em **Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new token**.
+   - Nome: `metricas thebestnewsbr`. Validade: 1 ano.
+   - **Repository access:** *Only select repositories* > `ferfagner/redacao-fato`.
+   - **Permissions > Repository permissions > Contents:** *Read and write*. Nenhuma outra.
+   - Gere e copie o token.
+2. Na planilha, clique em **Métricas > Configurar chaves** e cole o token no campo **Token do GitHub**. Deixe os outros campos em branco para manter o que já está.
+3. Clique em **Métricas > Coletar agora**. Na primeira vez, o Google pede autorização para ler o Drive, que é onde fica o `log.csv`. Confira no GitHub se apareceu `metricas/dados/metricas.csv`.
+
+O token vence em 1 ano. Quando vencer, a aba `execucoes` mostra `github: ... 401`: gere outro e cole de novo.
 
 ## Se der problema
 

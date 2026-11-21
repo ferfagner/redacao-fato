@@ -1,0 +1,23 @@
+{
+  "atualizado_em": "2026-11-20",
+  "fase": "coleta",
+  "categorias": {
+    "ciencia": 1.0,
+    "brasil": 1.0,
+    "tecnologia": 1.0,
+    "games": 1.0,
+    "mundo": 1.0
+  },
+  "ganchos": {
+    "preferir": [],
+    "evitar": []
+  },
+  "cenas": {
+    "preferir": [],
+    "evitar": []
+  },
+  "teste_da_semana": null,
+  "aprendizados": [
+    "Início: ainda não há métricas suficientes; seguir as regras do AGENTS.md sem preferências."
+  ]
+}

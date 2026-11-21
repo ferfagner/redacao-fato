@@ -5,12 +5,11 @@ Copie **tudo o que está entre as duas linhas** e cole como primeira mensagem nu
 Antes de colar, confira três coisas:
 - o Manus tem acesso ao GitHub, porque o repositório `https://github.com/ferfagner/redacao-fato` é privado;
 - a conexão do Gemini está ativa na conta;
-- o Google Drive e o Trello podem pedir autorização durante a montagem. Quando o Manus mostrar o cartão, é você quem aprova;
-- (para o Analista) a planilha `thebestnewsbr - Métricas` já está no Drive, coletando, conforme `metricas/LEIAME.md`. Se ainda não estiver, o Analista só espera.
+- o Google Drive e o Trello podem pedir autorização durante a montagem. Quando o Manus mostrar o cartão, é você quem aprova.
 
 ---
 
-Monte o time de produção do perfil **thebestnewsbr** (vídeos de fatos) e deixe as rotinas agendadas: duas diárias (pauta e produção) e uma semanal (análise das métricas). Execute tudo nesta sessão, sem pedir confirmação para criar perfis, grupo e quadro. Pare e me mostre só o que estiver marcado como "pare e me mostre".
+Monte o time de produção do perfil **thebestnewsbr** (vídeos de fatos) e deixe as duas rotinas diárias agendadas (pauta e produção). A análise das métricas não é do Manus: um agente agendado do Claude faz isso toda semana e grava a estratégia no repositório, em `estrategia/estrategia.json`. O time só lê esse arquivo. Execute tudo nesta sessão, sem pedir confirmação para criar perfis, grupo e quadro. Pare e me mostre só o que estiver marcado como "pare e me mostre".
 
 ## Contexto
 
@@ -35,7 +34,7 @@ python3 -m fato render  pautas/AAAA-MM-DD-slug
 
 **Imagens e som:** além do que o pipeline gera (tipografia, gráficos, objetos 3D e mascote), todo vídeo tem **pelo menos uma foto com licença livre** (as fontes liberadas estão no `AGENTS.md`), sempre com crédito na tela e tratamento automático, conforme a seção "Fotos" do `AGENTS.md`. Atrás de quase toda cena roda um **vídeo de fundo (b-roll)** real e liberado (Pexels, Pixabay, Mixkit, NASA ou kit de imprensa; no mínimo 4 trechos por vídeo), conforme a seção "Vídeo de fundo" do `AGENTS.md`. Nada de vídeo do YouTube, TikTok ou telejornal, logo de veículo, foto de banco pago ou agência, nem música sem licença.
 
-## Tarefa 1: criar seis perfis de agente
+## Tarefa 1: criar cinco perfis de agente
 
 Crie cada perfil com `manus-config agents create --file`, usando um JSON num diretório temporário único, e rode `agents complete` ao final de cada um. Não vincule conectores que eu não pedi.
 
@@ -69,7 +68,7 @@ Dê nota de 0 a 5 em seis critérios:
 | segurança editorial | 10 |
 | originalidade frente ao `log.csv` (no Drive) dos últimos 30 dias | 10 |
 
-A nota final vai de 0 a 100: some (nota × peso) e divida por 5. Depois **multiplique pelo peso da categoria** em `thebestnewsbr/estrategia.json` no Drive (campo `categorias`, entre 0,7 e 1,3; sem o arquivo, use 1,0) e limite a 100.
+A nota final vai de 0 a 100: some (nota × peso) e divida por 5. Depois **multiplique pelo peso da categoria** em `estrategia/estrategia.json` do repositório (campo `categorias`, entre 0,7 e 1,3; sem o arquivo, use 1,0) e limite a 100.
 
 **Variedade:** entre as oito, pelo menos três categorias diferentes e no máximo três pautas da mesma categoria.
 
@@ -103,7 +102,7 @@ Instrução: você transforma a ficha numa narração de **165 a 180 palavras**,
 - **Retenção:** o gancho abre uma pergunta que só se responde na virada. O `mecanismo` e a `virada` começam com uma frase-ponte que reabre a curiosidade ("Mas tem um detalhe.", "E aqui vem a parte estranha."), sempre verdadeira.
 - Use só o que está na ficha.
 
-Antes de escrever, leia `ganchos` e `aprendizados` em `thebestnewsbr/estrategia.json` no Drive (se existir) e prefira o tipo de gancho que está funcionando, sem quebrar as regras acima. Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa só no bloco indicado.
+Antes de escrever, leia `ganchos`, `teste_da_semana` e `aprendizados` em `estrategia/estrategia.json` do repositório e prefira o tipo de gancho que está funcionando, sem quebrar as regras acima. Grave `roteiro.json`. Quando o relatório pedir um corte ou um acréscimo, mexa só no bloco indicado.
 
 **Perfil 4, "Diretor".**
 
@@ -114,7 +113,7 @@ Instrução: você converte o roteiro em **11 a 13 cenas curtas (3 a 6 s cada; o
 - O destaque é uma palavra do título.
 - Toda cena com número leva `fonte`.
 - Cada cena tem uma `ancora`: a palavra da narração, no mesmo bloco, em que ela entra. Cada cena fica com 1,6 a 9 s.
-- Leia `cenas` em `thebestnewsbr/estrategia.json` no Drive (se existir) e prefira as famílias que estão funcionando, sem deixar de cumprir as regras do `AGENTS.md`.
+- Leia `cenas` e `teste_da_semana` em `estrategia/estrategia.json` do repositório e prefira as famílias que estão funcionando, sem deixar de cumprir as regras do `AGENTS.md`.
 
 **Todo vídeo tem pelo menos uma foto (regra).** Procure no navegador, na ordem da seção "Fotos" do `AGENTS.md`: Wikimedia Commons, Openverse, Agência Brasil, Fotos Públicas, NASA/ESA, kit de imprensa, Unsplash/Pexels/Pixabay e, em último caso, ilustração de IA (nunca de pessoa real). Salve em `imagens/`, use a família `foto` com licença e crédito, e escolha o tratamento: `recorte` para pessoas, `marca` para fotos de banco, `natural` para o resto. **Todo vídeo tem vídeo de fundo (regra).** Para cada cena, menos a `foto`, procure de 1 a 3 trechos curtos que combinem com a frase falada naquele momento (Pexels Videos com orientação vertical primeiro; depois Pixabay, Mixkit, NASA, kit de imprensa), baixe a versão HD em `videos/` e preencha `broll` como no `AGENTS.md`. O mínimo é 4 trechos por vídeo. Mantenha cada cena com até 6 s: cena longa perde ritmo; divida em duas com outra âncora. Você não reescreve o roteiro. Se o texto não couber na tela, corte e avise.
 
@@ -139,24 +138,9 @@ Etapa B (`saida/folha.png`, `saida/legendas.srt` e `saida/relatorio.json`):
 
 Formato, volume e áreas seguras são medidos pelo código: não meça de novo. Responda "aprovado" ou uma lista numerada de correções, cada uma com o número da cena. Você não reescreve, você aponta.
 
-**Perfil 6, "Analista".**
-
-Instrução: você mede o que deu certo e ajusta a estratégia, uma vez por semana. Você não produz vídeo e não publica nada.
-
-1. No Drive, exporte como CSV a primeira aba (`metricas`) da planilha `thebestnewsbr/thebestnewsbr - Métricas` e baixe `thebestnewsbr/log.csv`. A planilha é preenchida sozinha, todo dia, pelas APIs do Instagram, do Facebook e do TikTok. Você só lê.
-2. Rode `python3 -m fato.analisar metricas.csv log.csv analise.json` no repositório. Ele liga cada post ao vídeo do log, dá uma nota a cada vídeo (1,0 = a mediana da rede; alcance 40%, retenção 40%, compartilhamentos e salvamentos 20%) e agrupa por categoria, tipo de gancho, famílias de cena, duração e horário.
-3. Atualize `thebestnewsbr/estrategia.json` no Drive (formato na seção "Métricas e estratégia" do `AGENTS.md`):
-   - em `"fase": "coleta"` (menos de 10 vídeos com nota), não mude pesos nem preferências; só anote o que está aparecendo;
-   - em `"fase": "ajuste"`, mude só o que tem `conclusivo: true`. Cada peso de categoria fica entre 0,7 e 1,3 e anda no máximo 0,1 por semana. Nunca zere uma categoria;
-   - escolha **um teste para a semana**, com uma variável só (exemplo: gancho com número contra gancho de contraste), e diga como o Radar, o Roteirista ou o Diretor aplicam.
-4. Grave o relatório da semana em `thebestnewsbr/relatorios/AAAA-MM-DD.md`, em português simples: os 3 melhores e os 3 piores vídeos com o motivo provável, o que mudou na estratégia, o teste da semana e o resultado do teste anterior.
-5. **Mudança grande vai para mim:** parar uma categoria, mudar a duração alvo, mudar o horário de produção ou qualquer regra do `AGENTS.md`. Crie um card em "Precisa de você" com a proposta e os números, e não aplique.
-
-Uma nota alta pode ser sorte. Só conclua com 3 vídeos ou mais no grupo, e diga quando a amostra ainda é pequena.
-
 ## Tarefa 2: criar o grupo "Redação Fato"
 
-Use `manus-config group create` com `request_id`, o nome e a lista de ids, incluindo o meu e os seis perfis.
+Use `manus-config group create` com `request_id`, o nome e a lista de ids, incluindo o meu e os cinco perfis.
 
 ## Tarefa 3: preparar o Trello
 
@@ -189,13 +173,13 @@ Etiquetas: "nota alta", "auto" e "urgente", mais uma por categoria: "ciencia", "
 - Ao começar a produzir um card, mova-o para "Em produção".
 - Quando algo trava, o card vai para "Precisa de você" com um comentário.
 
-## Tarefa 4: três rotinas, em três tarefas separadas
+## Tarefa 4: duas rotinas, em duas tarefas separadas
 
-Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As três levam `--connector-uids` com o uid do Trello e o do conector do **Google Drive** (o Radar lê o `log.csv` e a `estrategia.json` de lá) (confira com `connector ensure`; se aparecer um cartão de autorização, pare e me mostre). A pesquisa do Radar é feita no navegador e não precisa de conector. Se o Gemini estiver na conta como conector, as Rotinas A e B levam também o uid dele, porque usam o Gemini para revisar textos. Não chute uid.
+Crie cada tarefa com `subtask_create` e passe ao agendamento o `--task-uid` dela. As duas levam `--connector-uids` com o uid do Trello e o do conector do **Google Drive** (o Radar lê o `log.csv` de lá) (confira com `connector ensure`; se aparecer um cartão de autorização, pare e me mostre). A pesquisa do Radar é feita no navegador e não precisa de conector. Se o Gemini estiver na conta como conector, as duas rotinas levam também o uid dele, porque usam o Gemini para revisar textos. Não chute uid.
 
 **Rotina A: tarefa "Radar Fato", todos os dias às 17h30 (America/Sao_Paulo).**
 
-Leia `thebestnewsbr/log.csv` e `thebestnewsbr/estrategia.json` no Drive (se existirem). Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Antes de criar os cards, passe os títulos e as descrições pelo Gemini para deixá-los simples e claros, sem mudar os fatos. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
+Clone o repositório (como no Contexto), leia `estrategia/estrategia.json` e o `thebestnewsbr/log.csv` do Drive (se existir). Rode o Radar pesquisando no navegador (Google, Google Notícias e YouTube), aplique a nota, a regra de variedade e os vetos, e crie no máximo oito cards em "Pauta do dia", ordenados por nota. Antes de criar os cards, passe os títulos e as descrições pelo Gemini para deixá-los simples e claros, sem mudar os fatos. Não escreva roteiro, não mova cards e não publique. No fim, envie um resumo com as notas e o link do quadro.
 
 **Rotina B: tarefa "Produção Fato", todos os dias às 7h30 (America/Sao_Paulo).**
 
@@ -213,8 +197,8 @@ Leia `thebestnewsbr/log.csv` e `thebestnewsbr/estrategia.json` no Drive (se exis
 10. Acrescente uma linha ao `thebestnewsbr/log.csv` no Drive (crie com o cabeçalho se não existir) com estas colunas: `data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana`.
    - `familias`: as famílias das cenas separadas por `;`.
    - `gancho_tipo`: um destes: `numero` (abre com um número), `contraste` (algo que parece errado ou ao contrário), `segredo` (algo escondido ou pouco conhecido), `superlativo` (o maior, o primeiro, o único), `comparacao` (um contra o outro) ou `outro`.
-   - `descricao_inicio`: as primeiras 80 letras da descrição do `.txt`. É assim que o Analista liga o post ao vídeo, então eu não posso apagar o começo da descrição ao postar.
-   - `teste_da_semana`: `a`, `b` ou vazio, conforme o teste da `estrategia.json` que este vídeo seguiu.
+   - `descricao_inicio`: as primeiras 80 letras da descrição do `.txt`. É assim que o Analista (agente do Claude) liga o post ao vídeo, então eu não posso apagar o começo da descrição ao postar.
+   - `teste_da_semana`: `a`, `b` ou vazio, conforme o teste de `estrategia/estrategia.json` que este vídeo seguiu.
 11. Envie um resumo curto com o link da pasta no Drive.
 
 **Se "Aprovado" estiver vazio:** produza o card de maior nota de "Pauta do dia", só se a nota for 85 ou mais. Marque o card com a etiqueta "auto" e siga o fluxo completo. Como nada é publicado, o vídeo só vai para o Drive, e eu decido se posto. Se nenhum card tiver nota 85 ou mais, não produza nada e me envie um aviso.
@@ -226,10 +210,6 @@ Leia `thebestnewsbr/log.csv` e `thebestnewsbr/estrategia.json` no Drive (se exis
 
 As regras completas estão na seção "Publicação" do `AGENTS.md`.
 
-**Rotina C: tarefa "Análise Fato", toda segunda-feira às 9h (America/Sao_Paulo).**
-
-Rode o **Analista** conforme o perfil 6. No fim, envie um resumo de até 8 linhas com o link do relatório no Drive: os destaques, o que mudou na estratégia e o teste da semana.
-
 ## Regras
 
 - **Nunca publique em rede social.** O destino é só o Google Drive.
@@ -239,13 +219,14 @@ Rode o **Analista** conforme o perfil 6. No fim, envie um resumo de até 8 linha
 - Nenhuma senha ou chave aparece no chat, no card, no repositório ou no `log.csv`.
 - Não renderize vídeo nesta sessão, salvo um teste do exemplo: `python3 -m fato revisar exemplos/teste-acervo`.
 - Não crie dois agendamentos na mesma tarefa.
+- `estrategia/estrategia.json` e `metricas/` no repositório são do Analista (Claude): leia, mas nunca edite.
 
 ## Ao final, me devolva
 
-- os seis ids dos perfis;
+- os cinco ids dos perfis;
 - o id do grupo;
 - o id do quadro;
-- os ids das três tarefas e dos três agendamentos;
+- os ids das duas tarefas e dos dois agendamentos;
 - o resultado do teste do exemplo (`ok`, duração e tempo);
 - a confirmação de que o Google Drive está conectado e de que a pasta `thebestnewsbr/videos/` existe;
 - a lista do que ficou pendente de autorização minha.

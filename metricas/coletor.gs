@@ -10,6 +10,10 @@
  *   REDIRECT_URI                           a URL do app da Web deste script (termina em /exec)
  *   META_CONFIG_ID (opcional)              id da configuração do "Login do Facebook para Empresas"
  *   PAGINA (opcional)                      nome ou id da página do Facebook, se houver mais de uma
+ *   GITHUB_TOKEN                           token do GitHub (fine-grained, só o repositório redacao-fato,
+ *                                          permissão Contents: leitura e escrita). Com ele, cada coleta envia
+ *                                          metricas.csv e o log.csv do Drive para metricas/dados/ no repositório,
+ *                                          onde o Analista (tarefa agendada do Claude) lê.
  * Propriedades que o script grava sozinho: META_PAGE_ID, META_PAGE_TOKEN, META_IG_ID, TT_REFRESH, TT_OPEN_ID, ESTADO_*.
  */
 
@@ -44,7 +48,11 @@ const CHAVES = [
   ['META_APP_SECRET', 'Chave secreta do app da Meta'],
   ['META_CONFIG_ID', 'ID da configuração do Login do Facebook para Empresas (opcional)'],
   ['PAGINA', 'Nome da página do Facebook (opcional, só se tiver mais de uma)'],
+  ['GITHUB_TOKEN', 'Token do GitHub (fine-grained, só o repositório redacao-fato, Contents: leitura e escrita)'],
 ];
+
+const GH_REPO = 'ferfagner/redacao-fato';
+const GH_PASTA = 'metricas/dados/';
 
 /** Pede cada chave numa janelinha e guarda nas propriedades do script (ninguém mais vê). */
 function configurarChaves() {
@@ -180,8 +188,11 @@ function coletar() {
   gravar(linhas);
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const ex = aba(ss, ABA_EXEC, ['quando', 'posts', 'erros', 'segundos']);
-  ex.appendRow([new Date(), linhas.length, erros.join(' | '), Math.round((Date.now() - t0) / 1000)]);
+  if (prop('GITHUB_TOKEN')) {
+    try { enviarGitHub(); } catch (e) { erros.push('github: ' + seguro(e.message)); }
+  }
   if (erros.length) console.log('erros: ' + erros.join(' | '));
+  ex.appendRow([new Date(), linhas.length, erros.join(' | '), Math.round((Date.now() - t0) / 1000)]);
   return { posts: linhas.length, erros: erros };
 }
 
@@ -288,6 +299,55 @@ function insights(base, tk, metricas) {
     if (!u.error) Object.assign(o, ler(u));
   });
   return o;
+}
+
+// ---------------------------------------------------------------- envio para o GitHub
+
+/** Manda a aba "metricas" (CSV) e o log.csv da pasta thebestnewsbr do Drive para o repositório. */
+function enviarGitHub() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const linhas = ss.getSheetByName(ABA).getDataRange().getValues();
+  const csv = linhas.map(r => r.map(celula).join(',')).join('\n') + '\n';
+  ghGravar(GH_PASTA + 'metricas.csv', csv, 'Métricas: coleta de ' + Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyy-MM-dd'));
+  const log = arquivoDrive('thebestnewsbr', 'log.csv');
+  if (log) ghGravar(GH_PASTA + 'log.csv', log.getBlob().getDataAsString('UTF-8'), 'Log de produção copiado do Drive');
+}
+
+function celula(v) {
+  if (v instanceof Date) v = Utilities.formatDate(v, 'America/Sao_Paulo', 'yyyy-MM-dd HH:mm:ss');
+  const s = String(v === null || v === undefined ? '' : v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function arquivoDrive(pasta, nome) {
+  const ps = DriveApp.getFoldersByName(pasta);
+  while (ps.hasNext()) {
+    const fs = ps.next().getFilesByName(nome);
+    if (fs.hasNext()) return fs.next();
+  }
+  return null;
+}
+
+/** Cria ou atualiza um arquivo no repositório; não faz commit se o conteúdo não mudou. */
+function ghGravar(caminho, texto, mensagem) {
+  const url = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + caminho;
+  const cab = { Authorization: 'Bearer ' + prop('GITHUB_TOKEN'), Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28' };
+  const atual = UrlFetchApp.fetch(url, { headers: cab, muteHttpExceptions: true });
+  let sha = null;
+  if (atual.getResponseCode() === 200) {
+    const j = JSON.parse(atual.getContentText());
+    sha = j.sha;
+    const antigo = Utilities.newBlob(Utilities.base64Decode(String(j.content || '').replace(/\s/g, ''))).getDataAsString('UTF-8');
+    if (antigo === texto) return;
+  } else if (atual.getResponseCode() !== 404) {
+    throw new Error('GitHub respondeu ' + atual.getResponseCode() + ' ao ler ' + caminho);
+  }
+  const corpo = { message: mensagem, content: Utilities.base64Encode(texto, Utilities.Charset.UTF_8) };
+  if (sha) corpo.sha = sha;
+  const r = UrlFetchApp.fetch(url, { method: 'put', headers: cab, contentType: 'application/json',
+    payload: JSON.stringify(corpo), muteHttpExceptions: true });
+  if (r.getResponseCode() >= 300) throw new Error('GitHub respondeu ' + r.getResponseCode() + ' ao gravar ' + caminho);
 }
 
 // ---------------------------------------------------------------- planilha

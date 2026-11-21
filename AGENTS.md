@@ -409,19 +409,17 @@ O código mistura sozinho:
 
 O volume final fica em −16 LUFS. Os agentes não escolhem som.
 
-## Métricas e estratégia (Analista)
+## Métricas e estratégia (Analista, agente do Claude)
 
-As métricas chegam sozinhas, todo dia, na planilha `thebestnewsbr/thebestnewsbr - Métricas` do Drive. O coletor (`metricas/coletor.gs`) lê as APIs oficiais do Instagram, do Facebook e do TikTok. A aba `metricas` tem uma linha por post: views, alcance, curtidas, comentários, compartilhamentos, salvamentos, tempo médio assistido (Instagram e Facebook), pulos nos 3 primeiros segundos (Instagram), além de views com 48 h e com 7 dias. O TikTok não informa tempo assistido pela API.
+A análise **não é feita pelo Manus**. Funciona assim:
 
-Toda segunda, o Analista exporta essa aba como CSV, baixa `thebestnewsbr/log.csv` e roda:
-
-```bash
-python3 -m fato.analisar metricas.csv log.csv analise.json
-```
-
-Ele liga cada post ao vídeo do log pelo começo da descrição e pela data, e dá uma nota a cada vídeo. A nota 1,0 é a mediana da rede: acima de 1,2 é bom e abaixo de 0,8 é fraco. Os resultados saem agrupados por categoria, tipo de gancho, família de cena, duração e horário. Um grupo com menos de 3 vídeos sai com `conclusivo: false`.
-
-O que ele muda fica em `thebestnewsbr/estrategia.json` no Drive, que o Radar, o Roteirista e o Diretor leem antes de trabalhar:
+1. **Coleta (todo dia, 6h):** a planilha `thebestnewsbr - Métricas` do Drive roda o `metricas/coletor.gs`, que lê as APIs oficiais do Instagram, do Facebook e do TikTok. Ela grava uma linha por post: views, alcance, curtidas, comentários, compartilhamentos, salvamentos, tempo médio assistido (Instagram e Facebook), pulos nos 3 primeiros segundos (Instagram), além de views com 48 h e com 7 dias. Em seguida, manda a aba `metricas` e o `thebestnewsbr/log.csv` do Drive para `metricas/dados/` neste repositório. O TikTok não informa tempo assistido pela API.
+2. **Análise (toda segunda):** uma tarefa agendada do Claude (o Analista) atualiza o repositório e roda:
+   ```bash
+   python3 -m fato.analisar metricas/dados/metricas.csv metricas/dados/log.csv
+   ```
+   Ele liga cada post ao vídeo do log pelo começo da descrição e pela data, e dá uma nota a cada vídeo. A nota 1,0 é a mediana da rede: acima de 1,2 é bom e abaixo de 0,8 é fraco. Os resultados saem agrupados por categoria, tipo de gancho, família de cena, duração e horário. Um grupo com menos de 3 vídeos sai com `conclusivo: false`.
+3. **Estratégia:** o Analista grava `estrategia/estrategia.json` e o relatório da semana em `estrategia/relatorios/AAAA-MM-DD.md`, e faz o commit. O Radar, o Roteirista e o Diretor (Manus) **só leem** esse arquivo, no repositório que clonam a cada rodada.
 
 ```json
 {
@@ -430,17 +428,21 @@ O que ele muda fica em `thebestnewsbr/estrategia.json` no Drive, que o Radar, o 
   "categorias": {"ciencia": 1.0, "brasil": 1.0, "tecnologia": 1.0, "games": 1.0, "mundo": 1.0},
   "ganchos": {"preferir": [], "evitar": []},
   "cenas": {"preferir": [], "evitar": []},
-  "teste_da_semana": {"variavel": "gancho_tipo", "a": "numero", "b": "contraste", "como": "Roteirista alterna: dias pares a, ímpares b"},
-  "aprendizados": ["frases curtas, uma por linha, com o número de vídeos que sustenta cada uma"]
+  "teste_da_semana": null,
+  "aprendizados": []
 }
 ```
 
+- `categorias`: o Radar multiplica a nota da pauta pelo peso da categoria.
+- `ganchos` e `cenas`: o Roteirista e o Diretor preferem o que está em `preferir` e evitam o que está em `evitar`, sem quebrar nenhuma regra deste manual.
+- `teste_da_semana`: quando houver, vem como `{"variavel": "gancho_tipo", "a": "numero", "b": "contraste", "como": "dias pares a, ímpares b"}`. Quem produz segue a instrução de `como` e registra `a` ou `b` na coluna `teste_da_semana` do log.
+
 Limites, para a estratégia não ficar pulando:
-- **Pesos de categoria:** entre 0,7 e 1,3, e cada um anda no máximo 0,1 por semana. O Radar multiplica a nota da pauta pelo peso.
+- **Pesos de categoria:** entre 0,7 e 1,3, e cada um anda no máximo 0,1 por semana.
 - **Fase "coleta"** (menos de 10 vídeos com nota): não mude pesos nem preferências.
 - **Conclusões:** só de grupos com `conclusivo: true`.
 - **Testes:** um por semana, com uma variável só.
-- **Regras deste manual** (licenças, Gemini, formato, segurança editorial): a estratégia nunca muda. Mudança grande (parar uma categoria, mudar a duração alvo, mudar o horário) vira um card em "Precisa de você", não uma alteração.
+- **Regras deste manual** (licenças, Gemini, formato, segurança editorial): a estratégia nunca muda. Mudança grande (parar uma categoria, mudar a duração alvo, mudar o horário) vai como proposta no relatório, para o dono decidir.
 
 ## O que o código garante, e o Revisor não precisa medir
 
