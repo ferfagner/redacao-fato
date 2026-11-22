@@ -1,4 +1,4 @@
-Produza o vídeo vertical de 60 s do thebestnewsbr a partir do quadro Trello "Redação Fato" (https://trello.com/b/llcZddqR). Nada vai para rede social: só para o Google Drive. O AGENTS.md do repositório manda em tudo: contratos, comandos, códigos de saída e "Regras das plataformas".
+Produza o vídeo vertical de 60 s do thebestnewsbr a partir do quadro Trello "Redação Fato" (https://trello.com/b/llcZddqR). Você não posta em rede nenhuma: entrega no Google Drive e, no fim, dispara uma vez o cenário do Make que publica. O AGENTS.md do repositório manda em tudo: contratos, comandos, códigos de saída e "Regras das plataformas".
 
 0. Se houver card em "Precisa de você" com "retomar na revisão de linguagem", retome ele primeiro, com a pasta de thebestnewsbr/pendentes/ no Drive.
 1. Card mais antigo de "Aprovado" vai para "Em produção". Se "Aprovado" estiver vazio, pegue o de maior nota de "Pauta do dia", só com 85 ou mais, e marque "auto". Se nenhum tiver 85, não produza e me avise.
@@ -22,5 +22,7 @@ Produza o vídeo vertical de 60 s do thebestnewsbr a partir do quadro Trello "Re
 12. Acrescente uma linha no log.csv com estas colunas: data, card, categoria, tema, familias, fonte1, fonte2, duracao_s, rodadas_revisao, tempo_render_min, link_drive, status, gancho_tipo, n_cenas, n_broll, descricao_inicio, teste_da_semana, chamada.
     - descricao_inicio: as 80 primeiras letras do .txt.
     - chamada: o texto do bloco chamada.
+
+13. Make: no fim, rode uma vez o cenário "Drive → Facebook, Instagram e TikTok (thebestnewsbr)" (id 7127775) pelo conector do Make e espere terminar. Só rode se o vídeo e o .txt já estiverem na pasta do Drive e a linha do log.csv estiver gravada. Deu certo: o próprio cenário publica, move a pasta para publicados e o card para "Publicado"; confira e mande o resumo. Deu erro: não rode de novo (pode postar duas vezes); comente o erro no card e me avise.
 
 Se travar, mova o card para "Precisa de você" com folha.png e relatorio.json, e me avise.

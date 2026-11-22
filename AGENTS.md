@@ -54,7 +54,8 @@ O que fica em `saida/`:
 8. Rode `revisar`. Se der código 2, devolva os erros (por exemplo, a narração ficou longa ou uma cena ficou curta).
 9. **Revisor, etapa B:** abre `saida/folha.png` (uma imagem por cena, já com legenda e fonte) e `saida/legendas.srt`, e responde "aprovado" ou uma lista numerada de correções por cena.
 10. Só depois do "aprovado" da etapa B, rode `render`. Se `ok` vier `false`, os `problemas` dizem o que conferir: duração, resolução, áudio ou volume.
-11. **Não publique em rede nenhuma.** O `render` deixa em `saida/entrega/` só dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição com as hashtags (`<pasta>.txt`). Salve os dois numa pasta nova do Google Drive (`thebestnewsbr/videos/AAAA-MM-DD - <tema>`).
+11. **Não publique em rede nenhuma por conta própria.** O `render` deixa em `saida/entrega/` só dois arquivos: o vídeo (`<pasta>.mp4`) e a descrição com as hashtags (`<pasta>.txt`). Salve os dois numa pasta nova do Google Drive (`thebestnewsbr/videos/AAAA-MM-DD - <tema>`).
+12. **Publicação pelo Make:** com os dois arquivos no Drive e a linha do `log.csv` gravada, rode uma vez o cenário "Drive → Facebook, Instagram e TikTok (thebestnewsbr)" (id 7127775) pelo conector do Make e espere terminar. Ele publica, move a pasta para `publicados` e o card para "Publicado". Se der erro, não rode de novo (pode postar duas vezes): comente o erro no card e avise o dono.
 
 ## Publicação: descrição, hashtags e palavras-chave (Roteirista)
 
