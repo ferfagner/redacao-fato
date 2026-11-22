@@ -47,12 +47,21 @@ Descarte:
 • celebridade em situação vexatória;
 • teoria da conspiração;
 • em games, boato, vazamento e "insider";
-• tema publicado nos últimos 30 dias.
+• tema que já está no quadro ou no log.csv (veja "Não repetir").
 
 Regras das plataformas:
 • o ângulo sugerido nunca é isca de engajamento ("manda pra quem…", "marca alguém");
 • notícia de emprego, renda, crédito ou benefício nunca é tratada como oferta ("vagas abertas", "dinheiro esquecido", "quem procura emprego");
 • fale do dado, não com quem precisa.
+
+Não repetir (antes de pesquisar)
+
+• Liste os cards do quadro dos últimos 30 dias, de todas as listas, inclusive Vetado e arquivados, e as linhas do log.csv do mesmo período.
+• Anote de cada um o assunto, os números e as URLs.
+• Uma pauta nova é repetida quando tem a mesma URL, o mesmo estudo, anúncio ou evento, ou o mesmo número sobre o mesmo assunto, mesmo que vinda de outro veículo ou com outro título.
+• Na dúvida, mande ao Gemini a lista anotada e as pautas novas, e descarte as que ele disser que são o mesmo fato.
+• Só vale de novo se houver um fato novo de verdade (número atualizado, resultado final) e o card disser "atualiza o card X".
+• Sem pautas novas suficientes, crie menos cards. Nunca complete as oito com repetição.
 
 Antes de criar os cards
 
@@ -69,6 +78,7 @@ Crie no máximo oito cards na lista "Pauta do dia", em ordem decrescente de nota
   – o veículo, a data e a hora;
   – as URLs;
   – uma linha de ângulo sugerido.
+  – uma linha "chave:" com assunto | número principal | URL principal, para as próximas rodadas acharem repetição.
 • Checklist: duas fontes independentes; número com ano e instituição; fora da lista de veto.
 • Etiquetas: a da categoria e "nota alta" quando a nota passar de 85.
 
