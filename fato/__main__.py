@@ -159,9 +159,25 @@ def entregar(pasta: Path, saida: Path, video: Path):
         shutil.rmtree(dest)
     dest.mkdir()
     nome = pasta.name
-    shutil.copy(video, dest / f"{nome}.mp4")
+    final = dest / f"{nome}.mp4"
+    tamanho = comprimir(video, final)
     (dest / f"{nome}.txt").write_text(texto, encoding="utf-8")
-    return {"pasta": "saida/entrega", "video": f"{nome}.mp4", "descricao": f"{nome}.txt"}
+    return {"pasta": "saida/entrega", "video": f"{nome}.mp4", "descricao": f"{nome}.txt", "tamanho_mb": tamanho}
+
+
+ENTREGA_MAX_MB = 90   # o Cloudinary grátis recusa acima de 100 MB; as redes aceitam bem abaixo disso
+
+
+def comprimir(origem: Path, destino: Path):
+    """O render sai com ~160 MB. Para postar, recomprime para ~50 MB sem perda visível (H.264, AAC 192k)."""
+    for teto in ("7M", "5M", "3500k"):
+        rodar("ffmpeg", "-y", "-v", "error", "-i", origem, "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+              "-maxrate", teto, "-bufsize", "14M", "-pix_fmt", "yuv420p", "-r", "30", "-c:a", "aac", "-b:a", "192k",
+              "-ar", "48000", "-movflags", "+faststart", destino)
+        mb = round(destino.stat().st_size / 1048576, 1)
+        if mb <= ENTREGA_MAX_MB:
+            return mb
+    raise RuntimeError(f"o vídeo de entrega ficou com {mb} MB mesmo comprimido (máximo {ENTREGA_MAX_MB} MB)")
 
 
 def conferir(video: Path, alvo: float):
