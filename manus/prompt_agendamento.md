@@ -23,6 +23,6 @@ Produza o vídeo vertical de 60 s do thebestnewsbr a partir do quadro Trello "Re
     - descricao_inicio: as 80 primeiras letras do .txt.
     - chamada: o texto do bloco chamada.
 
-13. Make: no fim, rode uma vez o cenário "Drive → Facebook, Instagram e TikTok (thebestnewsbr)" (id 7127775) pelo conector do Make e espere terminar. Só rode se o vídeo e o .txt já estiverem na pasta do Drive e a linha do log.csv estiver gravada. Deu certo: o próprio cenário publica, move a pasta para publicados e o card para "Publicado"; confira e mande o resumo. Deu erro: não rode de novo (pode postar duas vezes); comente o erro no card e me avise.
+13. Make: no fim, rode uma vez o cenário "Drive → Facebook, Instagram, TikTok e YouTube (thebestnewsbr)" (id 7127775) pelo conector do Make e espere terminar. Só rode se o vídeo e o .txt já estiverem na pasta do Drive e a linha do log.csv estiver gravada. Deu certo: o próprio cenário publica, move a pasta para publicados e o card para "Publicado"; confira e mande o resumo. Deu erro: não rode de novo (pode postar duas vezes); comente o erro no card e me avise.
 
 Se travar, mova o card para "Precisa de você" com folha.png e relatorio.json, e me avise.
